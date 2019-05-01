@@ -13,6 +13,7 @@ CREATE TABLE IF NOT EXISTS smpos_sis_categorias (
 	cat_estado 					INT(11)											COMMENT 'Estado de la categoria',
 	cat_principal				INT(11)											COMMENT 'Si posee categoria principal (padre)',
 	PRIMARY KEY (cat_codigo),
+	UNIQUE i_abbreviatura (cat_abbreviatura),
 	FOREIGN KEY (cat_principal) 			REFERENCES smpos_sis_categorias (cat_codigo)
 ) Engine=InnoDB COMMENT = 'Tabla que guarda las categorias';
 
@@ -22,7 +23,8 @@ CREATE TABLE IF NOT EXISTS smpos_sis_perfiles (
 	per_abbreviatura			VARCHAR(200)									COMMENT 'Abreviatura del perfil',
 	per_descripcion 			TEXT 			NOT NULL 						COMMENT 'Descripcion del perfil',
 	per_estado 					INT(11)											COMMENT 'Estado del perfil',
-	PRIMARY KEY (per_codigo)
+	PRIMARY KEY (per_codigo),
+	UNIQUE i_abbreviatura (per_abbreviatura)
 ) Engine=InnoDB COMMENT = 'Tabla que guarda los perfiles de usuario';
 
 CREATE TABLE IF NOT EXISTS smpos_sis_roles (
@@ -31,7 +33,8 @@ CREATE TABLE IF NOT EXISTS smpos_sis_roles (
 	rol_abbreviatura			VARCHAR(200)									COMMENT 'Abreviatura del rol',
 	rol_descripcion 			TEXT 			NOT NULL 						COMMENT 'Descripcion del rol',
 	rol_estado 					INT(11)											COMMENT 'Estado del rol',
-	PRIMARY KEY (rol_codigo)
+	PRIMARY KEY (rol_codigo),
+	UNIQUE i_abbreviatura (rol_abbreviatura)
 ) Engine=InnoDB COMMENT = 'Tabla que guarda los roles que maneja el sistema';
 
 CREATE TABLE IF NOT EXISTS smpos_sis_roles_x_perfiles (
@@ -55,6 +58,7 @@ CREATE TABLE IF NOT EXISTS smpos_sis_usuarios (
 	usu_usuario_modificador		INT(11)											COMMENT 'Codigo del usuario que hizo la ultima modificacion en el usuario',
 	usu_estado 					INT(11)											COMMENT 'Estado asociado al usuario',
 	PRIMARY KEY (usu_codigo),
+	UNIQUE i_alias (usu_alias),
 	FOREIGN KEY (usu_estado) 				REFERENCES smpos_sis_categorias (cat_codigo)
 ) Engine=InnoDB COMMENT = 'Tabla que posee informacion de los usuarios del sistema';
 
@@ -76,6 +80,7 @@ CREATE TABLE IF NOT EXISTS smpos_sis_conceptos (
 	con_afecta					INT(11)			NOT NULL 						COMMENT 'Indica como afecta el concepto (aumenta la venta o la disminuye)',
 	con_estado 					INT(11)											COMMENT 'Estado del concepto',
 	PRIMARY KEY (con_codigo),
+	UNIQUE i_abreviatura (con_abreviatura),
 	FOREIGN KEY (con_afecta) 				REFERENCES smpos_sis_categorias (cat_codigo),
 	FOREIGN KEY (con_estado) 				REFERENCES smpos_sis_categorias (cat_codigo)
 ) Engine=InnoDB COMMENT = 'Tabla que posee los conceptos soportados por el sistema';
@@ -100,6 +105,7 @@ CREATE TABLE IF NOT EXISTS smpos_men_opciones (
 	opc_principal				INT(11)											COMMENT 'Opcion principal asociada a esta',
 	opc_estado 					INT(11)											COMMENT 'Estado de esta opcion de menu',
 	PRIMARY KEY (opc_codigo),
+	UNIQUE i_abreviatura (opc_abreviatura),
 	FOREIGN KEY (opc_principal) 			REFERENCES smpos_men_opciones (opc_codigo)
 ) Engine=InnoDB COMMENT = 'Tabla que guarda el menu que puede manejarse en el sistema';
 
@@ -124,6 +130,7 @@ CREATE TABLE IF NOT EXISTS smpos_con_entidades (
 	ent_correo					TEXT 											COMMENT 'Correo electronico de la entidad',
 	ent_estado 					INT(11)											COMMENT 'Estado de la entidad',
 	PRIMARY KEY (ent_codigo),
+	UNIQUE i_identificacion (ent_identificacion),
 	FOREIGN KEY (ent_tipo) 					REFERENCES smpos_sis_categorias  (cat_codigo), 
 	FOREIGN KEY (ent_estado) 				REFERENCES smpos_sis_categorias  (cat_codigo)
 ) Engine=InnoDB COMMENT = 'Tabla que guarda la informacion general de la entidad';
@@ -170,11 +177,14 @@ CREATE TABLE IF NOT EXISTS smpos_con_empleados (
 	emp_fecha_fin 				DATE 											COMMENT 'Fecha final del contrato asociado al vendedor',
 	emp_usuario_creador			INT(11)											COMMENT 'Usuario que definio a este empleado',
 	emp_usuario_modificador		INT(11)											COMMENT 'Usuario que hizo la ultima modificacion del empleado',
+	emp_usuario					INT(11)											COMMENT 'Codigo del usuario',
 	emp_estado 					INT(11)											COMMENT 'Estado asociado al vendedor',
 	PRIMARY KEY (emp_codigo),
+	FOREIGN KEY (emp_persona)				REFERENCES smpos_con_personas	 (per_codigo),
 	FOREIGN KEY (emp_tipo_contrato) 		REFERENCES smpos_sis_categorias  (cat_codigo),
 	FOREIGN KEY (emp_usuario_creador) 		REFERENCES smpos_sis_usuarios  	 (usu_codigo),
 	FOREIGN KEY (emp_usuario_modificador) 	REFERENCES smpos_sis_usuarios  	 (usu_codigo),
+	FOREIGN KEY (emp_usuario) 				REFERENCES smpos_sis_usuarios  	 (usu_codigo),
 	FOREIGN KEY (emp_estado) 				REFERENCES smpos_sis_categorias  (cat_codigo)
 ) Engine=InnoDB COMMENT = 'Tabla que guarda los vendedores del sistema';
 
@@ -220,17 +230,28 @@ CREATE TABLE IF NOT EXISTS smpos_inv_inventarios (
 	FOREIGN KEY (inv_estado) 				REFERENCES smpos_sis_categorias  (cat_codigo)
 ) Engine=InnoDB COMMENT = 'Tabla que guarda las compras realizadas (asociada a inventario)';
 
-CREATE TABLE IF NOT EXISTS smpos_ven_consecutivos (
+CREATE TABLE IF NOT EXISTS smpos_csc_rangos (
 	con_codigo					INT(11)			NOT NULL 		AUTO_INCREMENT	COMMENT 'Codigo unico asociado al consecutivo',
 	con_base					INT(11)			NOT NULL 						COMMENT 'Numero base del consecutivo',
 	con_inicio					INT(11)			NOT NULL 						COMMENT 'Numero de inicio',
 	con_fin						INT(11)			NOT NULL 						COMMENT 'Numero final',
+	con_fecha_creacion			DATE			NOT NULL						COMMENT 'Fecha creacion de los consecutivos',
 	con_codigo_resolucion		VARCHAR(255)	NOT NULL						COMMENT 'Resolucion entregada por la DIAN',
 	con_fecha_resolucion		DATE			NOT NULL 						COMMENT 'Fecha de emision de la resolucion DIAN',
 	con_estado 					INT(11)											COMMENT 'Estado del consecutivo',
 	PRIMARY KEY (con_codigo),
 	FOREIGN KEY (con_estado) 				REFERENCES smpos_sis_categorias  (cat_codigo)
-) Engine=InnoDB COMMENT = 'Tabla que guarda los consecutivos para la venta';
+) Engine=InnoDB COMMENT = 'Tabla que guarda los rangos de consecutivos';
+
+CREATE TABLE IF NOT EXISTS smpos_csc_consecutivos (
+	con_codigo					INT(11)			NOT NULL 		AUTO_INCREMENT	COMMENT 'Codigo del consecutivo',
+	con_consecutivo				INT(11)			NOT NULL						COMMENT 'Codigo que representa el rango de consecutivos',
+	con_numero					VARCHAR(200)	NOT NULL						COMMENT 'Numero del consecutivo',
+	con_estado					INT(11)											COMMENT 'Estado de este consecutivo',
+	PRIMARY KEY (con_codigo),
+	FOREIGN KEY (con_consecutivo)			REFERENCES smpos_csc_rangos      (con_codigo),
+	FOREIGN KEY (con_estado) 				REFERENCES smpos_sis_categorias  (cat_codigo)
+) Engine=InnoDB COMMENT = 'Tabla que guarda los consecutivos a asignar a la venta';
 
 CREATE TABLE IF NOT EXISTS smpos_ven_ventas (
 	ven_codigo					INT(11)			NOT NULL 		AUTO_INCREMENT	COMMENT 'Codigo unico de la venta',
@@ -246,7 +267,7 @@ CREATE TABLE IF NOT EXISTS smpos_ven_ventas (
 	ven_vendedor				INT(11)											COMMENT 'Codigo del vendedor',
 	ven_estado					INT(11)											COMMENT 'Estado asociado a esta venta',
 	PRIMARY KEY (ven_codigo),
-	FOREIGN KEY (ven_consecutivo_codigo)	REFERENCES smpos_ven_consecutivos(con_codigo),
+	FOREIGN KEY (ven_consecutivo_codigo)	REFERENCES smpos_csc_consecutivos(con_codigo),
 	FOREIGN KEY (ven_cliente_codigo) 		REFERENCES smpos_con_entidades   (ent_codigo),
 	FOREIGN KEY (ven_vendedor) 				REFERENCES smpos_con_empleados   (emp_codigo),
 	FOREIGN KEY (ven_estado) 				REFERENCES smpos_sis_categorias  (cat_codigo)

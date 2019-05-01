@@ -5,4 +5,4 @@ RewriteEngine on
 RewriteCond $1 !^(index\.php|images|robots\.txt)
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
-RewriteRule ^(.*)$ /smart-pos/index.php/$1 [L,QSA]
+RewriteRule ^(.*)$ /smart-pos/restservices/index.php/$1 [L,QSA]
