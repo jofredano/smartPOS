@@ -58,7 +58,8 @@
  END //
  
  CREATE PROCEDURE smpos_prc_obtener_consecutivo(
- 	OUT 	vou_consecutivo				INT(11),
+ 	OUT 	vou_consecutivo_codigo		INT(11),
+	OUT 	vou_consecutivo_numero		INT(11),
    	OUT 	vou_codigo 	 				INT(11),
 	OUT 	vou_mensaje					TEXT)
  BEGIN
@@ -90,8 +91,10 @@
 	 	FROM 	smpos_csc_consecutivos c
 	 	WHERE 	c.con_codigo 	= CONSECU_CODIGO;
 	 	-- Variables de salida --
-		SET vou_codigo  	 	= 200;
-		SET vou_mensaje 	 	= 'Consecutivo entregado con exito';
+	 	SET vou_consecutivo_numero = CONSECU_NUMERO;
+	 	SET vou_consecutivo_codigo = CONSECU_CODIGO;
+		SET vou_codigo  	 	   = 200;
+		SET vou_mensaje 	 	   = 'Consecutivo entregado con exito';
 	ELSE 
 		-- Actualiza el rango de consecutivos --
 		UPDATE 	smpos_csc_rangos

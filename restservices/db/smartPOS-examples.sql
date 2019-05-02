@@ -11,7 +11,7 @@ SELECT @vou_codigo, @vou_mensaje;
 CALL smpos_prc_crear_entidad(
 	'PERSONA.TIPO.NATURAL',
 	'CC-1111789100',
-	'Henry Stiven',
+	'Henry Stivent',
 	'Montaño Ramirez',
 	STR_TO_DATE('1999-06-10', '%Y-%m-%d'),
 	NULL,
@@ -23,3 +23,12 @@ CALL smpos_prc_crear_entidad(
    	@vou_codigo,
 	@vou_mensaje);
 SELECT @vou_entidad, @vou_codenti, @vou_codigo, @vou_mensaje;
+
+CALL smpos_prc_obtener_consecutivo(
+ 	@vou_consecutivo_codigo,
+	@vou_consecutivo_numero,
+   	@vou_codigo,
+	@vou_mensaje);
+SELECT 	@vou_consecutivo_codigo, @vou_consecutivo_numero, @vou_codigo, @vou_mensaje;
+
+	
