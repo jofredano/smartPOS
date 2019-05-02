@@ -51,7 +51,7 @@ CREATE TABLE IF NOT EXISTS smpos_sis_roles_x_perfiles (
 CREATE TABLE IF NOT EXISTS smpos_sis_usuarios (
 	usu_codigo					INT(11)			NOT NULL		AUTO_INCREMENT	COMMENT 'Codigo unico del usuario',
 	usu_alias 					VARCHAR(25)		NOT NULL						COMMENT 'Nombre de usuario',
-	usu_clave 					VARCHAR(255)	NOT NULL						COMMENT 'Clave del usuario',
+	usu_clave 					TEXT			NOT NULL						COMMENT 'Clave del usuario',
 	usu_fecha_creacion			DATETIME 										COMMENT 'Fecha de creacion del usuario',
 	usu_fecha_modificado		DATETIME 										COMMENT 'Fecha en la que se hizo la ultima modificacion',
 	usu_usuario_creador			INT(11)											COMMENT 'Codigo del usuario creador',

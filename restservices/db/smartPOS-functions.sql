@@ -29,4 +29,16 @@ CREATE FUNCTION smpos_fnc_obtener_consec_rango_codigo(
  RETURN (result);
 END$$
 
+DELIMITER $$
 
+CREATE FUNCTION smpos_fnc_obtener_rol_codigo(
+    abbr_rol	VARCHAR(200)) 
+ RETURNS INT(11)
+    DETERMINISTIC
+ BEGIN
+    DECLARE result INT(11);
+ 	SELECT 	IF(COUNT(c.rol_codigo) > 0, c.rol_codigo, 0) INTO result
+ 	FROM 	smpos_sis_roles c
+ 	WHERE 	c.rol_abbreviatura = abbr_rol;
+ RETURN (result);
+END$$
