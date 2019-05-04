@@ -41,6 +41,15 @@ CALL smpos_prc_crear_usuario(
 	@vou_mensaje);
 SELECT 	@vou_usuario, @vou_codigo, @vou_mensaje;
 
+CALL smpos_prc_crear_usuario(
+	'hsmontanor',
+	'juninho05',
+	NULL,
+	'ROL.ADMINISTRADOR',
+	@vou_usuario,
+   	@vou_codigo,
+	@vou_mensaje);
+SELECT 	@vou_usuario, @vou_codigo, @vou_mensaje;
 
 CALL smpos_prc_crear_empleado(
 	'CC-14477810',
@@ -57,9 +66,42 @@ CALL smpos_prc_crear_empleado(
 	STR_TO_DATE('2020-05-02', '%Y-%m-%d'),
  	'jofreddyan',
 	'jose123',
-	'ROL.VENDEDOR',
+	'ROL.ADMINISTRADOR',
 	NULL,
 	@vou_entidad,
    	@vou_codigo,
 	@vou_mensaje);
-SELECT 	@vou_usuario, @vou_codigo, @vou_mensaje;
+SELECT 	@vou_entidad, @vou_codigo, @vou_mensaje;
+
+CALL smpos_prc_crear_articulo(
+	'ARTICULO.CATEGORIA.ACCESORIO' ,
+	'MRC.SONY' ,
+	'Mouse Optico (USB 3.0)' ,
+	'Mouse Optico USB Version 3.0 ' ,
+	'CC-16482024' ,
+	100 ,
+	NULL ,
+	@vou_entidad ,
+   	@vou_codigo  ,
+	@vou_mensaje);
+SELECT 	@vou_entidad, @vou_codigo, @vou_mensaje;
+
+
+CALL smpos_prc_iniciar_sesion(
+	'hmontano',
+	'juninho05',
+	30,
+	@vou_token,
+   	@vou_codigo,
+	@vou_mensaje);
+SELECT 	@vou_token, @vou_codigo, @vou_mensaje;
+
+CALL smpos_prc_iniciar_sesion(
+	'jofreddyan',
+	'jose123',
+	30,
+	@vou_token,
+   	@vou_codigo,
+	@vou_mensaje);
+SELECT 	@vou_token, @vou_codigo, @vou_mensaje;
+

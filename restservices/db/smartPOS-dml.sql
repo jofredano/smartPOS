@@ -188,6 +188,16 @@ CREATE TABLE IF NOT EXISTS smpos_con_empleados (
 	FOREIGN KEY (emp_estado) 				REFERENCES smpos_sis_categorias  (cat_codigo)
 ) Engine=InnoDB COMMENT = 'Tabla que guarda los vendedores del sistema';
 
+CREATE TABLE IF NOT EXISTS smpos_inv_marcas (
+	mar_codigo					INT(11) 		NOT NULL 		AUTO_INCREMENT 	COMMENT 'codigo unico de la marca',
+	mar_abbreviatura			VARCHAR(200) 									COMMENT 'Abreviatura de la categoria',
+	mar_descripcion				TEXT 											COMMENT 'Descripcion de la categoria',
+	mar_proveedor				INT(11) 										COMMENT 'Proveedor asociado a las marcas',	
+	PRIMARY KEY  (mar_codigo),
+	UNIQUE  i_abbreviatura (mar_abbreviatura),
+	FOREIGN KEY  (mar_proveedor)			REFERENCES smpos_con_proveedores  (pro_codigo)
+) Engine=InnoDB COMMENT = 'Tabla que guarda una marca asociada al articulo';
+
 CREATE TABLE IF NOT EXISTS smpos_inv_articulos (
 	art_codigo					INT(11)			NOT NULL 		AUTO_INCREMENT	COMMENT 'Codigo unico del articulo',
 	art_categoria				INT(11)											COMMENT 'Categoria del producto',
@@ -198,8 +208,9 @@ CREATE TABLE IF NOT EXISTS smpos_inv_articulos (
 	art_cantidad_maxima			INT(11)											COMMENT 'Cantidad limite que se puede tener del articulo',
 	art_estado 					INT(11)											COMMENT 'Estado del articulo',
 	PRIMARY KEY (art_codigo),
+	UNIQUE  i_articulo (art_nombre, art_marca),
 	FOREIGN KEY (art_categoria) 			REFERENCES smpos_sis_categorias  (cat_codigo),
-	FOREIGN KEY (art_marca) 				REFERENCES smpos_sis_categorias  (cat_codigo),
+	FOREIGN KEY (art_marca) 				REFERENCES smpos_inv_marcas      (mar_codigo),
 	FOREIGN KEY (art_proveedor) 			REFERENCES smpos_con_proveedores (pro_codigo),
 	FOREIGN KEY (art_estado) 				REFERENCES smpos_sis_categorias  (cat_codigo)
 ) Engine=InnoDB COMMENT = 'Tabla que guarda los articulos';
