@@ -7,6 +7,7 @@
  DROP PROCEDURE IF EXISTS smpos_prc_crear_proveedor;
  DROP PROCEDURE IF EXISTS smpos_prc_crear_articulo;
  DROP PROCEDURE IF EXISTS smpos_prc_iniciar_sesion;
+ DROP PROCEDURE IF EXISTS smpos_prc_finalizar_sesion;
  DROP PROCEDURE IF EXISTS debug_msg;
  
  -- Procedimiento para crear un rango de consecutivos -- 
@@ -27,7 +28,7 @@
 	IN 		vin_con_fin						INT(11),
 	IN 		vin_con_codigo_resolucion		VARCHAR(255),
 	IN 		vin_con_fecha_resolucion		DATE,
-	OUT 	vou_codigo						INT(11),
+	OUT 	vou_codigo						CHAR(5),
 	OUT		vou_mensaje						TEXT)
  BEGIN
  	DECLARE CESRANG_ACTIVO INT(11) DEFAULT 0;
@@ -44,7 +45,7 @@
  	SET CODRANG_CONSEC = smpos_fnc_obtener_consec_rango_codigo( vin_con_codigo_resolucion );
  
  	IF  CODRANG_CONSEC > 0 THEN 
-		SET vou_codigo  = 507;
+		SET vou_codigo  = '507';
 		SET vou_mensaje = CONCAT('Ya existe un rango de consecutivos con esta resolucion', ' (', vin_con_codigo_resolucion, ')');
  	ELSE 
 	 	-- Definicion del rango de consecutivos --
@@ -65,7 +66,7 @@
 		    SET  CNUMERO_CON_IN = CNUMERO_CON_IN + 1; 
 		END WHILE;
 	
-		SET vou_codigo  = 200;
+		SET vou_codigo  = '200';
 		SET vou_mensaje = 'Consecutivos creados con exito';
  	END IF;
  END //
@@ -516,6 +517,9 @@
 	DECLARE CODTOKEN_ACCESO			TEXT		DEFAULT NULL;
 	DECLARE FECINI_ACCESO			DATETIME	DEFAULT NULL;
 	DECLARE FECFIN_ACCESO			DATETIME	DEFAULT NULL;
+	DECLARE CANTAC_INGRESAD			INT(11)		DEFAULT 0;
+	DECLARE CODACCES_ESACTI			INT(11)		DEFAULT 0;
+	DECLARE CODACCES_ESCADU			INT(11)		DEFAULT 0;
 
 	DECLARE CONTINUE HANDLER FOR NOT FOUND 
 		BEGIN 
@@ -530,51 +534,62 @@
     	END;
 
 	SET CODENTID_ACTIVO		= smpos_fnc_obtener_categ_codigo('ENTIDAD.ESTADO.ACTIVO');
+	SET CODACCES_ESACTI		= smpos_fnc_obtener_categ_codigo('ACCESO.ESTADO.ACTIVO');
+	SET CODACCES_ESCADU		= smpos_fnc_obtener_categ_codigo('ACCESO.ESTADO.CADUCADO');
 	SET @enabled			= FALSE;
-
+	-- Linea para depurar procedimiento --
 	call debug_msg(@enabled, CONCAT('Entidad (', CODENTID_ACTIVO, ')'));
-
+	-- Condicion para validar si tiene los argumentos necesarios para realizar el proceso --
 	IF 	vin_usu_alias IS NOT NULL AND vin_usu_clave IS NOT NULL THEN
 		-- Linea para depurar procedimiento --
 		call debug_msg(@enabled, 'Procedemos a validar informacion usuario...');
-	
+		-- Consulta para validar la existencia del usuario --
 		SELECT 	u.usu_codigo, 	 u.usu_clave, 	 u.usu_estado
 		INTO	DATUSUAR_CODIGO, PASUSUAR_CLAVE, DATUSUAR_ESTADO
 		FROM	smpos_sis_usuarios u
 		WHERE 	u.usu_alias = vin_usu_alias;
-		
 		-- Linea para depurar procedimiento --
 		call debug_msg(@enabled, CONCAT('Resultado-Usuario (', DATUSUAR_CODIGO, '-', CODSALID_ESTADO, ')')); 
-
+		-- Valida si el estado de todo este proceso es exitoso --
  		IF	STRCMP(CODSALID_ESTADO, '00000') = 0 THEN 
+ 			-- Si corresponde la clave ingresada y si el estado del usuario es el indicado --
 			IF	PASUSUAR_CLAVE	= PASSWORD(vin_usu_clave) AND DATUSUAR_ESTADO = CODENTID_ACTIVO THEN 
 				-- Linea para depurar procedimiento --
 				call debug_msg(@enabled, 'Asignando parametros acceso..');
-				
+				-- Asigna los valores requeridos para realizar el inicio de sesion --
 				SET FECINI_ACCESO 	= NOW();
 				SET FECFIN_ACCESO	= DATE_ADD(FECINI_ACCESO, INTERVAL vin_duracion MINUTE);
-
 				-- Primero debemos buscar si hay una sesion para este usuario activa --
 			 	SELECT 	IF(COUNT(a.acc_token) > 0, a.acc_token, NULL) INTO CODTOKEN_ACCESO
 			 	FROM 	smpos_sis_accesos a
 			 	WHERE 	a.acc_usuario = DATUSUAR_CODIGO
 			 	AND 	FECINI_ACCESO BETWEEN a.acc_fecha_inicio AND a.acc_fecha_fin;
-			 	
 			 	-- Linea para depurar procedimiento --
 				call debug_msg(@enabled, CONCAT('Token leido (', IFNULL(CODTOKEN_ACCESO, ''), ')'));
-			 	
 				-- Verifica si efectivamente lo encontro --
 				IF 	CODTOKEN_ACCESO IS NOT NULL THEN 
 					SET vou_token	= CODTOKEN_ACCESO;
 					SET vou_codigo  = '200';
 					SET vou_mensaje = 'OK';
 				ELSE 
-					SET CODTOKEN_ACCESO	= LEFT(UUID(), 8);
+					SET CODTOKEN_ACCESO	= LEFT(UUID(), 20);
+					-- Inserta el nuevo acceso --
 					INSERT INTO smpos_sis_accesos 
-							(acc_token, acc_usuario, acc_fecha_inicio, acc_fecha_fin, acc_duracion) 
-					VALUES 	(CODTOKEN_ACCESO, DATUSUAR_CODIGO, FECINI_ACCESO, FECFIN_ACCESO, vin_duracion);
+							(acc_token,     acc_usuario,  acc_fecha_inicio, 
+							 acc_fecha_fin, acc_duracion, acc_estado) 
+					VALUES 	(CODTOKEN_ACCESO, DATUSUAR_CODIGO, FECINI_ACCESO, 
+					         FECFIN_ACCESO,   vin_duracion,    CODACCES_ESACTI);
+					-- Asigna la cantidad de accesos registrados --
+					SET CANTAC_INGRESAD	= ROW_COUNT();
+					-- Actualizar todos los accesos del usuario que esten activos --
+					-- y que no tengan el token que acabamos de crear --
+					UPDATE 	smpos_sis_accesos 
+					SET		acc_fecha_fin	=  FECINI_ACCESO, 
+							acc_estado		=  CODACCES_ESCADU
+					WHERE 	acc_token		<> CODTOKEN_ACCESO
+					AND 	acc_estado 		=  CODACCES_ESACTI;
 					-- Valida si inserto la informacion --
-					IF 	ROW_COUNT() > 0 THEN
+					IF 	CANTAC_INGRESAD > 0 THEN
 						SET vou_token	= CODTOKEN_ACCESO;
 						SET vou_codigo  = '200';
 						SET vou_mensaje = 'OK';
@@ -605,4 +620,88 @@
 	END IF;
   END //
   
+ CREATE PROCEDURE smpos_prc_finalizar_sesion(
+ 	IN 		vin_token					TEXT,
+   	OUT 	vou_codigo 	 				CHAR(5),
+	OUT 	vou_mensaje					TEXT)
+  BEGIN
+	DECLARE CODACCES_ESACTI			INT(11)		DEFAULT 0;
+	DECLARE CODACCES_ESFINA			INT(11)		DEFAULT 0;
+	DECLARE CODACCES_ESCADU			INT(11)		DEFAULT 0;
+	DECLARE CODUSUAR_ACCESO			INT(11)		DEFAULT 0;
+	DECLARE NMRDURAC_ACCESO			INT(11)		DEFAULT 0;
+	DECLARE CODESTAD_ACCESO			INT(11)		DEFAULT 0;
+	DECLARE FECINI_ACCESO			DATETIME	DEFAULT NULL;
+	DECLARE FECFIN_ACCESO			DATETIME	DEFAULT NULL;
+	DECLARE FECACT_ACCESO			DATETIME	DEFAULT NULL;
+	DECLARE CODSALID_ESTADO			CHAR(5)		DEFAULT '00000';
+	DECLARE MSGSALID_ESTADO			TEXT		DEFAULT '';
+	
+	DECLARE CONTINUE HANDLER FOR NOT FOUND 
+		BEGIN 
+			SET CODSALID_ESTADO = '402'; 
+        	SET MSGSALID_ESTADO = 'Usuario o clave no valido';
+		END;
+
+	SET CODACCES_ESACTI		= smpos_fnc_obtener_categ_codigo('ACCESO.ESTADO.ACTIVO');
+	SET CODACCES_ESCADU		= smpos_fnc_obtener_categ_codigo('ACCESO.ESTADO.CADUCADO');
+	SET CODACCES_ESFINA		= smpos_fnc_obtener_categ_codigo('ACCESO.ESTADO.FINALIZADO');
+	SET FECACT_ACCESO		= NOW();
+	SET @enabled			= TRUE;
+ 	-- Linea para depurar procedimiento --
+	call debug_msg(@enabled, CONCAT('Token leido (', IFNULL(vin_token, ''), ')'));
+	-- Validamos si el token esta especificado --
+	IF 	vin_token IS NOT NULL THEN 
+	 	-- Linea para depurar procedimiento --
+		call debug_msg(@enabled, 'Procedemos a buscar info del acceso...');
+		-- Ubicamos el token del acceso a finalizar --
+		SELECT 	a.acc_usuario,   a.acc_fecha_inicio, a.acc_fecha_fin, a.acc_duracion
+		INTO 	CODUSUAR_ACCESO, FECINI_ACCESO,		 FECFIN_ACCESO,   NMRDURAC_ACCESO
+		FROM 	smpos_sis_accesos a
+		WHERE 	a.acc_token		= vin_token
+		AND 	a.acc_estado	= CODACCES_ESACTI;
+	 	-- Linea para depurar procedimiento --
+		call debug_msg(@enabled, CONCAT('Consulta realizada (', CODSALID_ESTADO, ')'));
+		-- Valida si este bloque se ejecuto exitosamente --
+		IF	STRCMP(CODSALID_ESTADO, '00000') = 0 THEN 
+			-- Establecer que estado deberia aplicar a esta sesion --
+			IF	FECACT_ACCESO > FECFIN_ACCESO THEN 
+				SET CODESTAD_ACCESO	= CODACCES_ESCADU;
+			ELSE
+				SET CODESTAD_ACCESO	= CODACCES_ESFINA;
+				SET NMRDURAC_ACCESO	= TIMESTAMPDIFF(MINUTE, FECINI_ACCESO, FECACT_ACCESO)%60;
+			END IF;
+		 	-- Linea para depurar procedimiento --
+			call debug_msg(@enabled, CONCAT('Preparando datos para actualizar (', CODESTAD_ACCESO, ')'));
+			-- Se procede a actualizar el acceso --
+			UPDATE 	smpos_sis_accesos 
+			SET		acc_fecha_fin	=  FECACT_ACCESO, 
+					acc_estado		=  CODESTAD_ACCESO,
+					acc_duracion	=  NMRDURAC_ACCESO
+			WHERE 	acc_token		=  vin_token
+			AND 	acc_estado 		=  CODACCES_ESACTI;
+			-- Validamos si actualizo registros --
+			IF 	ROW_COUNT() > 0 THEN
+			 	-- Linea para depurar procedimiento --
+				call debug_msg(@enabled, CONCAT('Actualizacion realizada (', ROW_COUNT(), ')'));
+				-- Estableciendo final de la sesion --
+				SET vou_codigo  = '200';
+				SET vou_mensaje = 'Sesion finalizada';
+			ELSE 
+			 	-- Linea para depurar procedimiento --
+				call debug_msg(@enabled, 'No logro actualizar datos');
+				-- Estableciendo final de la sesion --
+				SET vou_codigo  = '200';
+				SET vou_mensaje = 'Sin datos actualizados';
+			END IF;
+		ELSE 
+			SET vou_codigo  = CODSALID_ESTADO;
+			SET vou_mensaje = MSGSALID_ESTADO;
+		END IF;
+	ELSE 
+		SET vou_codigo  = '500';
+		SET vou_mensaje = 'Debe especificar el token';
+	END IF;
+  END //
+    
  DELIMITER $$;

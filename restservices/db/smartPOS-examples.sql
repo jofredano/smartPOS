@@ -105,3 +105,10 @@ CALL smpos_prc_iniciar_sesion(
 	@vou_mensaje);
 SELECT 	@vou_token, @vou_codigo, @vou_mensaje;
 
+CALL smpos_prc_finalizar_sesion(
+ 	'57640c7a-6f5e-11e9-9',
+   	@vou_codigo,
+	@vou_mensaje);
+SELECT 	@vou_codigo, @vou_mensaje;
+
+

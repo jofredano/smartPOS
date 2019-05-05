@@ -50,6 +50,15 @@ INSERT INTO smpos_sis_categorias (cat_codigo, cat_abbreviatura, cat_descripcion,
 	VALUES (25, 'EMPLEADO.ESTADO.LICENCIA', 'Empleado en licencia', 2, 22);
 INSERT INTO smpos_sis_categorias (cat_codigo, cat_abbreviatura, cat_descripcion, cat_estado, cat_principal)
 	VALUES (26, 'EMPLEADO.ESTADO.INCAPACITADO', 'Empleado incapacitado', 2, 22);
+INSERT INTO smpos_sis_categorias (cat_codigo, cat_abbreviatura, cat_descripcion, cat_estado, cat_principal)
+	VALUES (27, 'ACCESO.ESTADO', 'Estados asociados al acceso al sistema', 2, NULL);
+INSERT INTO smpos_sis_categorias (cat_codigo, cat_abbreviatura, cat_descripcion, cat_estado, cat_principal)
+	VALUES (28, 'ACCESO.ESTADO.ACTIVO', 'Acceso activo', 2, 27);
+INSERT INTO smpos_sis_categorias (cat_codigo, cat_abbreviatura, cat_descripcion, cat_estado, cat_principal)
+	VALUES (29, 'ACCESO.ESTADO.CADUCADO', 'Acceso caducado', 2, 27);
+INSERT INTO smpos_sis_categorias (cat_codigo, cat_abbreviatura, cat_descripcion, cat_estado, cat_principal)
+	VALUES (30, 'ACCESO.ESTADO.FINALIZADO', 'Acceso finalizado', 2, 27);
+
 
 INSERT smpos_sis_roles (rol_codigo, rol_titulo, rol_abbreviatura, rol_descripcion, rol_estado) VALUES (1, 'Rol de administrador', 'ROL.ADMINISTRADOR', 'Rol que representa a un administrador en el sistema', 2);
 INSERT smpos_sis_roles (rol_codigo, rol_titulo, rol_abbreviatura, rol_descripcion, rol_estado) VALUES (2, 'Rol de vendedor', 'ROL.VENDEDOR', 'Rol que representa a un vendedor en el sistema', 2);

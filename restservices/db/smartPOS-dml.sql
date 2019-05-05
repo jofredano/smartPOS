@@ -91,8 +91,10 @@ CREATE TABLE IF NOT EXISTS smpos_sis_accesos (
 	acc_fecha_inicio			DATETIME 		NOT NULL						COMMENT 'Fecha de inicio del acceso',
 	acc_fecha_fin				DATETIME										COMMENT 'Fecha de finalizacion del acceso',
 	acc_duracion				INT(11)			NOT NULL						COMMENT 'Duracion en milisegundos del acceso',
+	acc_estado					INT(11)											COMMENT 'Estado del acceso',
 	PRIMARY KEY (acc_token),
-	FOREIGN KEY (acc_usuario) 				REFERENCES smpos_sis_usuarios   (usu_codigo)
+	FOREIGN KEY (acc_usuario) 				REFERENCES smpos_sis_usuarios   (usu_codigo),
+	FOREIGN KEY (acc_estado) 				REFERENCES smpos_sis_categorias (cat_codigo)
 ) Engine=InnoDB COMMENT = 'Tabla que posee la informacion de los accesos al sistema';
 
 CREATE TABLE IF NOT EXISTS smpos_men_opciones (
