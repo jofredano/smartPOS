@@ -7,6 +7,7 @@
  DROP PROCEDURE IF EXISTS smpos_prc_crear_proveedor;
  DROP PROCEDURE IF EXISTS smpos_prc_crear_articulo;
  DROP PROCEDURE IF EXISTS smpos_prc_iniciar_sesion;
+ DROP PROCEDURE IF EXISTS smpos_prc_verificar_sesion;
  DROP PROCEDURE IF EXISTS smpos_prc_finalizar_sesion;
  DROP PROCEDURE IF EXISTS debug_msg;
  
@@ -601,7 +602,7 @@
 				END IF;
 			ELSEIF DATUSUAR_ESTADO != CODENTID_ACTIVO THEN
 				SET vou_token	= '';
-				SET vou_codigo  = '402';
+				SET vou_codigo  = '401';
 				SET vou_mensaje = 'El estado del usuario no es valido';
 			ELSE 
 				SET vou_token	= '';
@@ -620,6 +621,88 @@
 	END IF;
   END //
   
+ CREATE PROCEDURE smpos_prc_verificar_sesion(
+ 	IN 		vin_token					TEXT,
+ 	OUT		vou_feini_acceso			DATETIME,
+ 	OUT 	vou_fefin_acceso			DATETIME,
+ 	OUT		vou_nrmdu_acceso			INT(11),
+ 	OUT		vou_codus_acceso			INT(11),
+   	OUT 	vou_codigo 	 				CHAR(5),
+	OUT 	vou_mensaje					TEXT)
+  BEGIN
+	DECLARE CODACCES_ESACTI			INT(11)		DEFAULT 0;
+	DECLARE CODACCES_ESFINA			INT(11)		DEFAULT 0;
+	DECLARE CODACCES_ESCADU			INT(11)		DEFAULT 0;
+	DECLARE CODUSUAR_ACCESO			INT(11)		DEFAULT 0;
+	DECLARE NMRDURAC_ACCESO			INT(11)		DEFAULT 0;
+	DECLARE CODESTAD_ACCESO			INT(11)		DEFAULT 0;
+	DECLARE FECINI_ACCESO			DATETIME	DEFAULT NULL;
+	DECLARE FECFIN_ACCESO			DATETIME	DEFAULT NULL;
+	DECLARE FECACT_ACCESO			DATETIME	DEFAULT NULL;
+	DECLARE CODSALID_ESTADO			CHAR(5)		DEFAULT '00000';
+	DECLARE MSGSALID_ESTADO			TEXT		DEFAULT '';
+	
+	DECLARE CONTINUE HANDLER FOR NOT FOUND 
+		BEGIN 
+			SET CODSALID_ESTADO = '402'; 
+        	SET MSGSALID_ESTADO = 'Sesion no encontrada';
+		END;
+
+	SET CODACCES_ESACTI		= smpos_fnc_obtener_categ_codigo('ACCESO.ESTADO.ACTIVO');
+	SET CODACCES_ESCADU		= smpos_fnc_obtener_categ_codigo('ACCESO.ESTADO.CADUCADO');
+	SET CODACCES_ESFINA		= smpos_fnc_obtener_categ_codigo('ACCESO.ESTADO.FINALIZADO');
+	SET FECACT_ACCESO		= NOW();
+	SET @enabled			= FALSE;
+ 	
+ 	-- Linea para depurar procedimiento --
+	call debug_msg(@enabled, CONCAT('Token leido (', IFNULL(vin_token, ''), ')'));
+	-- Validamos si el token esta especificado --
+	IF 	vin_token IS NOT NULL THEN 
+	 	-- Linea para depurar procedimiento --
+		call debug_msg(@enabled, 'Procedemos a buscar info del acceso...');
+		-- Ubicamos el token del acceso a finalizar --
+		SELECT 	a.acc_usuario,   a.acc_fecha_inicio, a.acc_fecha_fin, a.acc_duracion,  a.acc_estado
+		INTO 	CODUSUAR_ACCESO, FECINI_ACCESO,		 FECFIN_ACCESO,   NMRDURAC_ACCESO, CODESTAD_ACCESO
+		FROM 	smpos_sis_accesos a
+		WHERE 	a.acc_token		= vin_token
+		AND 	a.acc_estado	= CODACCES_ESACTI;
+	 	-- Linea para depurar procedimiento --
+		call debug_msg(@enabled, CONCAT('Consulta realizada (', CODSALID_ESTADO, ')'));
+		-- Valida si este bloque se ejecuto exitosamente --
+		IF	STRCMP(CODSALID_ESTADO, '00000') = 0 THEN
+			-- Establecer que estado deberia aplicar a esta sesion --
+			IF	FECACT_ACCESO > FECFIN_ACCESO THEN 
+				SET CODESTAD_ACCESO	= CODACCES_ESCADU;
+			END IF;
+		 	-- Linea para depurar procedimiento --
+			call debug_msg(@enabled, CONCAT('Verificando la sesion (', CODESTAD_ACCESO, ')'));
+			-- Valida si el estado esta activo --
+			IF	CODESTAD_ACCESO = CODACCES_ESACTI THEN 
+ 				SET vou_feini_acceso	= FECINI_ACCESO;
+ 				SET vou_fefin_acceso	= FECFIN_ACCESO;
+ 				SET vou_nrmdu_acceso	= NMRDURAC_ACCESO;
+ 				SET vou_codus_acceso	= CODUSUAR_ACCESO;
+				SET vou_codigo  		= '200';
+				SET vou_mensaje 		= 'Sesion activa';
+			ELSE 
+ 				SET vou_feini_acceso	= FECINI_ACCESO;
+ 				SET vou_fefin_acceso	= FECFIN_ACCESO;
+ 				SET vou_nrmdu_acceso	= NMRDURAC_ACCESO;
+ 				SET vou_codus_acceso	= CODUSUAR_ACCESO;
+				SET vou_codigo  		= '501';
+				SET vou_mensaje 		= 'Sesion ha caducado';
+			END IF;
+		ELSE 
+			SET vou_feini_acceso		= NULL;
+			SET vou_fefin_acceso		= NULL;
+			SET vou_nrmdu_acceso		= 0;
+			SET vou_codus_acceso		= 0;
+			SET vou_codigo  			= CODSALID_ESTADO;
+			SET vou_mensaje 			= MSGSALID_ESTADO;
+		END IF;
+	END IF;
+  END //
+
  CREATE PROCEDURE smpos_prc_finalizar_sesion(
  	IN 		vin_token					TEXT,
    	OUT 	vou_codigo 	 				CHAR(5),
@@ -640,7 +723,7 @@
 	DECLARE CONTINUE HANDLER FOR NOT FOUND 
 		BEGIN 
 			SET CODSALID_ESTADO = '402'; 
-        	SET MSGSALID_ESTADO = 'Usuario o clave no valido';
+        	SET MSGSALID_ESTADO = 'Sesion no encontrada';
 		END;
 
 	SET CODACCES_ESACTI		= smpos_fnc_obtener_categ_codigo('ACCESO.ESTADO.ACTIVO');

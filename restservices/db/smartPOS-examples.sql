@@ -111,4 +111,13 @@ CALL smpos_prc_finalizar_sesion(
 	@vou_mensaje);
 SELECT 	@vou_codigo, @vou_mensaje;
 
+CALL smpos_prc_verificar_sesion(
+ 	'57640c7a-6f5e-11e9-9',
+ 	@vou_feini_acceso,
+ 	@vou_fefin_acceso,
+ 	@vou_nrmdu_acceso,
+ 	@vou_codus_acceso,
+   	@vou_codigo,
+	@vou_mensaje);
+SELECT 	@vou_codigo, @vou_mensaje, @vou_feini_acceso, @vou_fefin_acceso, @vou_nrmdu_acceso, @vou_codus_acceso;
 
