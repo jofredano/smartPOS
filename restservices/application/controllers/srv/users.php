@@ -34,18 +34,23 @@ class users extends REST_Controller {
         $output     = NULL;
         $codeStatus = 0;
         try {
-            //Procedemos a realizar llamado a base de datos
-            $status = $this->db->query("CALL smpos_prc_iniciar_sesion('".$content["username"]."', '".$content["password"]."', ".self::TIMELIMIT_SESSION.", @vou_token, @vou_codigo,@vou_mensaje); ");
-            if ($status) {
-                $result = $this->db->query("SELECT @vou_token AS token, @vou_codigo AS codigo, @vou_mensaje AS mensaje;")->result_array();
-                $output = $result[0];
-                //Validamos si la respuesta fue adecuada
-                if ($output->codigo == '200') {
-                    $codeStatus = REST_Controller::HTTP_OK;
-                } else if ($output->codigo == '401') {
-                    $codeStatus = REST_Controller::HTTP_UNAUTHORIZED;
-                } else {
-                    $codeStatus = REST_Controller::HTTP_INTERNAL_SERVER_ERROR;
+            if (is_null($content)) {
+                $output = "No posee los argumentos necesarios";
+                $codeStatus = REST_Controller::HTTP_BAD_REQUEST;
+            } else {
+                //Procedemos a realizar llamado a base de datos
+                $status = $this->db->query("CALL smpos_prc_iniciar_sesion('".$content["username"]."', '".$content["password"]."', ".self::TIMELIMIT_SESSION.", @vou_token, @vou_codigo,@vou_mensaje); ");
+                if ($status) {
+                    $result = $this->db->query("SELECT @vou_token AS token, @vou_codigo AS codigo, @vou_mensaje AS mensaje;")->result_array();
+                    $output = $result[0];
+                    //Validamos si la respuesta fue adecuada
+                    if ($output->codigo == '200') {
+                        $codeStatus = REST_Controller::HTTP_OK;
+                    } else if ($output->codigo == '401') {
+                        $codeStatus = REST_Controller::HTTP_UNAUTHORIZED;
+                    } else {
+                        $codeStatus = REST_Controller::HTTP_INTERNAL_SERVER_ERROR;
+                    }
                 }
             }
         } catch (Exception $e) {
