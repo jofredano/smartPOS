@@ -647,7 +647,7 @@
 	SET CODACCES_ESCADU		= smpos_fnc_obtener_categ_codigo('ACCESO.ESTADO.CADUCADO');
 	SET CODACCES_ESFINA		= smpos_fnc_obtener_categ_codigo('ACCESO.ESTADO.FINALIZADO');
 	SET FECACT_ACCESO		= NOW();
-	SET @enabled			= TRUE;
+	SET @enabled			= FALSE;
  	-- Linea para depurar procedimiento --
 	call debug_msg(@enabled, CONCAT('Token leido (', IFNULL(vin_token, ''), ')'));
 	-- Validamos si el token esta especificado --
