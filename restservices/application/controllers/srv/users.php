@@ -68,9 +68,8 @@ class users extends REST_Controller {
         $output     = NULL;
         $codeStatus = REST_Controller::HTTP_OK;
         $headers    = apache_request_headers();
-        if (array_key_exists("Authorization", $headers) ) {
-            //Tratando informacion del token
-            $token  = str_replace("Bearer ", "", $headers["Authorization"]);
+        $token      = (array_key_exists("Authorization", $headers))?str_replace("Bearer ", "", $headers["Authorization"]):"";
+        if (!empty($token)) {
             //Procedemos a validar el token
             try {
                 //Procedemos a realizar llamado a base de datos
@@ -106,9 +105,8 @@ class users extends REST_Controller {
         $output     = NULL;
         $codeStatus = REST_Controller::HTTP_OK;
         $headers    = apache_request_headers();
-        if (array_key_exists("Authorization", $headers) ) {
-            //Tratando informacion del token
-            $token  = str_replace("Bearer ", "", $headers["Authorization"]);
+        $token      = (array_key_exists("Authorization", $headers))?str_replace("Bearer ", "", $headers["Authorization"]):"";
+        if (!empty($token)) {
             //Procedemos a validar el token
             try {
                 //Procedemos a realizar llamado a base de datos
