@@ -121,3 +121,10 @@ CALL smpos_prc_verificar_sesion(
 	@vou_mensaje);
 SELECT 	@vou_codigo, @vou_mensaje, @vou_feini_acceso, @vou_fefin_acceso, @vou_nrmdu_acceso, @vou_codus_acceso;
 
+
+CALL smpos_prc_obtener_menu(
+ 	'57640c7a-6f5e-11e9-9',
+   	@vou_codigo,
+	@vou_mensaje);
+SELECT 	@vou_codigo, @vou_mensaje;
+

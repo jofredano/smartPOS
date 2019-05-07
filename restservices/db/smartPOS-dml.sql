@@ -105,6 +105,7 @@ CREATE TABLE IF NOT EXISTS smpos_men_opciones (
 	opc_descripcion 			TEXT											COMMENT 'Describe detalladamente la opcion que realiza esta opcion',
 	opc_ruta 					TEXT											COMMENT 'Ruta a la que dirije el menu',
 	opc_principal				INT(11)											COMMENT 'Opcion principal asociada a esta',
+	opc_orden					INT(11)											COMMENT 'Orden de la opcion',
 	opc_estado 					INT(11)											COMMENT 'Estado de esta opcion de menu',
 	PRIMARY KEY (opc_codigo),
 	UNIQUE i_abreviatura (opc_abreviatura),

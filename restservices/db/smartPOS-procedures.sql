@@ -9,6 +9,7 @@
  DROP PROCEDURE IF EXISTS smpos_prc_iniciar_sesion;
  DROP PROCEDURE IF EXISTS smpos_prc_verificar_sesion;
  DROP PROCEDURE IF EXISTS smpos_prc_finalizar_sesion;
+ DROP PROCEDURE IF EXISTS smpos_prc_obtener_menu;
  DROP PROCEDURE IF EXISTS debug_msg;
  
  -- Procedimiento para crear un rango de consecutivos -- 
@@ -786,5 +787,58 @@
 		SET vou_mensaje = 'Debe especificar el token';
 	END IF;
   END //
-    
+
+   CREATE PROCEDURE smpos_prc_obtener_menu(
+ 	IN 		vin_token					TEXT,
+   	OUT 	vou_codigo 	 				CHAR(5),
+	OUT 	vou_mensaje					TEXT)
+  BEGIN
+	DECLARE CODSALID_ESTADO			CHAR(5)		DEFAULT '00000';
+	DECLARE MSGSALID_ESTADO			TEXT		DEFAULT '';
+	DECLARE NMRDURAC_ACCESO			INT(11)		DEFAULT 0;
+	DECLARE CODACCES_USUARI			INT(11)		DEFAULT 0;
+	DECLARE FECINI_ACCESO			DATETIME	DEFAULT NULL;
+	DECLARE FECFIN_ACCESO			DATETIME	DEFAULT NULL;
+
+	SET @enabled	= FALSE;
+ 	-- Linea para depurar procedimiento --
+	call debug_msg(@enabled, CONCAT('Token leido (', IFNULL(vin_token, ''), ')'));
+	-- Validamos si el token esta especificado --
+	IF 	vin_token IS NOT NULL THEN 
+	 	-- Linea para depurar procedimiento --
+		call debug_msg(@enabled, 'Validar si el acceso existe...');
+		-- Verifica si el acceso es valido --
+		CALL smpos_prc_verificar_sesion(
+		 	vin_token,       FECINI_ACCESO,
+		 	FECFIN_ACCESO,   NMRDURAC_ACCESO,
+		 	CODACCES_USUARI, CODSALID_ESTADO,
+			MSGSALID_ESTADO);
+	 	-- Linea para depurar procedimiento --
+		call debug_msg(@enabled, CONCAT('Validacion realizada (', CODSALID_ESTADO, ')'));
+		-- Verifica respuesta del procedimiento --
+		IF	STRCMP(CODSALID_ESTADO, '00000') = 0 THEN 
+			-- Se procede a entregar el menu para este usuario --
+			SELECT opc.* 
+			FROM   smpos_sis_accesos acc,
+				   smpos_sis_usuarios_x_roles uxp,
+				   smpos_sis_roles_x_perfiles rxp,
+				   smpos_men_opciones_x_perfiles oxp,
+				   smpos_men_opciones opc
+			WHERE  acc.acc_usuario = uxp.uxr_usuario
+			AND    uxp.rxp_rol     = rxp.rxp 
+			AND    oxp.oxp_perfil  = rxp.rxp_perfil
+			AND    opc.opc_codigo  = oxp.oxp_opcion
+			AND    acc.acc_token   = vin_token
+			ORDER BY opc.opc_orden ASC;
+		ELSE 
+			-- Salida cuando hay error --
+			SET vou_codigo  = CODSALID_ESTADO;
+			SET vou_mensaje = MSGSALID_ESTADO;
+		END IF;
+	ELSE 
+		SET vou_codigo  	= '600';
+		SET vou_mensaje 	= 'Debe especificar el token';
+	END IF;
+  END //
+
  DELIMITER $$;

@@ -2,9 +2,7 @@
 use Restserver\Libraries\REST_Controller;
 defined('BASEPATH') OR exit('No direct script access allowed');
 
-/** @noinspection PhpIncludeInspection */
-require APPPATH . 'libraries/REST_Controller.php';
-require APPPATH . 'libraries/Format.php';
+require APPPATH . 'libraries/base/ResourceRestController.php';
 
 /**
  * Implementacion de recursos a usuarios
@@ -12,7 +10,7 @@ require APPPATH . 'libraries/Format.php';
  * @author jofre
  *
  */
-class users extends REST_Controller {
+class users extends ResourceRestController {
     
     const TIMELIMIT_SESSION = 50;
     const MSGNOTTOKEN_DATA  = "Debe especificar el token para realizar proceso";
@@ -20,9 +18,6 @@ class users extends REST_Controller {
     function __construct() {
         parent::__construct();
         $this->load->database();
-        $this->methods['users_get']['limit'] = 500; // 500 requests per hour per user/key
-        $this->methods['users_post']['limit'] = 100; // 100 requests per hour per user/key
-        $this->methods['users_delete']['limit'] = 50; // 50 requests per hour per user/key
     }
     
     /**
@@ -39,18 +34,16 @@ class users extends REST_Controller {
                 $codeStatus = REST_Controller::HTTP_BAD_REQUEST;
             } else {
                 //Procedemos a realizar llamado a base de datos
-                $status = $this->db->query("CALL smpos_prc_iniciar_sesion('".$content["username"]."', '".$content["password"]."', ".self::TIMELIMIT_SESSION.", @vou_token, @vou_codigo,@vou_mensaje); ");
-                if ($status) {
-                    $result = $this->db->query("SELECT @vou_token AS token, @vou_codigo AS codigo, @vou_mensaje AS mensaje;")->result_array();
-                    $output = $result[0];
-                    //Validamos si la respuesta fue adecuada
-                    if ($output->codigo == '200') {
-                        $codeStatus = REST_Controller::HTTP_OK;
-                    } else if ($output->codigo == '401') {
-                        $codeStatus = REST_Controller::HTTP_UNAUTHORIZED;
-                    } else {
-                        $codeStatus = REST_Controller::HTTP_INTERNAL_SERVER_ERROR;
-                    }
+                $this->db->query("CALL smpos_prc_iniciar_sesion('".$content["username"]."', '".$content["password"]."', ".self::TIMELIMIT_SESSION.", @vou_token, @vou_codigo,@vou_mensaje); ");
+                $result = $this->db->query("SELECT @vou_token AS token, @vou_codigo AS codigo, @vou_mensaje AS mensaje;")->result_array();
+                $output = $result[0];
+                //Validamos si la respuesta fue adecuada
+                if ($output->codigo == '200') {
+                    $codeStatus = REST_Controller::HTTP_OK;
+                } else if ($output->codigo == '401') {
+                    $codeStatus = REST_Controller::HTTP_UNAUTHORIZED;
+                } else {
+                    $codeStatus = REST_Controller::HTTP_INTERNAL_SERVER_ERROR;
                 }
             }
         } catch (Exception $e) {
@@ -67,8 +60,7 @@ class users extends REST_Controller {
     public function check_get() {
         $output     = NULL;
         $codeStatus = REST_Controller::HTTP_OK;
-        $headers    = apache_request_headers();
-        $token      = (array_key_exists("Authorization", $headers))?str_replace("Bearer ", "", $headers["Authorization"]):"";
+        $token      = $this->getHeader("Authorization");
         if (!empty($token)) {
             //Procedemos a validar el token
             try {
@@ -104,8 +96,7 @@ class users extends REST_Controller {
     public function logout_get() {
         $output     = NULL;
         $codeStatus = REST_Controller::HTTP_OK;
-        $headers    = apache_request_headers();
-        $token      = (array_key_exists("Authorization", $headers))?str_replace("Bearer ", "", $headers["Authorization"]):"";
+        $token      = $this->getHeader("Authorization");
         if (!empty($token)) {
             //Procedemos a validar el token
             try {
