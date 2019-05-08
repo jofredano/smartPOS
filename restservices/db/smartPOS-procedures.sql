@@ -790,16 +790,50 @@
 
    CREATE PROCEDURE smpos_prc_obtener_menu(
  	IN 		vin_token					TEXT,
+ 	OUT 	vou_textResultSet			TEXT,
    	OUT 	vou_codigo 	 				CHAR(5),
 	OUT 	vou_mensaje					TEXT)
   BEGIN
-	DECLARE CODSALID_ESTADO			CHAR(5)		DEFAULT '00000';
-	DECLARE MSGSALID_ESTADO			TEXT		DEFAULT '';
-	DECLARE NMRDURAC_ACCESO			INT(11)		DEFAULT 0;
-	DECLARE CODACCES_USUARI			INT(11)		DEFAULT 0;
-	DECLARE FECINI_ACCESO			DATETIME	DEFAULT NULL;
-	DECLARE FECFIN_ACCESO			DATETIME	DEFAULT NULL;
-
+	DECLARE CODSALID_ESTADO			CHAR(5)			DEFAULT '00000';
+	DECLARE MSGSALID_ESTADO			TEXT			DEFAULT '';
+	DECLARE NMRDURAC_ACCESO			INT(11)			DEFAULT 0;
+	DECLARE CODACCES_USUARI			INT(11)			DEFAULT 0;
+	DECLARE FECINI_ACCESO			DATETIME		DEFAULT NULL;
+	DECLARE FECFIN_ACCESO			DATETIME		DEFAULT NULL;
+	DECLARE RESSET_MENUOPTS			TEXT 			DEFAULT '';
+  	DECLARE CURSOR_DONE 			INT 			DEFAULT FALSE;
+  
+	DECLARE OPC_CODIGO				INT(11)			DEFAULT 0;
+	DECLARE OPC_NOMBRE				VARCHAR(90)		DEFAULT NULL;
+	DECLARE OPC_TITULO				VARCHAR(255)	DEFAULT NULL;
+	DECLARE OPC_ABREVI				VARCHAR(200)	DEFAULT NULL;
+	DECLARE OPC_DESCRI				TEXT			DEFAULT NULL;
+	DECLARE OPC_RUTAUR				TEXT			DEFAULT NULL;
+	DECLARE OPC_PRINCI				INT(11)			DEFAULT 0;
+	DECLARE OPC_ORDEN				INT(11)			DEFAULT 0;
+	DECLARE OPC_ESTADO				INT(11)			DEFAULT 0;
+	
+	DECLARE cur_menus 				CURSOR FOR 
+		SELECT opc.opc_codigo, 		opc.opc_nombre,
+			   opc.opc_titulo,		opc.opc_abreviatura,
+			   opc.opc_descripcion,	opc.opc_ruta,
+			   opc.opc_principal,	opc.opc_orden,
+			   opc.opc_estado 	 
+		FROM   smpos_sis_accesos acc,
+			   smpos_sis_usuarios_x_roles uxr,
+			   smpos_sis_roles_x_perfiles rxp,
+			   smpos_men_opciones_x_perfiles oxp,
+			   smpos_men_opciones opc
+		WHERE  acc.acc_usuario = uxr.uxr_usuario
+		AND    uxr.uxr_rol     = rxp.rxp_rol 
+		AND    oxp.oxp_perfil  = rxp.rxp_perfil
+		AND    opc.opc_codigo  = oxp.oxp_opcion
+		AND    acc.acc_token   = vin_token
+		ORDER BY opc.opc_orden ASC;
+	
+	DECLARE CONTINUE HANDLER FOR NOT FOUND 
+		SET CURSOR_DONE = TRUE;
+	
 	SET @enabled	= FALSE;
  	-- Linea para depurar procedimiento --
 	call debug_msg(@enabled, CONCAT('Token leido (', IFNULL(vin_token, ''), ')'));
@@ -816,20 +850,48 @@
 	 	-- Linea para depurar procedimiento --
 		call debug_msg(@enabled, CONCAT('Validacion realizada (', CODSALID_ESTADO, ')'));
 		-- Verifica respuesta del procedimiento --
-		IF	STRCMP(CODSALID_ESTADO, '00000') = 0 THEN 
+		IF	STRCMP(CODSALID_ESTADO, '200') = 0 THEN 
 			-- Se procede a entregar el menu para este usuario --
-			SELECT opc.* 
-			FROM   smpos_sis_accesos acc,
-				   smpos_sis_usuarios_x_roles uxp,
-				   smpos_sis_roles_x_perfiles rxp,
-				   smpos_men_opciones_x_perfiles oxp,
-				   smpos_men_opciones opc
-			WHERE  acc.acc_usuario = uxp.uxr_usuario
-			AND    uxp.rxp_rol     = rxp.rxp 
-			AND    oxp.oxp_perfil  = rxp.rxp_perfil
-			AND    opc.opc_codigo  = oxp.oxp_opcion
-			AND    acc.acc_token   = vin_token
-			ORDER BY opc.opc_orden ASC;
+			OPEN  cur_menus;
+				read_loop: LOOP
+					-- Lee un registro del cursor --
+					FETCH cur_menus INTO OPC_CODIGO, OPC_NOMBRE, OPC_TITULO, 
+										 OPC_ABREVI, OPC_DESCRI, OPC_RUTAUR,
+										 OPC_PRINCI, OPC_ORDEN,  OPC_ESTADO;
+					-- Determina si continua el loop --
+				    IF 	CURSOR_DONE THEN
+				      	LEAVE read_loop;
+				    END IF;
+					-- Construye la salida parcial --
+					SET RESSET_MENUOPTS	= CONCAT(
+						RESSET_MENUOPTS,
+						'	<row>',
+						'		<field name="opc_codigo">', OPC_CODIGO, '</field>',
+						'		<field name="opc_nombre">', OPC_NOMBRE, '</field>',
+						'		<field name="opc_titulo">', OPC_TITULO, '</field>',
+						'		<field name="opc_abreviatura">', OPC_ABREVI, '</field>',
+						'		<field name="opc_descripcion">', OPC_DESCRI, '</field>',
+						'		<field name="opc_ruta">', OPC_RUTAUR, '</field>',
+						'		<field name="opc_principal">', OPC_PRINCI, '</field>',
+						'		<field name="opc_orden">', OPC_ORDEN, '</field>',
+						'		<field name="opc_estado">', OPC_ESTADO, '</field>',
+						'	</row>');
+				END LOOP;
+			CLOSE cur_menus;
+			-- 	Verifica la salida si se puede entregar --
+			IF	RESSET_MENUOPTS IS NOT NULL AND RESSET_MENUOPTS <> '' THEN
+				-- 	Valida si quedo con informacion para entregar la salida --
+				SET vou_textResultSet 	= CONCAT(
+					'<?xml version="1.0" encoding="UTF-8"?>',
+					'<rows>', RESSET_MENUOPTS, '</rows>');
+				-- Salida cuando hay error --
+				SET vou_codigo  		= '200';
+				SET vou_mensaje 		= 'Carga de menu exitosa';
+			ELSE 
+				SET vou_textResultSet 	= NULL;
+				SET vou_codigo  		= '402';
+				SET vou_mensaje 		= 'No hay opciones en el menu parametrizadas';
+			END IF;
 		ELSE 
 			-- Salida cuando hay error --
 			SET vou_codigo  = CODSALID_ESTADO;

@@ -12,7 +12,7 @@ CALL smpos_prc_crear_entidad(
 	'PERSONA.TIPO.NATURAL',
 	'CC-1111789100',
 	'Henry Stivent',
-	'Montaño Ramirez',
+	'Montaï¿½o Ramirez',
 	STR_TO_DATE('1999-06-10', '%Y-%m-%d'),
 	NULL,
 	'Carrera 41 sur #1S-99',
@@ -122,9 +122,11 @@ CALL smpos_prc_verificar_sesion(
 SELECT 	@vou_codigo, @vou_mensaje, @vou_feini_acceso, @vou_fefin_acceso, @vou_nrmdu_acceso, @vou_codus_acceso;
 
 
+SET FOREIGN_KEY_CHECKS = 0;
 CALL smpos_prc_obtener_menu(
- 	'57640c7a-6f5e-11e9-9',
+ 	'5c3e3128-713a-11e9-b',
+   	@text_salida,
    	@vou_codigo,
 	@vou_mensaje);
-SELECT 	@vou_codigo, @vou_mensaje;
+SELECT 	@text_salida, @vou_codigo, @vou_mensaje;
 

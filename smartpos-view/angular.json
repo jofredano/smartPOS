@@ -27,7 +27,8 @@
               "src/assets"
             ],
             "styles": [
-              "src/styles.scss"
+              "src/styles.scss",
+              "node_modules/ngx-foundation/dist/css/ngx-foundation.min.css"
             ],
             "scripts": [],
             "es5BrowserSupport": true
