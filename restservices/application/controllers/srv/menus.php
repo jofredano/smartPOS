@@ -41,6 +41,7 @@ class menus extends ResourceRestController {
 	public function list_get() {
 	    $token      = $this->getHeader("Authorization");
 	    $output     = NULL;
+	    $items		= NULL;
 	    $codeStatus = REST_Controller::HTTP_OK;
 	    //Debe estar definido el token para el menu
 	    if (!empty($token)) {
@@ -52,7 +53,8 @@ class menus extends ResourceRestController {
 	            //Validamos si la respuesta fue adecuada
 	            if ($output->codigo == '200') {
 	                //Tratamiento del cursor como xml texto
-	                //Investigar mañana con la ayuda de Dios
+	            	$items      = prepareResultSetText($output->resultSet);
+	            	//Se recorre el resultado para transformarlo a menu de la aplicacion
 	                $codeStatus = REST_Controller::HTTP_OK;
 	            } else if ($output->codigo == '401') {
 	                $codeStatus = REST_Controller::HTTP_UNAUTHORIZED;

@@ -25,4 +25,25 @@ class ResourceRestController extends REST_Controller {
 		return (array_key_exists($key, $headers))?str_replace("Bearer ", "", $headers[$key]):"";
 	}
 	
+	/**
+	 * Obtiene una lista de datos basado en el texto como xml
+	 * @param string $text
+	 * @return NULL
+	 */
+	public function prepareResultSetText(string $text) {
+		$result 	 = array();
+		$xmlData     = simplexml_load_string($text);
+		$xmlRows     = $xmlData->children();
+		foreach ($xmlRows as $row) {
+			$rowData = new \stdClass;
+			foreach ($row->children() as $field) {
+				$fieldName  		  = $field->attributes()["name"];
+				$fieldValue 		  = "$field";
+				$rowData->$fieldName  = $fieldValue;
+			}
+			array_push($result, $rowData);
+		}
+		return $result;
+	}
+	
 }
