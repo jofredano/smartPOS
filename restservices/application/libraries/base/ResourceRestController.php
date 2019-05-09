@@ -4,6 +4,10 @@ use Restserver\Libraries\REST_Controller;
 /** @noinspection PhpIncludeInspection */
 require APPPATH . 'libraries/REST_Controller.php';
 require APPPATH . 'libraries/Format.php';
+/**
+ * Inclusion de objetos de transferencia
+ * */
+require APPPATH . 'libraries/dto/dto.inc.php';
 
 /**
  * Clase personalizada para recursos restfull
