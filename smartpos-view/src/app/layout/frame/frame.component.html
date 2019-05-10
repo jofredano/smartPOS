@@ -1,0 +1,11 @@
+<app-header></app-header>
+<div class="body-wrapper" [ngClass]="{'header-menu-active': menuActive}">
+      <!-- sidebar -->
+      <app-sidebar class="aside"></app-sidebar>
+      <!-- Page content-->
+      <div class="app-content-wrapper" (click)="this.sidebarService.setStatus(false)">
+            <div class="container-fluid">
+                <router-outlet></router-outlet>
+            </div>
+      </div>
+</div>

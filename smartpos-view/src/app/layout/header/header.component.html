@@ -1,0 +1,38 @@
+<div class="layout">
+
+  <a href="#" id="header-menu-button" (click)="changeSidebarStatus()" [ngClass]="{ 'header-menu-active' : menuActive }">
+    <i class="fa fa-angle-right arrow"></i>
+    <i class="fa fa-angle-up mobile"></i>
+  </a>
+
+  <span class="topbar-title textwhite">Aplicación para punto de venta</span>
+
+  <a href="#" id="topbar-profile-menu-button" (click)="userMenuActive = !userMenuActive">
+    <div id="topbar-name-container">
+      <span id="topbar-name">{{ user?.fullName }}</span>
+      <span id="topbar-last-access">Último ingreso: {{ user?.lastAccess }}</span>
+    </div>
+    <img alt="ecuador-layout" class="topbar-profile" src="assets/images/user.jpg" style="display:none;" />
+    <i class="fa fa-sort-down"></i>
+  </a>
+
+  <ul class="fadeInDown" [ngClass]="{ 'usermenu-active': userMenuActive }" id="topbar-usermenu">
+    <li class="topbar-name-mobile">
+      <span>{{ user?.fullName }}</span>
+    </li>
+    <li>
+      <a href="#" (click)="windowClose()">
+        <i class="fa fa-fw fa-times"></i>
+        <span class="topbar-item-name">Salir</span>
+      </a>
+    </li>
+    <li>
+      <a id="logout" href="#" (click)="userMenuActive = false; fullLogout();">
+        <i class="fa fa-fw fa-sign-out"></i>
+        <span class="topbar-item-name">Cerrar Sesion</span>
+      </a>
+    </li>
+  </ul>
+</div>
+ 
+ 

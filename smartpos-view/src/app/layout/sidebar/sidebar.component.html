@@ -1,0 +1,20 @@
+<div class="sidebar">
+    <p-scrollPanel [style]="{height: '100%'}">
+      <div class="sidebar-title">{{ userMenu?.name }}</div>
+      <ul class="sidebar-root">
+        <li class="nav-item" *ngFor="let menu of userMenu?.menuItems" [ngClass]="{'active-item': menu.active }">
+            <a class="ripple nav-link" href="#" [routerLink]="menu.children &&  menu.children.length > 0 ? null : '/'.concat(menu.contextPath)"  (click)="toggleSubmenu(menu)">
+                <i class="fa {{menu.image}}"></i>
+                <span class="sidebar-menuitem-text">{{ menu.name }}</span>
+                <i *ngIf="menu.children && menu.children.length > 0" class="fa fa-angle-down sidebar-menuitem-toggler"></i>
+            </a>
+            <app-submenu *ngIf="menu.children && menu.children.length > 0" 
+                            [basePath]="menu.contextPath" 
+                            [visible]="menu.active" 
+                            [itemsMenu]="menu.children"
+                            [paddingLeft]="20">
+            </app-submenu>
+        </li>
+      </ul>
+  </p-scrollPanel>
+</div>

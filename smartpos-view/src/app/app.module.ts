@@ -6,7 +6,9 @@ import { HttpClientModule } from '@angular/common/http';
 import { APP_BASE_HREF, LocationStrategy, HashLocationStrategy } from '@angular/common';
 
 import { CoreModule } from './core/core.module';
+import { LayoutModule  } from './layout/layout.module';
 import { SharedModule  } from './shared/shared.module';
+import { RoutesModule  } from './routes/routes.module';
 
 import { AppComponent } from './app.component';
 
@@ -21,6 +23,8 @@ import { AppComponent } from './app.component';
     ReactiveFormsModule,
     HttpClientModule,
     CoreModule,
+    LayoutModule,
+    RoutesModule,
     SharedModule.forRoot()
   ],
   providers: [

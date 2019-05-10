@@ -1,0 +1,15 @@
+<ul class="sidebar-submenu" [@anim]="visible">
+    <li *ngFor="let menu of itemsMenu" class="nav-item" [ngClass]="{'active-subitem': menu.active}">
+        <a class="nav-link pd-{{ paddingLeft }}" href="#" [routerLink]="menu.children &&  menu.children.length > 0 ? null : '/'.concat(basePath).concat('/').concat(menu.contextPath)" (click)="toggleSubmenu(menu)">
+            <i class="fa {{menu.image}}"></i>
+            <span class="sidebar-submenu-menuitem-text">{{ menu.name }}</span>
+            <i *ngIf="menu.children && menu.children.length > 0" class="fa fa-angle-down sidebar-menuitem-toggler"></i>
+        </a>
+        <app-submenu *ngIf="menu.children && menu.children.length > 0" 
+                        [basePath]="basePath + '/' + menu.contextPath" 
+                        [visible]="menu.active" 
+                        [itemsMenu]="menu.children"
+                        [paddingLeft]="paddingLeft + 10" >
+        </app-submenu>
+    </li>
+</ul>

@@ -4,3 +4,19 @@
 
 // Import Angular ngx-foundation Framework Added Styles
 @import "~ngx-foundation/assets/scss/main";
+
+/* You can add global styles to this file, and also import other style files */
+@import '~primeng/resources/primeng.min.css';
+@import '~primeng/resources/themes/omega/theme.css';
+@import 'assets/theme.css';
+
+html {
+  	position: relative;
+  	min-height: 100%;
+  	font-size: 16px;
+}
+
+body {
+    padding-top: 3.5rem;
+    margin-bottom: 60px; /*for sticky footer*/
+}
