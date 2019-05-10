@@ -1,9 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { HttpInterceptor, HttpRequest, HttpHandler, HttpEvent, HttpErrorResponse, HttpEventType } from '@angular/common/http';
-import { Observable } from 'rxjs/Observable';
-import { Subject } from 'rxjs/Subject';
-import { throwError } from 'rxjs';
+import { Observable, Subject, throwError } from 'rxjs';
 import 'rxjs/add/operator/do';
 
 /**
@@ -14,7 +12,9 @@ declare var $: any;
 /**
  * Interceptor HTTP cuya responsabilidad es controlar la autorizacion y autenticacion global de peticiones hacia el backend
  */
-@Injectable()
+@Injectable({
+    providedIn: 'root'
+})
 export class HttpInterceptRequestService implements HttpInterceptor {
 
     /**

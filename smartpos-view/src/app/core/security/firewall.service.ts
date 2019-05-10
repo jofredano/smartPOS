@@ -1,20 +1,40 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { SessionStorageService } from 'ng2-webstorage';
-import { Observable } from 'rxjs/Observable';
-import { Subject } from 'rxjs/Subject';
-import { share } from 'rxjs/operators/share';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { AngularWebStorageModule } from 'angular-web-storage';
+import { Observable, Subject } from 'rxjs';
+import { share } from 'rxjs/operators';
 
 /**
- *  Servicio usado para gestionar la seguridad del usuario
+ *  Servicio usado para seguridad de la aplicacion
  */
 @Injectable()
-export class IdentityService {
+export class FirewallService {
 
     /**
      * Contexto de la aplicacion
      * */
-    private CONTEXT:string = '';
+    static readonly CONTEXT = '';
+
+    /** recurso que obtiene la informacion del acceso */
+    static readonly SECURITY_ACCES_INFO = 'restservices/srv/users/check';
+    
+    /** recurso que realiza el inicio de sesion en el sistema */
+    static readonly SECURITY_LOGIN_ACCE = 'restservices/srv/users/login';
+    
+    /** recurso que realiza el cierre de sesion en el sistema */
+    static readonly SECURITY_CLOSE_ACCE = 'restservices/srv/users/logout';
+    
+    /** recurso que verifica si un recurso puede accederlo el usuario */
+    static readonly SECURITY_RESOU_ACCE = 'restservices/srv/users/resource';
+    
+    /** recurso que obtiene el menu asociado a este usuario */
+    static readonly SECURITY_MENUS_ACCE = 'restservices/srv/menus/list';
+    
+    /** codigo de acceso entregado en el logueo */
+    private _token: string;
+    
+    /** informacion del usuario (alias, clave) */
+    private _userInfo: any;
     
     /** representa el codigo unico de acceso */
     private access: any;
@@ -22,10 +42,9 @@ export class IdentityService {
     /** Subject para notificar la informacion del usuario  */
     private authState = new Subject<any>();
 
-    /**
-     *  Almacena una referencia hacia el observable que obtiene la información del usuario y lo marca de tipo share para que
-     *  no se haga una misma peticion multiples veces
-     */
+    /** 
+     * Con esto se busca tener una unica instancia y realizar tantas peticiones
+     * */
     private observerAccess: Observable<any>;
 
     /**
@@ -36,12 +55,28 @@ export class IdentityService {
     }
 
     /**
+     * Prepara el encabezado con el token
+     * @param token
+     */
+    static getHeaderToken(token: string):any {
+        var headers_object = new HttpHeaders();
+            headers_object.append('Content-Type', 'application/json');
+            headers_object.append("Authorization", "Bearer " + token);
+        const httpOptions = {
+            headers: headers_object
+        };
+        return httpOptions;
+    }
+    
+    /**
      * Esta función se encarga de verificar el acceso del usuario
      * a traves del codigo de acceso asignado
      */
     refreshAccessInfo() {
         if (this.observerAccess == null) {
-            this.observerAccess = this.http.get(this.CONTEXT + Constants.SECURITY_USER_INFO);
+            this.observerAccess = this.http.get(
+               FirewallService.CONTEXT + FirewallService.SECURITY_ACCES_INFO, 
+               FirewallService.getHeaderToken(this._token));
         }
         this.observerAccess.subscribe(access => {
            this.authState.next(access);
@@ -50,68 +85,73 @@ export class IdentityService {
     }
 
     /**
-     * Devuelve un Observable en el cual se notificará el usuario en la sesión.
-     * @returns devuelve un stream donde se puede obtener la información del usuario logueado
+     * Con esta funcion se puede comprobar si el usuario en la sesion tiene permiso hacia un recurso especifico
+     * @param resource url del recurso
+     * @returns indica si un usuario tiene acceso a un recurso especifico
      */
-    getUserInfo(): Observable<any> {
-        const self = this;
-        setTimeout(function() {
-            self.refreshAccessInfo();
-        }, 500);
-        return this.authState.asObservable();
+    isAuthorized(resource: string): Observable<boolean> {
+        //Averiguar como se puede manejar envios POST con header
+        return this.http.post<boolean>(
+               FirewallService.CONTEXT + FirewallService.SECURITY_RESOU_ACCE, { 
+                   resource: resource });
     }
 
     /**
      * Devuelve el menu asociado a el usuario
      * @returns devuelve el menu del usuario
      */
-    getUserMenu(): Observable<string> {
-        //Aqui debe consumir el servicio de menu a traves del token
-        return null;
+    getUserMenu(): Observable<any> {
+        return this.http.get(
+                FirewallService.CONTEXT + FirewallService.SECURITY_MENUS_ACCE, 
+                FirewallService.getHeaderToken(this._token));
     }
-
+    
+    /**
+     * Esta funcion invoca el logout completo del sistema, aqui si se cierra la sesion y el usuario debería ingresar sus
+     * credenciales si desea volver a ingresar.
+     */
+    fullLogout() {
+        //Debe invocar el recurso para cerrar sesion
+        this.http.get(
+            FirewallService.CONTEXT + FirewallService.SECURITY_CLOSE_ACCE, 
+            FirewallService.getHeaderToken(this._token));
+        // es necesario limpiar el sessionStorage
+        this.clearObserverForLogin();
+    }
+    
     /**
      * Con esta funcion se puede definir si el usuario se logro loguear o no
      * @returns devuelve el objeto de respuesta de logueo
      */
-    getLoginForm(username: string, password: string): Observable<string> {
-        return this.http.post<string>(this.CONTEXT + Constants.SECURITY_CHECK_STATUS, {
-            username: username,
-            password: password
+    getLoginAccess(): Observable<any> {
+        const userInfoData = this._userInfo;
+        return this.http.post<any>(FirewallService.CONTEXT + FirewallService.SECURITY_LOGIN_ACCE, {
+            username: userInfoData.username,
+            password: userInfoData.password
         });
+    }
+    
+    /**
+     * Devuelve un Observable en el cual se notificará el usuario en la sesión.
+     * @returns devuelve un stream donde se puede obtener la información del usuario logueado
+     */
+    getAccessInfo(): Observable<any> {
+        const self = this;
+        setTimeout(function() {
+            //Agregar logica para no realizar tantas veces 
+            //La pregunta del acceso
+            self.refreshAccessInfo();
+        }, 500);
+        return this.authState.asObservable();
     }
 
     /**
      * Esta funcion comprueba si un usuario esta logueado en el sistema
      * @returns indica si el usuario esta logueado en el sistema o no
      */
-    isLoggedIn(): boolean {
-        return this.access != null;
-    }
-
-    /**
-     * Con esta funcion se puede comprobar si el usuario en la sesion tiene permiso hacia un recurso especifico
-     * @param resource url del recurso
-     * @returns indica si un usuario tiene acceso a un recurso especifico
-     */
-    isAuthorized(resource: string): Observable<boolean> {
-        return this.http.post<boolean>(this.CONTEXT + Constants.SECURITY_USER_ACCESS, resource);
-    }
-
-    /**
-     * Esta funcion realiza el logout parcial del sistema, no cierra la sesion.
-     */
-    partialLogout() {
-        window.location.href = '/logout';
-    }
-
-    /**
-     * Esta funcion invoca el logout completo del sistema, aqui si se cierra la sesion y el usuario debería ingresar sus
-     * credenciales si desea volver a ingresar.
-     */
-    fullLogout() {
-        // es necesario limpiar el sessionStorage
-        this.clearObserverForLogin();
+    haveAccess(): boolean {
+        const today:Date = new Date();
+        return this.access != null && today <= new Date(this.access.fecfin_acceso.split(' ').join('T'));
     }
 
     /**
@@ -121,5 +161,22 @@ export class IdentityService {
     clearObserverForLogin() {
         this.observerAccess = null;
         this.access = null;
+        this._userInfo = null;
+    }
+    
+    get userInfo(): any {
+        return this._userInfo;
+    }
+    
+    set userInfo(_userInfo: any) {
+        this._userInfo = _userInfo;
+    }
+    
+    get token(): string {
+        return this._token;
+    }
+    
+    set token(_token: string) {
+        this._token = _token;
     }
 }
