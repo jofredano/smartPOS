@@ -13,7 +13,7 @@ export class FirewallService {
     /**
      * Contexto de la aplicacion
      * */
-    static readonly CONTEXT = '';
+    static readonly CONTEXT = '/smart-pos/';
 
     /** recurso que obtiene la informacion del acceso */
     static readonly SECURITY_ACCES_INFO = 'restservices/srv/users/check';
@@ -61,7 +61,9 @@ export class FirewallService {
     static getHeaderToken(token: string):any {
         var headers_object = new HttpHeaders();
             headers_object.append('Content-Type', 'application/json');
+        if (token != null) {
             headers_object.append("Authorization", "Bearer " + token);
+        }
         const httpOptions = {
             headers: headers_object
         };
@@ -131,6 +133,17 @@ export class FirewallService {
         });
     }
     
+    /**
+     * Metodo que realiza logueo en el sistema
+     * @param info
+     */
+    accessUser(info:any): Observable<any> {
+        return this.http.post<any>(FirewallService.CONTEXT + FirewallService.SECURITY_LOGIN_ACCE, {
+            username: info.username,
+            password: info.password
+        });
+    }
+
     /**
      * Devuelve un Observable en el cual se notificará el usuario en la sesión.
      * @returns devuelve un stream donde se puede obtener la información del usuario logueado

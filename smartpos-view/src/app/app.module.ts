@@ -9,6 +9,7 @@ import { CoreModule } from './core/core.module';
 import { LayoutModule  } from './layout/layout.module';
 import { SharedModule  } from './shared/shared.module';
 import { RoutesModule  } from './routes/routes.module';
+import { WidgetsModule  } from './widgets/widgets.module';
 
 import { AppComponent } from './app.component';
 
@@ -25,6 +26,7 @@ import { AppComponent } from './app.component';
     CoreModule,
     LayoutModule,
     RoutesModule,
+    WidgetsModule,
     SharedModule.forRoot()
   ],
   providers: [

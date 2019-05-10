@@ -169,7 +169,7 @@ div.jumbotron h4.textSizeNormal {
 
 
 h1, h2, h3, h4, h5, h6 {
-    font-family: "FS Joey", "Montserrat", sans-serif !important;
+    font-family: sans-serif !important;
 }
 
 .mobile {
@@ -262,7 +262,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 #topbar-profile-menu-button:hover {
-    background-color: #326ddf;
+    background-color: #008040;
 }
 
 #topbar-last-access {

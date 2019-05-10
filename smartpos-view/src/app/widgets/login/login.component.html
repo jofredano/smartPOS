@@ -1,0 +1,46 @@
+        <div class="grid-container fluid">
+          <div class="small-3 medium-4 large-12 cell">
+            <div class="grid-x grid-padding-x align-center">
+                <div class="small-6 medium-4 large-4 cell text-center">
+                  <h3>{{lblTittleForm}}</h3>
+                  <!-- 
+                  <img src="images/avatar.png" alt="Inicio de Sesion">
+                  -->                        
+                </div>
+            </div>
+            <div *ngIf="showMessage" class="grid-x grid-padding-x align-center">
+                <div class="small-6 medium-4 large-4 cell text-center">
+                  Hubo problemas de cesion                  
+                </div>
+            </div>
+            <form class="card-section" (ngSubmit)="accessUser()" >
+              <div class="grid-x grid-padding-x align-center">
+                <div class="small-8 medium-6 large-4 cell">
+                  <label class="fi-home">{{lblQuestionUsernameForm}}</label>
+                  <input type="text" name="username" [(ngModel)]="username" placeholder="{{lblQuestionUsernameForm}}" />
+                </div>
+              </div>
+              <div class="grid-x grid-padding-x align-center">
+                <div class="small-8 medium-6 large-4 cell">
+                  <label class="fi-unlock">{{lblQuestionPasswdForm}}</label>
+                  <input type="password" name="password" [(ngModel)]="password" placeholder="{{lblQuestionPasswdForm}}" />
+                </div>
+              </div>
+              <!-- 
+              <div class="grid-x grid-padding-x">
+                <div class="small-offset-2 medium-offset-3 large-offset-4 cell">
+                  <input id="checkbox1" type="checkbox"><label for="checkbox1">Remind me</label>
+                </div>
+              </div>
+              -->
+              <div class="grid-x grid-padding-x">
+                <div class="small-offset-2 medium-offset-3 large-offset-4 cell" id="ingresar">
+                   <button type="submit" 
+                  		   class="button float-left">{{lblButtonAccessForm}}</button>
+				   <button type="button" 
+				   		   class="button rounded bordered shadow secondary">{{lblButtonRegisterForm}}</button>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
