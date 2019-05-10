@@ -21,3 +21,8 @@ Pasos para crear un nuevo proyecto angular.
 Cualquier otra informacion adicional que se requiera buscar en la siguiente pagina: 
 
 	https://ngxfoundation.com/getting-started
+	
+	
+Instalar componentes para la vista
+
+	a.	npm install --save-dev @angular-devkit/build-angular
