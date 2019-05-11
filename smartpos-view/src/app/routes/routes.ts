@@ -14,7 +14,7 @@ export const APP_ROUTES: Routes = [
       children: [
          { path: '', redirectTo: 'login', pathMatch: 'full' },
          { path: 'login' , component: LoginComponent, canActivateChild: [Authorization] },
-         { path: 'main'  , component: MainComponent, canActivateChild: [Authorization] }
+         { path: 'main'  , component: MainComponent,  canActivateChild: [Authorization] }
       ]
     },
     // errors

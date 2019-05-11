@@ -24,9 +24,33 @@ class ResourceRestController extends REST_Controller {
 		$this->methods['users_delete']['limit'] = 50; // 50 requests per hour per user/key
 	}
 
-	public function getHeader($key) {
-		$headers = apache_request_headers();
-		return (array_key_exists($key, $headers))?str_replace("Bearer ", "", $headers[$key]):"";
+	/**
+	 * Obtiene la informacion de encabezado
+	 * @param string $key
+	 * @return string|mixed
+	 */
+	public function getHeader(string $key) {
+		$value = $this->getValue($key, apache_request_headers());
+		return ($value != null)?str_replace("Bearer ", "", $value):"";
+	}
+	
+	/**
+	 * Obtiene el valor de una lista
+	 * @param string $key
+	 * @param $items
+	 * @return NULL|string
+	 */
+	public function getValue(string $key, array $items) {
+	    $result = null;
+	    if (count($items) > 0) {
+	        foreach($items as $k => $v) {
+	            if (strcasecmp($k, $key) == 0) {
+	                $result = $v;
+	                break;
+	            }
+	        }
+	    }
+	    return $result;
 	}
 	
 	/**

@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { AngularWebStorageModule } from 'angular-web-storage';
+import { AngularWebStorageModule, SessionStorage } from 'angular-web-storage';
 import { Observable, Subject } from 'rxjs';
 import { share } from 'rxjs/operators';
 
@@ -31,7 +31,7 @@ export class FirewallService {
     static readonly SECURITY_MENUS_ACCE = 'restservices/srv/menus/list';
     
     /** codigo de acceso entregado en el logueo */
-    private _token: string;
+    @SessionStorage() private _token: string;
     
     /** informacion del usuario (alias, clave) */
     private _userInfo: any;
@@ -41,11 +41,6 @@ export class FirewallService {
 
     /** Subject para notificar la informacion del usuario  */
     private authState = new Subject<any>();
-
-    /** 
-     * Con esto se busca tener una unica instancia y realizar tantas peticiones
-     * */
-    private observerAccess: Observable<any>;
 
     /**
      * Constructor de la clase
@@ -58,14 +53,13 @@ export class FirewallService {
      * Prepara el encabezado con el token
      * @param token
      */
-    static getHeaderToken(token: string):any {
-        var headers_object = new HttpHeaders();
-            headers_object.append('Content-Type', 'application/json');
-        if (token != null) {
-            headers_object.append("Authorization", "Bearer " + token);
-        }
-        const httpOptions = {
-            headers: headers_object
+    prepareHeaderRequest(token: string):any {
+        console.log( 'getHeaderToken -> Token: ' + token );
+        let httpOptions = {
+            headers: new HttpHeaders({
+                'Content-Type' : 'application/json',
+                'Authorization': 'Bearer ' + token
+            })
         };
         return httpOptions;
     }
@@ -75,15 +69,20 @@ export class FirewallService {
      * a traves del codigo de acceso asignado
      */
     refreshAccessInfo() {
-        if (this.observerAccess == null) {
-            this.observerAccess = this.http.get(
-               FirewallService.CONTEXT + FirewallService.SECURITY_ACCES_INFO, 
-               FirewallService.getHeaderToken(this._token));
-        }
-        this.observerAccess.subscribe(access => {
-           this.authState.next(access);
-           this.access = access;
-        });
+        this.applyAccessToken( this._token, function() {} );
+    }
+    
+    applyAccessToken(token: string, callback : Function) {
+        this.http.get(FirewallService.CONTEXT + FirewallService.SECURITY_ACCES_INFO, 
+             this.prepareHeaderRequest(token))
+             .subscribe(access => {
+                 this.authState.next(access);
+                 this.access = access;
+                 callback( access );
+             }, error => {
+                 callback( null );
+                 console.log(error);
+             });
     }
 
     /**
@@ -105,7 +104,7 @@ export class FirewallService {
     getUserMenu(): Observable<any> {
         return this.http.get(
                 FirewallService.CONTEXT + FirewallService.SECURITY_MENUS_ACCE, 
-                FirewallService.getHeaderToken(this._token));
+                this.prepareHeaderRequest(this._token));
     }
     
     /**
@@ -116,7 +115,7 @@ export class FirewallService {
         //Debe invocar el recurso para cerrar sesion
         this.http.get(
             FirewallService.CONTEXT + FirewallService.SECURITY_CLOSE_ACCE, 
-            FirewallService.getHeaderToken(this._token));
+            this.prepareHeaderRequest(this._token));
         // es necesario limpiar el sessionStorage
         this.clearObserverForLogin();
     }
@@ -161,7 +160,6 @@ export class FirewallService {
      * de esta forma se puede hacer refresh de dicha información solicitandola al backend
      */
     clearObserverForLogin() {
-        this.observerAccess = null;
         this.access = null;
         this._userInfo = null;
     }

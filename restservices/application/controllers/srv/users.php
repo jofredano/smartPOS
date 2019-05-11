@@ -69,9 +69,9 @@ class users extends ResourceRestController {
                 $result = $this->db->query("SELECT @vou_codigo AS codigo, @vou_mensaje AS mensaje, @vou_feini_acceso AS fecini_acceso, @vou_fefin_acceso AS fecfin_acceso, @vou_nrmdu_acceso AS nrmdu_acceso, @vou_codus_acceso AS codus_acceso;")->result_array();
                 $output = $result[0];
                 //Validamos si la respuesta fue adecuada
-                if ($output->codigo == '200') {
+                if ($output['codigo'] == '200') {
                     $codeStatus = REST_Controller::HTTP_OK;
-                } else if ($output->codigo == '401') {
+                } else if ($output['codigo'] == '401') {
                     $codeStatus = REST_Controller::HTTP_UNAUTHORIZED;
                 } else {
                     $codeStatus = REST_Controller::HTTP_INTERNAL_SERVER_ERROR;
@@ -104,9 +104,9 @@ class users extends ResourceRestController {
                     $result = $this->db->query("SELECT @vou_codigo AS codigo, @vou_mensaje AS mensaje;")->result_array();
                     $output = $result[0];
                     //Validamos si la respuesta fue adecuada
-                    if ($output->codigo == '200') {
+                    if ($output['codigo'] == '200') {
                         $codeStatus = REST_Controller::HTTP_OK;
-                    } else if ($output->codigo == '401') {
+                    } else if ($output['codigo'] == '401') {
                         $codeStatus = REST_Controller::HTTP_UNAUTHORIZED;
                     } else {
                         $codeStatus = REST_Controller::HTTP_INTERNAL_SERVER_ERROR;

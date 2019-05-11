@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Subject, Subscription, Observable } from 'rxjs';
 import { FirewallService } from '../security';
+import { Router } from "@angular/router";
 
 /**
  * Servicio para gestionar el estado del menu
@@ -22,7 +23,7 @@ export class SidebarService {
    * Constructor
    * @param firewallService Servicio de identidad de usuario
    */
-  constructor(private firewallService: FirewallService) {
+  constructor(private router: Router, private firewallService: FirewallService) {
     this.status     = new Subject<boolean>();
     this.stream     = new Subject<any>();
     const self      = this;
@@ -71,7 +72,7 @@ export class SidebarService {
         this.inactivateAllItems(menuUser.menuItems);
         this.setOptionMenu(menuUser);
     }, error => {
-        console.error(error);
+        this.router.navigate(['login']);
      });
   }
 

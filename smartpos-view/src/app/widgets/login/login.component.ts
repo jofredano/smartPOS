@@ -128,11 +128,16 @@ export class LoginComponent implements OnInit, OnDestroy {
   
   accessUser() {
       const self = this.firewallService;
+      const navigator = this.router;
       this.firewallService.accessUser(this.info).subscribe(
        res => {
           this.showMessage = false;
           self.token = res.token;
-          this.router.navigate(['main']);
+          self.applyAccessToken( res.token , function(access) {
+              if (access != null) {
+                  navigator.navigate(['main']);
+              }
+          });
        }, error => {
           this.showMessage = true;
           this.textMessage = error.error.mensaje;

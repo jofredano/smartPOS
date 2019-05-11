@@ -54,14 +54,14 @@ class menus extends ResourceRestController {
 	            $result = $this->db->query("SELECT @vou_result AS resultSet, @vou_codigo AS codigo, @vou_mensaje AS mensaje;")->result_array();
 	            $output = $result[0];
 	            //Validamos si la respuesta fue exitosa
-	            if ($output->codigo == '200') {
+	            if ($output['codigo'] == '200') {
 	                //Tratamiento del cursor como xml texto
-	            	$items      = $this->prepareResultSetText($output->resultSet);
+	                $items      = $this->prepareResultSetText($output['resultSet']);
 	            	//Se recorre el resultado para transformarlo a menu de la aplicacion
 	            	$output 	= $this->prepareMenu($items);
 	            	//Estado de la respuesta
 	                $codeStatus = REST_Controller::HTTP_OK;
-	            } else if ($output->codigo == '401') {
+	            } else if ($output['codigo'] == '401') {
 	                $codeStatus = REST_Controller::HTTP_UNAUTHORIZED;
 	            } else {
 	                $codeStatus = REST_Controller::HTTP_INTERNAL_SERVER_ERROR;
