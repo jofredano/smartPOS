@@ -13,6 +13,8 @@ require APPPATH . 'libraries/base/ResourceRestController.php';
  */
 class menus extends ResourceRestController {
 
+    const MSGNOTTOKEN_DATA = 'Debe especificar el token para realizar procesos';
+    
     function __construct() {
         parent::__construct();
         $this->load->helper('xml');

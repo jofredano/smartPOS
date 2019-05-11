@@ -24,7 +24,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 |
 */
 //Poner la url local en sus equipos de computo
-$config['base_url'] = 'http://local.smartproject.com:8080/smart-pos/';
+$config['base_url'] = 'http://local.smartproject.com:8080/smart-pos/restservices';
 
 /*
 |--------------------------------------------------------------------------
