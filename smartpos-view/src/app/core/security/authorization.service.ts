@@ -65,7 +65,6 @@ export class Authorization implements CanActivate, CanActivateChild {
             resolver(res);
         }, error => {
             this.router.navigate(['access-denied']);
-            console.error(error);
             resolver(false);
         });
     }

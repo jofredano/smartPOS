@@ -130,7 +130,6 @@ export class FirewallService {
             username: info.username,
             password: info.password
         };
-        console.log(userinfo);
         return this.http.post<any>(FirewallService.CONTEXT + FirewallService.SECURITY_LOGIN_ACCE, userinfo);
     }
 

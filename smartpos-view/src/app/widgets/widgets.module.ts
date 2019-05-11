@@ -5,7 +5,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 
-import { LoginComponent } from './';
+import { LoginComponent, MainComponent } from './';
 
 @NgModule({
     imports: [
@@ -17,13 +17,16 @@ import { LoginComponent } from './';
       { provide: HTTP_INTERCEPTORS, useClass: HttpInterceptRequestService, multi: true }
     ],
     exports: [
-       LoginComponent
+       LoginComponent, 
+       MainComponent
     ],
     declarations: [
-       LoginComponent
+       LoginComponent, 
+       MainComponent
     ],
     bootstrap: [
-       LoginComponent
+       LoginComponent, 
+       MainComponent
     ]
 })
 export class WidgetsModule { }

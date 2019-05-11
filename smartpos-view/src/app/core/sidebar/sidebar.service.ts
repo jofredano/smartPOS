@@ -66,11 +66,13 @@ export class SidebarService {
    * Metodo que carga la informacion del menu para el usuario logueado
    */
   loadOptionsMenu() {
-    this.firewallService.getUserMenu().toPromise().then(userMenu => {
+    this.firewallService.getUserMenu().subscribe(userMenu => {
         const menuUser = userMenu;
         this.inactivateAllItems(menuUser.menuItems);
         this.setOptionMenu(menuUser);
-    });
+    }, error => {
+        console.error(error);
+     });
   }
 
   /**

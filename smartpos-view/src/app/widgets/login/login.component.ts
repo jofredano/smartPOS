@@ -1,6 +1,8 @@
 import { Component, Input, OnInit, OnDestroy } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { FirewallService } from '../../core/security';
+import { FormControl, FormGroup } from '@angular/forms';
+import { Router } from "@angular/router";
 
 /**
  * Componente para renderizar el encabezado de la aplicación
@@ -33,7 +35,7 @@ export class LoginComponent implements OnInit, OnDestroy {
       password: ''
   };
 
-  constructor(private firewallService: FirewallService) {}
+  constructor(private router: Router, private firewallService: FirewallService) {}
 
   ngOnInit(): void {
       //this.identityService.getUserInfo().subscribe(userInfo => this.user = userInfo);
@@ -125,14 +127,15 @@ export class LoginComponent implements OnInit, OnDestroy {
   }
   
   accessUser() {
+      const self = this.firewallService;
       this.firewallService.accessUser(this.info).subscribe(
        res => {
-          this.showMessage = true;
-          this.textMessage = 'Hay un logueo true';
-          console.error(res);
+          this.showMessage = false;
+          self.token = res.token;
+          this.router.navigate(['main']);
        }, error => {
           this.showMessage = true;
-          this.textMessage = error.error;
+          this.textMessage = error.error.mensaje;
           console.error(error);
        });
   }
