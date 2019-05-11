@@ -1,9 +1,9 @@
 <?php
-use Restserver\Libraries\REST_Controller;
 defined('BASEPATH') || exit('No direct script access allowed');
-
-/** @noinspection PhpIncludeInspection */
 require APPPATH . 'libraries/base/ResourceRestController.php';
+
+use Restserver\Libraries\REST_Controller;
+use domain\transfer\DTOMenu;
 
 /**
  * Implementacion de recursos a menus
@@ -120,7 +120,7 @@ class menus extends ResourceRestController {
 	 * Obtiene un resultado a traves del codigo
 	 * @param string $code
 	 * @param array $items
-	 * @return NULL|result
+	 * @return NULL
 	 */
 	protected function getResult(string $code, array $items) {
 		$result = NULL;
@@ -140,7 +140,7 @@ class menus extends ResourceRestController {
 	protected function prepareMenu($items) {
 		$result 	= array();
 		foreach($items as $item) {
-			$menu 	= new domain\transfer\DTOMenu();
+			$menu 	= new DTOMenu();
 			$menu->setCode( $item->opc_codigo );
 			$menu->setName( $item->opc_nombre );
 			$menu->setTittle( $item->opc_titulo );
@@ -159,7 +159,7 @@ class menus extends ResourceRestController {
 				if (is_null($element)) {
 					//No existe, debe crearse la opcion y adicionarse al menu.
 					$parent = $this->getResult($item->opc_principal, $items);
-					$element = new domain\transfer\DTOMenu();
+					$element = new DTOMenu();
 					$element->setCode( $parent->opc_codigo );
 					$element->setName( $parent->opc_nombre );
 					$element->setTittle( $parent->opc_titulo );
