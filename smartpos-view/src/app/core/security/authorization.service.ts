@@ -46,8 +46,9 @@ export class Authorization implements CanActivate, CanActivateChild {
         return new Promise(resolver => {
             if (!this.firewall.haveAccess()) {
                 this.router.navigate(['login']);
+            } else {
+                this.checkAuthorization(state.url.substring(1), resolver);
             }
-            this.checkAuthorization(state.url.substring(1), resolver);
         });
     }
 

@@ -122,26 +122,16 @@ export class FirewallService {
     }
     
     /**
-     * Con esta funcion se puede definir si el usuario se logro loguear o no
-     * @returns devuelve el objeto de respuesta de logueo
-     */
-    getLoginAccess(): Observable<any> {
-        const userInfoData = this._userInfo;
-        return this.http.post<any>(FirewallService.CONTEXT + FirewallService.SECURITY_LOGIN_ACCE, {
-            username: userInfoData.username,
-            password: userInfoData.password
-        });
-    }
-    
-    /**
      * Metodo que realiza logueo en el sistema
      * @param info
      */
     accessUser(info:any): Observable<any> {
-        return this.http.post<any>(FirewallService.CONTEXT + FirewallService.SECURITY_LOGIN_ACCE, {
+        const userinfo = {
             username: info.username,
             password: info.password
-        });
+        };
+        console.log(userinfo);
+        return this.http.post<any>(FirewallService.CONTEXT + FirewallService.SECURITY_LOGIN_ACCE, userinfo);
     }
 
     /**

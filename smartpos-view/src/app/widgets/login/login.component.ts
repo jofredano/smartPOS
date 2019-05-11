@@ -25,6 +25,9 @@ export class LoginComponent implements OnInit, OnDestroy {
     
   private _showMessage: boolean = false;
 
+  private _textMessage: string;
+
+
   private info:any = {
       username: '',
       password: ''
@@ -39,7 +42,7 @@ export class LoginComponent implements OnInit, OnDestroy {
       this.lblQuestionPasswdForm      = 'Clave';
       this.lblButtonAccessForm        = 'Ingresar';
       this.lblButtonRegisterForm      = 'Registrar';
-      this.showMessage                = true;
+      this.showMessage                = false;
   }
 
   ngOnDestroy(): void {
@@ -78,7 +81,11 @@ export class LoginComponent implements OnInit, OnDestroy {
       return this.info.password;
   }
 
+  get textMessage(): string {
+      return this._textMessage;
+  }
   
+ 
   set lblTittleForm(_lblTittleForm: string) {
       this._lblTittleForm = _lblTittleForm;
   }
@@ -113,12 +120,21 @@ export class LoginComponent implements OnInit, OnDestroy {
       this.info.password = _password;
   }
   
+  set textMessage(_textMessage: string) {
+      this._textMessage = _textMessage;
+  }
+  
   accessUser() {
-      this.firewallService.accessUser(this.info).subscribe(res => {
+      this.firewallService.accessUser(this.info).subscribe(
+       res => {
+          this.showMessage = true;
+          this.textMessage = 'Hay un logueo true';
           console.error(res);
        }, error => {
+          this.showMessage = true;
+          this.textMessage = error.error;
           console.error(error);
-       });;
+       });
   }
 
 }

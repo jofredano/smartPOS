@@ -1,6 +1,6 @@
 {
 	"/smart-pos/*": {
-		 "target": "http://localhost:80/",
+		 "target": "http://local.smartproject.com:8080/",
 		 "secure": false,
 		 "logLevel": "debug"
 	}

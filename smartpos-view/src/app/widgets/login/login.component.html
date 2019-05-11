@@ -10,10 +10,10 @@
             </div>
             <div *ngIf="showMessage" class="grid-x grid-padding-x align-center">
                 <div class="small-6 medium-4 large-4 cell text-center">
-                  Hubo problemas de cesion                  
+                  {{textMessage}}                  
                 </div>
             </div>
-            <form class="card-section" (ngSubmit)="accessUser()" >
+            <form #userlogin="ngForm" class="card-section" (ngSubmit)="accessUser()">
               <div class="grid-x grid-padding-x align-center">
                 <div class="small-8 medium-6 large-4 cell">
                   <label class="fi-home">{{lblQuestionUsernameForm}}</label>
