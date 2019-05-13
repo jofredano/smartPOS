@@ -1,6 +1,6 @@
 <?php
 defined('BASEPATH') || exit('No direct script access allowed');
-require APPPATH . 'libraries/base/ResourceRestController.php';
+require APPPATH . 'libraries/base/rest-controller.inc.php';
 
 use Restserver\Libraries\REST_Controller;
 use domain\transfer\DTOMenu;
@@ -11,7 +11,7 @@ use domain\transfer\DTOMenu;
  * @author jofre
  *
  */
-class menus extends ResourceRestController {
+class menus extends PathRestController {
 
     const MSGNOTTOKEN_DATA = 'Debe especificar el token para realizar procesos';
     
@@ -24,7 +24,7 @@ class menus extends ResourceRestController {
     //      ejemplo: cuando necesita hacer una consulta con filtros. (idempotencia)
 	public function test_get() {
 	    $output    = "Hola mundo: ";
-	    $token      = $this->getHeader("Authorization");
+	    $token      = $this->getHeader(PathRestController::ATTRIB_AUTHORIZATION);
 	    if ($token == NULL) {
 	        $output = "Debe especificar el token para realizar procesos"; 
 	    }
@@ -42,7 +42,7 @@ class menus extends ResourceRestController {
 	
 	public function list_get() {
 		//Obtenemos el codigo de acceso de este usuario
-	    $token      = $this->getHeader("Authorization");
+	    $token      = $this->getHeader(PathRestController::ATTRIB_AUTHORIZATION);
 	    $output     = NULL;
 	    $items		= NULL;
 	    $codeStatus = REST_Controller::HTTP_OK;
@@ -54,14 +54,14 @@ class menus extends ResourceRestController {
 	            $result = $this->db->query("SELECT @vou_result AS resultSet, @vou_codigo AS codigo, @vou_mensaje AS mensaje;")->result_array();
 	            $output = $result[0];
 	            //Validamos si la respuesta fue exitosa
-	            if ($output['codigo'] == '200') {
+	            if ($output[PathRestController::ATTRIB_CODE] == '200') {
 	                //Tratamiento del cursor como xml texto
 	                $items      = $this->prepareResultSetText($output['resultSet']);
 	            	//Se recorre el resultado para transformarlo a menu de la aplicacion
 	            	$output 	= $this->prepareMenu($items);
 	            	//Estado de la respuesta
 	                $codeStatus = REST_Controller::HTTP_OK;
-	            } else if ($output['codigo'] == '401') {
+	            } else if ($output[PathRestController::ATTRIB_CODE] == '401') {
 	                $codeStatus = REST_Controller::HTTP_UNAUTHORIZED;
 	            } else {
 	                $codeStatus = REST_Controller::HTTP_INTERNAL_SERVER_ERROR;

@@ -56,7 +56,6 @@ CALL smpos_prc_crear_empleado(
 	'Jose Freddy',
 	'Angulo Ortega',
 	STR_TO_DATE('1984-07-16', '%Y-%m-%d'),
-	NULL,
 	'Carrera 41 sur #1S-78',
 	'3207010650',
 	'jofredano@hotmail.com',
@@ -128,5 +127,13 @@ CALL smpos_prc_obtener_menu(
    	@text_salida,
    	@vou_codigo,
 	@vou_mensaje);
-SELECT 	@text_salida, @vou_codigo, @vou_mensaje;
+SELECT @text_salida, @vou_codigo, @vou_mensaje;
+
+CALL smpos_prc_verificar_perfil(
+ 	'5c3e3128-713a-11e9-b',
+ 	'EMPLEADO.CREAR',
+   	@vou_usuario,
+ 	@vou_codigo,
+	@vou_mensaje);
+SELECT @vou_usuario, @vou_codigo, @vou_mensaje;
 

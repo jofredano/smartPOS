@@ -15,13 +15,52 @@ require APPPATH . 'libraries/dto/dto.inc.php';
  * @author joseanor
  *
  */
-class ResourceRestController extends REST_Controller {
+class PathRestController extends REST_Controller {
+	
+	const ATTRIB_CODE          = 'codigo';
+	
+	const ATTRIB_LIMIT         = 'limit';
+	
+	const MSGNOTTOKEN_DATA     = "Debe especificar el token para realizar proceso";
+	
+	const ATTRIB_AUTHORIZATION = 'Authorization';
 	
 	function __construct() {
 		parent::__construct();
-		$this->methods['users_get']['limit']    = 500; // 500 requests per hour per user/key
-		$this->methods['users_post']['limit']   = 100; // 100 requests per hour per user/key
-		$this->methods['users_delete']['limit'] = 50; // 50 requests per hour per user/key
+		$this->methods['users_get'][ATTRIB_LIMIT]    = 500; // 500 requests per hour per user/key
+		$this->methods['users_post'][ATTRIB_LIMIT]   = 100; // 100 requests per hour per user/key
+		$this->methods['users_delete'][ATTRIB_LIMIT] = 50; // 50 requests per hour per user/key
+	}
+	
+	/**
+	 * Verifica si el usuario tiene asignado este perfil
+	 * @param  string $token
+	 * @param  string $profile
+	 * @param  $database
+	 * $param  $postFunction | NULL
+	 * @return boolean
+	 */
+	public function checkProfile(string $token, string $profile, $database, $postFunction) {
+		//Procedemos a realizar llamado a base de datos
+		$output = NULL;
+		$codeStatus = 0;
+		$database->query("CALL smpos_prc_verificar_perfil('".$token."', '".$profile."', @vou_usuario, @vou_codigo, @vou_mensaje); ");
+		$result = $database->query("SELECT @vou_usuario AS usuario, @vou_codigo AS codigo, @vou_mensaje AS mensaje;")->result_array();
+		$output = $result[0];
+		//Validamos si la respuesta fue exitosa
+		if ($output[self::ATTRIB_CODE] == '200') {
+			//Estado de la respuesta
+			$codeStatus = $output['usuario'];
+			//Funcion que se ejcuta
+			if (!is_null($postFunction)) {
+				$postFunction($codeStatus, $output['usuario']);				
+			}
+		} else if ($output[self::ATTRIB_CODE] == '401') {
+			$codeStatus = 0;
+		} else {
+			$codeStatus = 0;
+		}
+		return $codeStatus;
 	}
 
 	/**

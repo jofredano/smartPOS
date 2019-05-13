@@ -1,8 +1,8 @@
 <?php
-use Restserver\Libraries\REST_Controller;
-defined('BASEPATH') OR exit('No direct script access allowed');
+defined('BASEPATH') || exit('No direct script access allowed');
+require APPPATH . 'libraries/base/rest-controller.inc.php';
 
-require APPPATH . 'libraries/base/ResourceRestController.php';
+use Restserver\Libraries\REST_Controller;
 
 /**
  * Implementacion de recursos a usuarios
@@ -10,10 +10,9 @@ require APPPATH . 'libraries/base/ResourceRestController.php';
  * @author jofre
  *
  */
-class users extends ResourceRestController {
+class users extends PathRestController {
     
     const TIMELIMIT_SESSION = 50;
-    const MSGNOTTOKEN_DATA  = "Debe especificar el token para realizar proceso";
     
     function __construct() {
         parent::__construct();
@@ -38,9 +37,9 @@ class users extends ResourceRestController {
                 $result = $this->db->query("SELECT @vou_token AS token, @vou_codigo AS codigo, @vou_mensaje AS mensaje;")->result_array();
                 $output = $result[0];
                 //Validamos si la respuesta fue adecuada
-                if ($output['codigo'] == '200') {
+                if ($output[PathRestController::ATTRIB_CODE] == '200') {
                     $codeStatus = REST_Controller::HTTP_OK;
-                } else if ($output['codigo'] == '401') {
+                } else if ($output[PathRestController::ATTRIB_CODE] == '401') {
                     $codeStatus = REST_Controller::HTTP_UNAUTHORIZED;
                 } else {
                     $codeStatus = REST_Controller::HTTP_INTERNAL_SERVER_ERROR;
@@ -60,7 +59,7 @@ class users extends ResourceRestController {
     public function check_get() {
         $output     = NULL;
         $codeStatus = REST_Controller::HTTP_OK;
-        $token      = $this->getHeader("Authorization");
+        $token      = $this->getHeader(PathRestController::ATTRIB_AUTHORIZATION);
         if (!empty($token)) {
             //Procedemos a validar el token
             try {
@@ -69,9 +68,9 @@ class users extends ResourceRestController {
                 $result = $this->db->query("SELECT @vou_codigo AS codigo, @vou_mensaje AS mensaje, @vou_feini_acceso AS fecini_acceso, @vou_fefin_acceso AS fecfin_acceso, @vou_nrmdu_acceso AS nrmdu_acceso, @vou_codus_acceso AS codus_acceso;")->result_array();
                 $output = $result[0];
                 //Validamos si la respuesta fue adecuada
-                if ($output['codigo'] == '200') {
+                if ($output[PathRestController::ATTRIB_CODE] == '200') {
                     $codeStatus = REST_Controller::HTTP_OK;
-                } else if ($output['codigo'] == '401') {
+                } else if ($output[PathRestController::ATTRIB_CODE] == '401') {
                     $codeStatus = REST_Controller::HTTP_UNAUTHORIZED;
                 } else {
                     $codeStatus = REST_Controller::HTTP_INTERNAL_SERVER_ERROR;
@@ -81,7 +80,7 @@ class users extends ResourceRestController {
                 $codeStatus = REST_Controller::HTTP_INTERNAL_SERVER_ERROR;
             }
         } else {
-            $output     = self::MSGNOTTOKEN_DATA;
+            $output     = PathRestController::MSGNOTTOKEN_DATA;
             $codeStatus = REST_Controller::HTTP_INTERNAL_SERVER_ERROR;
         }
         //Hacer como se pasa por encabezado informacion al recurso
@@ -94,7 +93,7 @@ class users extends ResourceRestController {
     public function logout_get() {
         $output     = NULL;
         $codeStatus = REST_Controller::HTTP_OK;
-        $token      = $this->getHeader("Authorization");
+        $token      = $this->getHeader(PathRestController::ATTRIB_AUTHORIZATION);
         if (!empty($token)) {
             //Procedemos a validar el token
             try {
@@ -104,9 +103,9 @@ class users extends ResourceRestController {
                     $result = $this->db->query("SELECT @vou_codigo AS codigo, @vou_mensaje AS mensaje;")->result_array();
                     $output = $result[0];
                     //Validamos si la respuesta fue adecuada
-                    if ($output['codigo'] == '200') {
+                    if ($output[PathRestController::ATTRIB_CODE] == '200') {
                         $codeStatus = REST_Controller::HTTP_OK;
-                    } else if ($output['codigo'] == '401') {
+                    } else if ($output[PathRestController::ATTRIB_CODE] == '401') {
                         $codeStatus = REST_Controller::HTTP_UNAUTHORIZED;
                     } else {
                         $codeStatus = REST_Controller::HTTP_INTERNAL_SERVER_ERROR;
@@ -117,7 +116,7 @@ class users extends ResourceRestController {
                 $codeStatus = REST_Controller::HTTP_INTERNAL_SERVER_ERROR;
             }
         } else {
-            $output     = self::MSGNOTTOKEN_DATA;
+            $output     = PathRestController::MSGNOTTOKEN_DATA;
             $codeStatus = REST_Controller::HTTP_INTERNAL_SERVER_ERROR;
         }
         //Hacer como se pasa por encabezado informacion al recurso

@@ -10,6 +10,7 @@
  DROP PROCEDURE IF EXISTS smpos_prc_verificar_sesion;
  DROP PROCEDURE IF EXISTS smpos_prc_finalizar_sesion;
  DROP PROCEDURE IF EXISTS smpos_prc_obtener_menu;
+ DROP PROCEDURE IF EXISTS smpos_prc_verificar_perfil;
  DROP PROCEDURE IF EXISTS debug_msg;
  
  -- Procedimiento para crear un rango de consecutivos -- 
@@ -320,7 +321,6 @@
 	IN		vin_per_nombres				VARCHAR(255),
 	IN 		vin_per_apellidos			VARCHAR(255),
 	IN 		vin_per_fecha_nacimiento	DATE,
-	IN 		vin_emp_razon_social		VARCHAR(255),
 	IN 		vin_ent_direccion			TEXT,
 	IN 		vin_ent_telefono			TEXT,
 	IN 		vin_ent_correo				TEXT,
@@ -345,7 +345,7 @@
 	DECLARE CODCATESTA_ACTIVO		INT(11)	DEFAULT 0;
 	DECLARE DEVOLVER_TODO			INT(11)	DEFAULT 0;
 
-	SET @enabled 			= TRUE;	
+	SET @enabled 			= FALSE;	
 	SET CODCATTIPO_CONT		= smpos_fnc_obtener_categ_codigo(vin_emp_tipo_contrato);
 	SET CODCATESTA_ACTIVO	= smpos_fnc_obtener_categ_codigo('ENTIDAD.ESTADO.ACTIVO');
 	
@@ -353,7 +353,7 @@
 		CALL smpos_prc_crear_entidad(
 			'PERSONA.TIPO.NATURAL',		vin_ent_identificacion,
 			vin_per_nombres, 			vin_per_apellidos,
-			vin_per_fecha_nacimiento, 	vin_emp_razon_social,
+			vin_per_fecha_nacimiento, 	NULL,
 			vin_ent_direccion,			vin_ent_telefono,
 			vin_ent_correo,				CODENTID_PERSONA,
 			CODENTID_ENTIDAD,			CODSALID_ESTADO,
@@ -788,7 +788,7 @@
 	END IF;
   END //
 
-   CREATE PROCEDURE smpos_prc_obtener_menu(
+  CREATE PROCEDURE smpos_prc_obtener_menu(
  	IN 		vin_token					TEXT,
  	OUT 	vou_textResultSet			TEXT,
    	OUT 	vou_codigo 	 				CHAR(5),
@@ -898,6 +898,70 @@
 			SET vou_mensaje = MSGSALID_ESTADO;
 		END IF;
 	ELSE 
+		SET vou_codigo  	= '600';
+		SET vou_mensaje 	= 'Debe especificar el token';
+	END IF;
+  END //
+
+  CREATE PROCEDURE smpos_prc_verificar_perfil(
+ 	IN 		vin_token					TEXT,
+ 	IN 		vin_abbr_perfil				VARCHAR(200),
+ 	OUT 	vou_usuario					INT(11),
+   	OUT 	vou_codigo 	 				CHAR(5),
+	OUT 	vou_mensaje					TEXT)
+  BEGIN
+	DECLARE CODSALID_ESTADO			CHAR(5)			DEFAULT '00000';
+	DECLARE MSGSALID_ESTADO			TEXT			DEFAULT '';
+	DECLARE NMRDURAC_ACCESO			INT(11)			DEFAULT 0;
+	DECLARE CODACCES_USUARI			INT(11)			DEFAULT 0;
+	DECLARE NMPERFIL_USUARI			INT(11)			DEFAULT 0;
+	DECLARE FECINI_ACCESO			DATETIME		DEFAULT NULL;
+	DECLARE FECFIN_ACCESO			DATETIME		DEFAULT NULL;
+
+	SET @enabled	= FALSE;
+ 	-- Linea para depurar procedimiento --
+	call debug_msg(@enabled, CONCAT('Token leido (', IFNULL(vin_token, ''), ')'));
+	-- Validamos si el token esta especificado --
+	IF 	vin_token IS NOT NULL THEN
+	 	-- Linea para depurar procedimiento --
+		call debug_msg(@enabled, 'Validar si el acceso existe...');
+		-- Verifica si el acceso es valido --
+		CALL smpos_prc_verificar_sesion(
+		 	vin_token,       FECINI_ACCESO,
+		 	FECFIN_ACCESO,   NMRDURAC_ACCESO,
+		 	CODACCES_USUARI, CODSALID_ESTADO,
+			MSGSALID_ESTADO);
+	 	-- Linea para depurar procedimiento --
+		call debug_msg(@enabled, CONCAT('Validacion realizada (', CODSALID_ESTADO, ')'));
+		-- Verifica respuesta del procedimiento --
+		IF	STRCMP(CODSALID_ESTADO, '200') = 0 THEN
+			-- Se procede a validar si el usuario posee dicho perfil --
+			SELECT 	IF(COUNT(a.acc_token) > 0, a.acc_token, NULL) INTO NMPERFIL_USUARI
+			FROM 	smpos_sis_usuarios_x_roles uxr, 
+					smpos_sis_roles_x_perfiles rxp, 
+					smpos_sis_perfiles         per
+			WHERE 	uxr.uxr_rol				=	rxp.rxp_rol
+			AND 	rxp.rxp_perfil			=	per.per_codigo
+			AND 	uxr.uxr_usuario			=	CODACCES_USUARI
+			AND 	per.per_abbreviatura	=	vin_abbr_perfil;
+			-- Valida si existe el perfil para este usuario --
+			IF	NMPERFIL_USUARI > 0 THEN
+				SET vou_usuario = CODACCES_USUARI;
+				SET vou_codigo  = '200';
+				SET vou_mensaje = 'El usuario tiene asignado el perfil';
+			ELSE 
+				SET vou_usuario = 0;
+				SET vou_codigo  = '402';
+				SET vou_mensaje = CONCAT('El perfil (', vin_abbr_perfil, ') no lo tiene asignado este usuario');
+			END IF;
+		ELSE 
+			-- Salida cuando hay error --
+			SET vou_usuario = 0;
+			SET vou_codigo  = CODSALID_ESTADO;
+			SET vou_mensaje = MSGSALID_ESTADO;
+		END IF;
+	ELSE 
+		SET vou_usuario 	= 0;
 		SET vou_codigo  	= '600';
 		SET vou_mensaje 	= 'Debe especificar el token';
 	END IF;
