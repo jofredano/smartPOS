@@ -25,4 +25,14 @@ Cualquier otra informacion adicional que se requiera buscar en la siguiente pagi
 	
 Instalar componentes para la vista
 
-	a.	npm install --save-dev @angular-devkit/build-angular
+	a.	recomendable aplicar npm update
+	b.	npm install angular-web-storage --save
+	c. 	npm install --save rxjs-compat
+	d.	npm install --save-dev @types/core-js
+	e.	npm install primeng --save
+	f.	npm install @angular/cdk --save
+	g.	npm install -g npm
+	
+	
+	en el archivo package.json 
+		en el atributo "start" colocar ng serve --host local.suranet.com --open --proxy-config proxy.conf.json
