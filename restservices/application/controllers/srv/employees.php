@@ -3,6 +3,7 @@ defined('BASEPATH') || exit('No direct script access allowed');
 require APPPATH . 'libraries/base/rest-controller.inc.php';
 
 use Restserver\Libraries\REST_Controller;
+use domain\exception\GeneralException;
 
 /**
  * Implementacion de recursos a empleados
@@ -22,6 +23,21 @@ class employees extends PathRestController {
 	}
 	
 	protected function checkContent($content) {
+		if (!is_null($content)) {
+			if (!isset($content['id'])) {
+				throw new GeneralException('Empleado no posee identificacion', 45);
+			} else if (is_string($content['id'])) {
+				//Debe verificar que contenga la extructura que es
+				$id = explode("-", $content['id']);
+				//Verificar si contiene dos partes
+				if (count($id) != 2) {
+				   throw new GeneralException('Identificador no valido', 45);
+				} else {
+				   $content['id']['type']   = $id[0];
+				   $content['id']['number'] = $id[1];
+				}
+			}
+		}
 		return $content;
 	}
 	
