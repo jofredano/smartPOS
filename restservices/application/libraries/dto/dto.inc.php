@@ -6,4 +6,7 @@ namespace domain\transfer {
 namespace domain\exception {
 	require_once 'exc.general-exception.inc.php';
 }
+namespace domain\util {
+	require_once 'util.utils.inc.php';
+}
 ?>

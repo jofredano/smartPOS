@@ -4,6 +4,7 @@ require APPPATH . 'libraries/base/rest-controller.inc.php';
 
 use Restserver\Libraries\REST_Controller;
 use domain\exception\GeneralException;
+use domain\util\Utils;
 
 /**
  * Implementacion de recursos a empleados
@@ -25,17 +26,18 @@ class employees extends PathRestController {
 	protected function checkContent($content) {
 		if (!is_null($content)) {
 			if (!isset($content['id'])) {
-				throw new GeneralException('Empleado no posee identificacion', 45);
-			} else if (is_string($content['id'])) {
-				//Debe verificar que contenga la extructura que es
-				$id = explode("-", $content['id']);
-				//Verificar si contiene dos partes
-				if (count($id) != 2) {
-				   throw new GeneralException('Identificador no valido', 45);
-				} else {
-				   $content['id']['type']   = $id[0];
-				   $content['id']['number'] = $id[1];
-				}
+				throw new GeneralException('Empleado no posee identificacion', 1045);
+			} else if (is_object($content['id']) && (!isset($content['id']['type']) || !isset($content['id']['number']))) {
+				throw new GeneralException('Identificador no valido', 1046);
+			} else {
+				$content['id'] = $content['id']['type']."-".$content['id']['number'];
+			}
+			//Ahora se comienza a validar cada campo incluyendo la identificacion nuevamente
+			if (!Utils::checkIdentification($content['id'])) {
+				throw new GeneralException('No corresponde a un documento de identificacion', 1047);
+			}
+			if (!Utils::checkEmail($content['mail'])) {
+				throw new GeneralException('No corresponde a un correo electronico', 1048);
 			}
 		}
 		return $content;
@@ -59,7 +61,7 @@ class employees extends PathRestController {
 				$content 					= $this->checkContent( $content );
 				
 				//Se diligencia los datos para ser invocado el procedimiento
-				$vin_ent_identificacion		= $content['id']['type']."-".$content['id']['number'];
+				$vin_ent_identificacion		= $content['id'];
 				$vin_per_nombres			= $content['name'];
 				$vin_per_apellidos			= $content['lastname'];
 				$vin_per_fecha_nacimiento	= $content['birth'];
