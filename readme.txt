@@ -33,6 +33,11 @@ Instalar componentes para la vista
 	f.	npm install @angular/cdk --save
 	g.	npm install -g npm
 	
-	
 	en el archivo package.json 
 		en el atributo "start" colocar ng serve --host local.suranet.com --open --proxy-config proxy.conf.json
+		
+Enlaces de interes:
+	a.	http://www.igdonline.com/blog/rapido-y-completo-expresiones-regulares-en-php/
+		Narra sobre expresiones regulares
+	b.	Conversion de fechas y calcular diferencias
+		https://programacion.net/articulo/calcular_la_diferencia_entre_dos_fechas_con_php_1566
