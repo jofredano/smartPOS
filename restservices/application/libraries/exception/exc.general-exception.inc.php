@@ -1,4 +1,13 @@
 <?php
+namespace domain\exception;
+use Exception;
+
+/**
+ * Clase que controla las excepciones de la aplicacion
+ * 
+ * @author joseanor
+ *
+ */
 class GeneralException extends Exception {
 
 	public function __construct($message = null, $code = 0) {
@@ -15,5 +24,4 @@ class GeneralException extends Exception {
 	}
 	
 }
-
 ?>

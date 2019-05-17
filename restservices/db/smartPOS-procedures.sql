@@ -936,7 +936,7 @@
 		-- Verifica respuesta del procedimiento --
 		IF	STRCMP(CODSALID_ESTADO, '200') = 0 THEN
 			-- Se procede a validar si el usuario posee dicho perfil --
-			SELECT 	IF(COUNT(a.acc_token) > 0, a.acc_token, NULL) INTO NMPERFIL_USUARI
+			SELECT 	COUNT(uxr.uxr_rol) INTO NMPERFIL_USUARI
 			FROM 	smpos_sis_usuarios_x_roles uxr, 
 					smpos_sis_roles_x_perfiles rxp, 
 					smpos_sis_perfiles         per
