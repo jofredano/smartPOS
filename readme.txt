@@ -103,3 +103,33 @@ export const APP_ROUTES: Routes = [
 
 ];
 
+
+
+
+consumo servicio de empleados:
+
+{
+	"id": {
+		"type": "CC",
+		"number": "11117778334"
+	},
+	"name": "Davis Javier",
+	"lastname": "Vanegas",
+	"birth": "1985-06-12",
+	"address": "Carrera 45 #1S-78 Bellavista",
+	"phone": "3124567567",
+	"mail": "dajavan@hotmail.com",
+	"agreement": {
+		"type": "CONTRATO.TIPO.INDEFINIDO",
+		"number": "56353660",
+		"begin": "2019-05-17",
+		"end": "2019-05-17"
+	}, 
+	"user": {
+		"name": "dajavan", 
+		"password": "dajavan123",
+		"role": "ROL.ADMINISTRADOR"
+	}
+}
+
+
