@@ -11,6 +11,8 @@ import { SharedModule  } from './shared/shared.module';
 import { RoutesModule  } from './routes/routes.module';
 import { WidgetsModule  } from './widgets/widgets.module';
 
+import { TooltipModule } from 'ngx-foundation';
+
 import { AppComponent } from './app.component';
 
 @NgModule({
@@ -27,7 +29,8 @@ import { AppComponent } from './app.component';
     LayoutModule,
     RoutesModule,
     WidgetsModule,
-    SharedModule.forRoot()
+    SharedModule.forRoot(),
+    TooltipModule.forRoot()
   ],
   providers: [
     { provide: APP_BASE_HREF, useValue: '/' },

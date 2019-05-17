@@ -5,7 +5,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 
-import { LoginComponent, MainComponent } from './';
+import { LoginComponent, MainComponent, WCreateEmployeeComponent } from './';
 
 @NgModule({
     imports: [
@@ -18,15 +18,18 @@ import { LoginComponent, MainComponent } from './';
     ],
     exports: [
        LoginComponent, 
-       MainComponent
+       MainComponent,
+       WCreateEmployeeComponent
     ],
     declarations: [
        LoginComponent, 
-       MainComponent
+       MainComponent, 
+       WCreateEmployeeComponent
     ],
     bootstrap: [
        LoginComponent, 
-       MainComponent
+       MainComponent, 
+       WCreateEmployeeComponent
     ]
 })
 export class WidgetsModule { }

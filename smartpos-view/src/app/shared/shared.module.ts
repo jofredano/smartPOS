@@ -5,6 +5,8 @@ import { FormsModule } from '@angular/forms';
 
 import { Error403Component } from './global-error-components';
 
+import { AlertModule } from 'ngx-foundation';
+
 import { InputTextModule } from 'primeng/primeng';
 import { ButtonModule } from 'primeng/primeng';
 import { CheckboxModule } from 'primeng/primeng';
@@ -16,7 +18,9 @@ import { ScrollPanelModule } from 'primeng/primeng';
 @NgModule({
   imports: [
     CommonModule,
-    RouterModule
+    RouterModule,
+    FormsModule,
+    AlertModule.forRoot()
   ],
   declarations: [
     Error403Component

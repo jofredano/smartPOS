@@ -135,7 +135,7 @@ export class LoginComponent implements OnInit, OnDestroy {
           self.token = res.token;
           self.applyAccessToken( res.token , function(access) {
               if (access != null) {
-                  navigator.navigate(['main']);
+                  navigator.navigate(['admin/create-employee']);
               }
           });
        }, error => {

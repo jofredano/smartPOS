@@ -50,6 +50,12 @@ class employees extends PathRestController {
 			if (!Utils::checkEmail($content['mail'])) {
 				throw new GeneralException('No corresponde a un correo electronico', 1048);
 			}
+			if (!Utils::checkAlphabetic($content['name'])) {
+				throw new GeneralException('No corresponde a un nombre de persona valido', 1049);
+			}
+			if (!Utils::checkAlphabetic($content['lastname'])) {
+				throw new GeneralException('No corresponde a un apellido de persona valido', 1049);
+			}
 		}
 		return $content;
 	}

@@ -27,10 +27,14 @@
               "src/assets"
             ],
             "styles": [
-              "src/styles.scss",
-              "node_modules/ngx-foundation/dist/css/ngx-foundation.min.css"
+              "./node_modules/foundation-sites/dist/css/foundation.min.css",
+              "./node_modules/ngx-foundation/dist/scss/ngx-foundation.scss",
+              "./node_modules/ngx-foundation/dist/css/ngx-foundation.min.css",
+              "src/styles.scss"
             ],
-            "scripts": [],
+            "scripts": [
+               "./node_modules/foundation-sites/dist/js/foundation.min.js"
+            ],
             "es5BrowserSupport": true
           },
           "configurations": {

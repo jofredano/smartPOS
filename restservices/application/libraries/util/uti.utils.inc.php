@@ -1,6 +1,12 @@
 <?php 
 namespace domain\util;
 
+/**
+ * Clase para control de utilidades 
+ * 
+ * @author joseanor
+ *
+ */
 class Utils {
 	
 	/**
@@ -14,6 +20,12 @@ class Utils {
 	 * @var string
 	 */
 	const CHCK_IDENT_REG = "/^([a-zA-Z]{2,3})-([0-9]{4,12})$/";
+	
+	/**
+	 * Expresion para indicar que es un texto alfabetico
+	 * @var string
+	 */
+	const CHCK_ALPHA_REG = "/^(([A-Za-zÁÉÍÓÚÜÑáéíóúüñ]+)(\s)?)+$/";
 	
 	/**
 	 * Constante que define cualquier separador de datos (correo, telefono)
@@ -38,6 +50,15 @@ class Utils {
 	 */
 	public static function checkEmail(string $value) {
 		return Utils::checkDataSeparator(self::CHCK_EMAIL_REG, $value);
+	}
+	
+	/**
+	 * Determina si el valor corresponde a un texto alfabetico
+	 * @param string $value
+	 * @return bool
+	 */
+	public static function checkAlphabetic(string $value) {
+		return preg_match(self::CHCK_ALPHA_REG, $value);
 	}
 
 	/**
