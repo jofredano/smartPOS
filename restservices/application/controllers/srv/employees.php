@@ -20,6 +20,7 @@ class employees extends PathRestController {
 	
 	const MESSAGE_ATTRIB = 'mensaje';
 	
+
 	function __construct() {
 		parent::__construct();
 		$this->load->database();
@@ -134,8 +135,10 @@ class employees extends PathRestController {
 				};
 				//Se realiza proceso de creacion del empleado
 				//1. Se verifica que el usuario logueado puede realizar esta operacion
-				$codeStatus = $this->checkProfile($token, 'EMPLEADO.CREAR', $this->db, $callback);
-				if ($codeStatus == REST_Controller::HTTP_OK) {
+				$status = $this->checkProfile($token, 'EMPLEADO.CREAR', $this->db, $callback);
+				//Verifica si efectivamente se creo el empleado
+				if ($status > 0) {
+					$codeStatus = REST_Controller::HTTP_OK;
 					$output = "Se creo el empleado de manera exitosa";
 				}
 			} catch (Exception $e) {
