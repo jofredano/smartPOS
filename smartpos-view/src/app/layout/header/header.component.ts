@@ -42,6 +42,10 @@ export class HeaderComponent implements OnInit, OnDestroy {
   windowClose() {
     window.close();
   }
+  
+  haveAccess(): boolean {
+      return this.identityService.haveAccess();
+  }
 
 }
 

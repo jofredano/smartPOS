@@ -3,7 +3,7 @@ defined('BASEPATH') || exit('No direct script access allowed');
 require APPPATH . 'libraries/base/rest-controller.inc.php';
 
 use Restserver\Libraries\REST_Controller;
-use domain\transfer\DTOMenu;
+use domain\transfer\dto\DTOMenu;
 
 /**
  * Implementacion de recursos a menus

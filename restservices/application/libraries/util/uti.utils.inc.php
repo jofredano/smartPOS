@@ -35,9 +35,9 @@ class Utils {
 	
 	/**
 	 * Aplica funcionalidad para determinar si el valor es nulo (sino entrega valor por defecto)
-	 * @param  $value	Valor a verificar
-	 * @param  $default	Valor por defecto a asignar (si el primer parametro es nulo)
-	 * @return unknown
+	 * @param  $value	
+	 * @param  $default	
+	 * @return object
 	 */
 	public static function nvl($value, $default) {
 		return (isset($value))?$value:$default;

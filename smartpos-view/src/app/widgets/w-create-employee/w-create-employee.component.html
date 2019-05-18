@@ -1,64 +1,119 @@
-<div class="panel callout radius">
-  <h5>This is a callout panel.</h5>
-  <p>It's a little ostentatious, but useful for important content.</p>
+<div class="card">
+  <div class="card-header">
+    <h4>Contratando un nuevo empleado</h4>
+  </div>
+  <div class="card-body">
+	<form class="card-text needs-validation" novalidate [formGroup]="employeecreate" (ngSubmit)="create()">
+	  <div class="form-row">
+	    <div class="form-group col-md-6">
+	      <label for="name">Nombres del empleado</label>
+	      <input type="text" class="form-control" id="name" placeholder="Richard" formControlName="name" required>
+	      <div class="invalid-feedback">
+	        Please enter a message in the textarea.
+	      </div>
+	    </div>
+	    <div class="form-group col-md-6">
+	      <label for="lastname">Apellidos del empleado</label>
+	      <input type="text" class="form-control" id="lastname" placeholder="Mojica" formControlName="lastname" required>
+	      <div class="invalid-feedback">
+	        Please enter a message in the textarea.
+	      </div>
+	    </div>
+	  </div>
+	  <div class="form-row">
+	    <div class="form-group col-md-6">
+	      <label for="birth">Fecha de nacimiento</label>
+	      <input type="date" class="form-control" id="birth" formControlName="birth" required>
+	      <div class="invalid-feedback">
+	        Please enter a message in the textarea.
+	      </div>
+	    </div>
+	    <div class="form-group col-md-6">
+	      <label for="bothcity">Ciudad de nacimiento</label>
+	      <input type="text" class="form-control" id="bothcity" formControlName="bothcity" placeholder="Bogota" required>
+	      <div class="invalid-feedback">
+	        Please enter a message in the textarea.
+	      </div>
+	    </div>
+	  </div>
+	  <div class="form-group">
+	    <label for="address">Direcciones</label>
+	    <input type="text" class="form-control" id="address" formControlName="address" placeholder="1234 Main St" required>
+	    <div class="invalid-feedback">
+	        Please enter a message in the textarea.
+	    </div>
+	  </div>
+	  <div class="form-group">
+	    <label for="phones">Teléfonos de contacto</label>
+	    <input type="text" class="form-control" id="phones" formControlName="phones" placeholder="245678" required>
+	    <div class="invalid-feedback">
+	        Please enter a message in the textarea.
+	    </div>
+	  </div>
+	  <div class="form-group">
+	    <label for="mail">Correos electrónicos</label>
+	    <input type="text" class="form-control" id="mail" formControlName="mail" placeholder="mirandavelez@hotmail.com">
+	    <div class="invalid-feedback">
+	        Please enter a message in the textarea.
+	    </div>
+	  </div>
+	  <div class="form-row">
+	    <div class="form-group col-md-6">
+	      <label for="contractType">Tipo de contrato</label>
+	      <select id="contractType" formControlName="contractType" class="form-control">
+	          <option value="husker">Temporal</option>
+	          <option value="starbuck">Indefinido</option>
+	      </select>
+	    </div>
+	    <div class="form-group col-md-6">
+	      <label for="contractNumber">Número de contrato</label>
+	      <input type="text" class="form-control" id="contractNumber" formControlName="contractNumber" placeholder="456799">
+	    </div>
+	  </div>
+	  <div class="form-row">
+	    <div class="form-group col-md-6">
+	      <label for="contractBegin">Fecha de inicio (contrato)</label>
+	      <input type="date" class="form-control" id="contractBegin" formControlName="contractBegin">
+	    </div>
+	    <div class="form-group col-md-6">
+	      <label for="contractEnd">Fecha final (contrato)</label>
+	      <input type="date" class="form-control" id="contractEnd" formControlName="contractEnd">
+	    </div>
+	  </div>
+	  <div class="form-group">
+	    <label for="userName">Nombre de usuario</label>
+	    <input type="text" class="form-control" id="userName" formControlName="userName" placeholder="richmoj233" required>
+	    <div class="invalid-feedback">
+	        Please enter a message in the textarea.
+	    </div>
+	  </div>
+	  <div class="form-row">
+	    <div class="form-group col-md-6">
+	      <label for="password1">Contraseña</label>
+	      <input type="password" class="form-control" id="password1" formControlName="password1" placeholder="Clave" required>
+		  <div class="invalid-feedback">
+		      Please enter a message in the textarea.
+		  </div>
+	    </div>
+	    <div class="form-group col-md-6">
+	      <label for="password2">Contraseña (confirmar)</label>
+	      <input type="password" class="form-control" id="password2" formControlName="password2" placeholder="Repetir clave" required>
+		  <div class="invalid-feedback">
+		      Please enter a message in the textarea.
+		  </div>
+	    </div>
+	  </div>
+	  
+	  <div class="form-group row">
+	    <div class="form-group col-md-6">
+	      <button type="submit" class="btn btn-primary" [disabled]="!employeecreate.valid">Crear</button>
+	    </div>
+	    <div class="form-group col-md-6">
+	      <button type="button" class="btn btn-primary">Limpiar</button>
+	    </div>
+	  </div>
+	  
+	</form>
+  </div>
 </div>
 
-<form data-abide>
-  <div class="row">
-    <div class="large-6 columns">
-      <label>Nombres del empleado
-        <input type="text" placeholder="large-6.columns" />
-      </label>
-    </div>
-    <div class="large-6 columns">
-      <label>Apellidos del empleado
-        <input type="text" placeholder="large-6.columns" />
-      </label>
-    </div>
-  </div>
-  <div class="row">
-    <div class="large-12 columns">
-      <label>Fecha de nacimiento
-        <input type="date" placeholder="large-12.columns" />
-      </label>
-    </div>
-  </div>
-  <div class="row">
-    <div class="large-12 columns">
-      <label>Direccion del empleado
-        <input type="text" placeholder="large-12.columns" />
-      </label>
-    </div>
-  </div>
-  <div class="row">
-    <div class="large-6 columns">
-      <label>Telefonos del empleado
-        <input type="text" placeholder="large-6.columns" />
-      </label>
-    </div>
-    <div class="large-6 columns">
-      <label>Correos electronicos
-        <input type="text" placeholder="large-6.columns" />
-      </label>
-    </div>
-  </div>
-  <div class="row">
-    <div class="large-12 columns">
-      <label>Tipo de contrato
-        <select>
-          <option value="husker">Husker</option>
-          <option value="starbuck">Starbuck</option>
-          <option value="hotdog">Hot Dog</option>
-          <option value="apollo">Apollo</option>
-        </select>
-      </label>
-    </div>
-  </div>
-  <div class="row">
-    <div class="large-12 columns">
-      <label>Textarea Label
-        <textarea placeholder="small-12.columns"></textarea>
-      </label>
-    </div>
-  </div>
-</form>

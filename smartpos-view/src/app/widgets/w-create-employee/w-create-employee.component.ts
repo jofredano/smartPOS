@@ -14,13 +14,23 @@ import { Router } from "@angular/router";
 })
 export class WCreateEmployeeComponent implements OnInit, OnDestroy {
     
+    employeecreate:FormGroup;
+    
     constructor(private router: Router, private firewallService: FirewallService) {}
     
     ngOnInit(): void {
       //Implementacion cuando se intente destruir el componente
+        this.employeecreate = new FormGroup({
+            name: new FormControl()
+            //incluir los demas campos....
+        });
     }
 
     ngOnDestroy(): void {
         //Implementacion cuando se intente destruir el componente
+    }
+    
+    create(): void {
+        
     }
 }

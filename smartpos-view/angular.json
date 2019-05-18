@@ -27,13 +27,13 @@
               "src/assets"
             ],
             "styles": [
-              "./node_modules/foundation-sites/dist/css/foundation.min.css",
-              "./node_modules/ngx-foundation/dist/scss/ngx-foundation.scss",
-              "./node_modules/ngx-foundation/dist/css/ngx-foundation.min.css",
+              "./node_modules/foundation-apps/scss/foundation.scss",
+              "./node_modules/bootstrap/dist/css/bootstrap.css",
+              "./node_modules/font-awesome/css/font-awesome.css",
               "src/styles.scss"
             ],
             "scripts": [
-               "./node_modules/foundation-sites/dist/js/foundation.min.js"
+               
             ],
             "es5BrowserSupport": true
           },

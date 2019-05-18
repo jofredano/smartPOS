@@ -1,5 +1,6 @@
 <div class="sidebar">
-    <p-scrollPanel [style]="{height: '100%'}">
+  <!-- 
+  <p-scrollPanel [style]="{height: '100%'}">
       <div class="sidebar-title">{{ userMenu?.name }}</div>
       <ul class="sidebar-root">
         <li class="nav-item" *ngFor="let menu of userMenu?.menuItems" [ngClass]="{'active-item': menu.active }">
@@ -17,4 +18,13 @@
         </li>
       </ul>
   </p-scrollPanel>
+  -->
+  <section class="block-list">
+	<header>Menu principal</header>
+	<ul>
+		<li class="with-chevron"><a href="#/admin/create-employee">Administracion</a></li>
+		<li class="with-chevron"><a href="#/admin/create-employee">Venta</a></li>
+		<li class="with-chevron"><a href="#/admin/create-employee">Inventario</a></li>
+	</ul>
+  </section>
 </div>

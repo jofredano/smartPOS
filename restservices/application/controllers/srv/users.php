@@ -54,6 +54,13 @@ class users extends PathRestController {
     }
     
     /**
+     * Metodo que sirve para validar si un recurso se puede acceder
+     */
+    public function resource_post() {
+        $this->set_response(true, REST_Controller::HTTP_OK);
+    }
+    
+    /**
      * Metodo que verifica si una sesion esta activa
      */
     public function check_get() {
