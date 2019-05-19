@@ -1,6 +1,6 @@
 <div class="layout">
 
-  <a href="#" id="header-menu-button" (click)="changeSidebarStatus()" *ngIf="haveAccess()" [ngClass]="{ 'header-menu-active' : menuActive }">
+  <a id="header-menu-button" (click)="changeSidebarStatus()" *ngIf="haveAccess()" [ngClass]="{ 'header-menu-active' : menuActive }">
     <i class="fa fa-angle-right arrow"></i>
     <i class="fa fa-angle-up mobile"></i>
   </a>

@@ -12,7 +12,7 @@ export const APP_ROUTES: Routes = [
     { path: '',
       component: FrameComponent,
       children: [
-         { path: '', redirectTo: 'login', pathMatch: 'full' },
+         { path: '', redirectTo: 'main', pathMatch: 'full' },
          { path: 'login' , component: LoginComponent, canActivateChild: [Authorization] },
          { path: 'main'  , component: MainComponent,  canActivateChild: [Authorization] },
          { path: 'admin' , 

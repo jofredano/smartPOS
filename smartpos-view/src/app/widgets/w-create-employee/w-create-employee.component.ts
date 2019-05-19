@@ -21,8 +21,20 @@ export class WCreateEmployeeComponent implements OnInit, OnDestroy {
     ngOnInit(): void {
       //Implementacion cuando se intente destruir el componente
         this.employeecreate = new FormGroup({
-            name: new FormControl()
-            //incluir los demas campos....
+            name            : new FormControl(),
+            lastname        : new FormControl(),
+            birth           : new FormControl(),
+            bothcity        : new FormControl(),
+            address         : new FormControl(),
+            phones          : new FormControl(),
+            mails           : new FormControl(),
+            contractType    : new FormControl(),
+            contractNumber  : new FormControl(),
+            contractBegin   : new FormControl(),
+            contractEnd     : new FormControl(),
+            userName        : new FormControl(),
+            password1       : new FormControl(),
+            password2       : new FormControl()
         });
     }
 

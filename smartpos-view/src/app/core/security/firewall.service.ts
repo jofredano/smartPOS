@@ -33,12 +33,12 @@ export class FirewallService {
     /** codigo de acceso entregado en el logueo */
     @SessionStorage() private _token: string;
     
+    /** representa el codigo unico de acceso */
+    @SessionStorage() private access: any;
+    
     /** informacion del usuario (alias, clave) */
     private _userInfo: any;
     
-    /** representa el codigo unico de acceso */
-    private access: any;
-
     /** Subject para notificar la informacion del usuario  */
     private authState = new Subject<any>();
 
@@ -152,7 +152,8 @@ export class FirewallService {
      */
     haveAccess(): boolean {
         const today:Date = new Date();
-        return this.access != null && today <= new Date(this.access.fecfin_acceso.split(' ').join('T'));
+        const result:boolean = this.access != null && today <= new Date(this.access.fecfin_acceso.split(' ').join('T'));
+        return result;
     }
 
     /**
