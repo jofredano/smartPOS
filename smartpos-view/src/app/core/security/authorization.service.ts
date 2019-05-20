@@ -46,18 +46,19 @@ export class Authorization implements CanActivate, CanActivateChild {
      */
     doActivate(state: RouterStateSnapshot): Promise<boolean> {
         return new Promise(resolver => {
-            //Hay que hacer lo siguiente
             //1. Si la ruta a la que se quiere acceder es de login y no tiene acceso (debe pasarla)
             //2. Si la ruta es diferente a login debe preguntar si esta autorizado   (preguntar si debe pasar)
             const mustRedirect = !this.firewall.haveAccess() && (state.url != '/main/login');
+            //Verficia que sea /main/login para que se cambie por /main/home
+            let urlPath        = (this.firewall.haveAccess() && (state.url == '/main/login'))?'/main/home':state.url.substring(1);
             //Validar consola
-            console.log('Ruta => ' + state.url + ' -> ' + mustRedirect);
+            console.log('Ruta => ' + urlPath + ' -> ' + mustRedirect);
             //Debe verificar si se debe redireccionar
             if (mustRedirect) {
                 //Aqui debe estar el problema
                 this.router.navigate(['main/login']);
             } else {
-                this.checkAuthorization(state.url.substring(1), resolver);                
+                this.checkAuthorization(urlPath, resolver);                
             }
         });
     }
@@ -68,16 +69,18 @@ export class Authorization implements CanActivate, CanActivateChild {
      * @param resolver permite que se pueda completar el promise.
      */
     checkAuthorization(url: string, resolver: Function) {
-        console.log( 'Autoriza -> ' + url );
-        this.firewall.isAuthorized(url).subscribe(res => {
-            if (!res) {
-               this.router.navigate(['access-denied']);
-            }
-            resolver(res);
-        }, error => {
-            this.router.navigate(['access-denied']);
-            resolver(false);
-        });
+        if (url != '/main/login') {
+            this.firewall.isAuthorized(url).subscribe(res => {
+                if (!res) {
+                   this.router.navigate(['access-denied']);
+                } else {
+                   resolver(res);
+                }
+            }, error => {
+                this.router.navigate(['access-denied']);
+                resolver(false);
+            }); 
+        }
     }
 
 }
