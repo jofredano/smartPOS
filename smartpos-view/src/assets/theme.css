@@ -210,7 +210,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .header-menu-active .app-content-wrapper {
-    margin-left: 200px;
+    margin-left: 250px;
 }
 
 @media(max-width: 1024px){
@@ -362,10 +362,10 @@ ul.usermenu-active {
     z-index: 999;
     position: fixed;
     height: 100%;
-    margin-left: -200px;
+    margin-left: -250px;
     overflow-y: auto;
     box-shadow: 1px 3px 3px rgba(0, 0, 0, 0.12);
-    width: 200px;
+    width: 250px;
 
     -webkit-transition: margin-left 0.3s;
     -moz-transition: margin-left 0.3s;

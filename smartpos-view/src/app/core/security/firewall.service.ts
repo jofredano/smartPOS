@@ -7,7 +7,9 @@ import { share } from 'rxjs/operators';
 /**
  *  Servicio usado para seguridad de la aplicacion
  */
-@Injectable()
+@Injectable({
+  providedIn: 'root'
+})
 export class FirewallService {
 
     /**
@@ -34,7 +36,7 @@ export class FirewallService {
     @SessionStorage() private _token: string;
     
     /** representa el codigo unico de acceso */
-    @SessionStorage() private access: any;
+    @SessionStorage() private _access: any;
     
     /** informacion del usuario (alias, clave) */
     private _userInfo: any;
@@ -65,19 +67,16 @@ export class FirewallService {
     }
     
     /**
-     * Esta función se encarga de verificar el acceso del usuario
-     * a traves del codigo de acceso asignado
+     * Metodo que verifica si el token es valido
+     * @param token     Codigo del token a validar
+     * @param callback  Funcion callback si se requiere
      */
-    refreshAccessInfo() {
-        this.applyAccessToken( this._token, function() {} );
-    }
-    
     applyAccessToken(token: string, callback : Function) {
         this.http.get(FirewallService.CONTEXT + FirewallService.SECURITY_ACCES_INFO, 
              this.prepareHeaderRequest(token))
              .subscribe(access => {
                  this.authState.next(access);
-                 this.access = access;
+                 this._access = access;
                  callback( access );
              }, error => {
                  callback( null );
@@ -111,13 +110,18 @@ export class FirewallService {
      * Esta funcion invoca el logout completo del sistema, aqui si se cierra la sesion y el usuario debería ingresar sus
      * credenciales si desea volver a ingresar.
      */
-    fullLogout() {
+    fullLogout(): void {
         //Debe invocar el recurso para cerrar sesion
+        const self = this;
         this.http.get(
             FirewallService.CONTEXT + FirewallService.SECURITY_CLOSE_ACCE, 
-            this.prepareHeaderRequest(this._token));
-        // es necesario limpiar el sessionStorage
-        this.clearObserverForLogin();
+            this.prepareHeaderRequest(this._token))
+            .subscribe(access => {
+                self.clearObserverForLogin();
+            }, error => {
+                self.clearObserverForLogin();
+                console.log(error);
+            });
     }
     
     /**
@@ -139,9 +143,10 @@ export class FirewallService {
     getAccessInfo(): Observable<any> {
         const self = this;
         setTimeout(function() {
-            //Agregar logica para no realizar tantas veces 
-            //La pregunta del acceso
-            self.refreshAccessInfo();
+            //Agregar logica para no realizar tantas veces La pregunta del acceso
+            self.applyAccessToken( this._token, function(access) {
+                console.log( access );
+            });
         }, 500);
         return this.authState.asObservable();
     }
@@ -152,7 +157,7 @@ export class FirewallService {
      */
     haveAccess(): boolean {
         const today:Date = new Date();
-        const result:boolean = this.access != null && today <= new Date(this.access.fecfin_acceso.split(' ').join('T'));
+        const result:boolean = this._access != null && today <= new Date(this._access.fecfin_acceso.split(' ').join('T'));
         return result;
     }
 
@@ -161,8 +166,9 @@ export class FirewallService {
      * de esta forma se puede hacer refresh de dicha información solicitandola al backend
      */
     clearObserverForLogin() {
-        this.access = null;
+        this._access    = null;
         this._userInfo = null;
+        this._token    = null;
     }
     
     get userInfo(): any {

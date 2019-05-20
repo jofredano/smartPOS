@@ -12,9 +12,13 @@ export const APP_ROUTES: Routes = [
     { path: '',
       component: FrameComponent,
       children: [
-         { path: '', redirectTo: 'main', pathMatch: 'full' },
-         { path: 'login' , component: LoginComponent, canActivateChild: [Authorization] },
-         { path: 'main'  , component: MainComponent,  canActivateChild: [Authorization] },
+         { path: ''      , redirectTo: 'main/resume' , pathMatch: 'full' },
+         { path: 'main' , 
+             children: [
+                { path: 'resume', component: MainComponent  },
+                { path: 'login' , component: LoginComponent },
+             ], 
+             canActivateChild: [Authorization] },
          { path: 'admin' , 
              children: [
                 { path: 'create-employee' , component: WCreateEmployeeComponent }
@@ -25,6 +29,6 @@ export const APP_ROUTES: Routes = [
     // errors
     { path: 'access-denied', component: Error403Component},
     // Not found
-    { path: '**', redirectTo: 'login' }
+    { path: '**', redirectTo: 'main/login' }
 
 ];

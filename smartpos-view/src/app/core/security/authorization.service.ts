@@ -6,7 +6,9 @@ import { FirewallService } from './firewall.service';
 /**
  * Servicio que controla la autorizacion de los componentes
  */
-@Injectable()
+@Injectable({
+  providedIn: 'root'
+})
 export class Authorization implements CanActivate, CanActivateChild {
 
     /**
@@ -44,10 +46,18 @@ export class Authorization implements CanActivate, CanActivateChild {
      */
     doActivate(state: RouterStateSnapshot): Promise<boolean> {
         return new Promise(resolver => {
-            if (!this.firewall.haveAccess()) {
-                this.router.navigate(['login']);
+            //Hay que hacer lo siguiente
+            //1. Si la ruta a la que se quiere acceder es de login y no tiene acceso (debe pasarla)
+            //2. Si la ruta es diferente a login debe preguntar si esta autorizado   (preguntar si debe pasar)
+            const mustRedirect = !this.firewall.haveAccess() && (state.url != '/main/login');
+            //Validar consola
+            console.log('Ruta => ' + state.url + ' -> ' + mustRedirect);
+            //Debe verificar si se debe redireccionar
+            if (mustRedirect) {
+                //Aqui debe estar el problema
+                this.router.navigate(['main/login']);
             } else {
-                this.checkAuthorization(state.url.substring(1), resolver);
+                this.checkAuthorization(state.url.substring(1), resolver);                
             }
         });
     }
@@ -58,6 +68,7 @@ export class Authorization implements CanActivate, CanActivateChild {
      * @param resolver permite que se pueda completar el promise.
      */
     checkAuthorization(url: string, resolver: Function) {
+        console.log( 'Autoriza -> ' + url );
         this.firewall.isAuthorized(url).subscribe(res => {
             if (!res) {
                this.router.navigate(['access-denied']);

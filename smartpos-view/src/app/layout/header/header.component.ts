@@ -2,6 +2,7 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { SidebarService } from '../../core/sidebar';
 import { FirewallService } from '../../core/security';
+import { Router } from "@angular/router";
 
 /**
  * Componente para renderizar el encabezado de la aplicación
@@ -19,7 +20,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
   private sidebarSuscription: Subscription;
 
-  constructor(private sidebarService: SidebarService, private identityService: FirewallService) {}
+  constructor(private router: Router, private sidebarService: SidebarService, private identityService: FirewallService) {}
 
   ngOnInit(): void {
     this.sidebarSuscription = this.sidebarService.onStatusChanged(status => this.menuActive = status);
@@ -43,8 +44,9 @@ export class HeaderComponent implements OnInit, OnDestroy {
     window.close();
   }
   
-  haveAccess(): boolean {
-      return this.identityService.haveAccess();
+  checkAccess(): boolean {
+      const validated = this.identityService.haveAccess();
+      return validated;
   }
 
 }

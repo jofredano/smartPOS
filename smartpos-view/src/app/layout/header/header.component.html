@@ -1,13 +1,13 @@
 <div class="layout">
 
-  <a id="header-menu-button" (click)="changeSidebarStatus()" *ngIf="haveAccess()" [ngClass]="{ 'header-menu-active' : menuActive }">
+  <a id="header-menu-button" (click)="changeSidebarStatus()" *ngIf="checkAccess()" [ngClass]="{ 'header-menu-active' : menuActive }">
     <i class="fa fa-angle-right arrow"></i>
     <i class="fa fa-angle-up mobile"></i>
   </a>
 
   <span class="topbar-title textwhite">Aplicación para punto de venta</span>
 
-  <a href="#" id="topbar-profile-menu-button" (click)="userMenuActive = !userMenuActive" *ngIf="haveAccess()">
+  <a id="topbar-profile-menu-button" (click)="userMenuActive = !userMenuActive" *ngIf="checkAccess()">
     <div id="topbar-name-container">
       <span id="topbar-name">{{ user?.fullName }}</span>
       <span id="topbar-last-access">Ingreso: {{ user?.lastAccess }}</span>
@@ -27,7 +27,7 @@
       </a>
     </li>
     <li>
-      <a id="logout" href="#" (click)="userMenuActive = false; fullLogout();">
+      <a id="logout" (click)="userMenuActive = false; fullLogout();">
         <i class="fa fa-fw fa-sign-out"></i>
         <span class="topbar-item-name">Cerrar Sesion</span>
       </a>
