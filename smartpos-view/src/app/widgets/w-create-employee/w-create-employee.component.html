@@ -1,20 +1,20 @@
 <div class="card">
   <div class="card-header">
-    <h4>Contratando un nuevo empleado</h4>
+    <h4>{{lblTittleForm}}</h4>
   </div>
   <div class="card-body">
-	<form class="card-text needs-validation" novalidate [formGroup]="employeecreate" (ngSubmit)="create()">
+	<form class="card-text needs-validation" novalidate #employeecreate="ngForm" (ngSubmit)="create()">
 	  <div class="form-row">
 	    <div class="form-group col-md-6">
-	      <label for="name">Nombres del empleado</label>
-	      <input type="text" class="form-control" id="name" placeholder="Richard" formControlName="name" required>
+	      <label for="name">{{lblInputName}}</label>
+	      <input type="text" class="form-control" id="name" name="name" placeholder="Richard" [(ngModel)]="employee.name" required>
 	      <div class="invalid-feedback">
 	        Please enter a message in the textarea.
 	      </div>
 	    </div>
 	    <div class="form-group col-md-6">
-	      <label for="lastname">Apellidos del empleado</label>
-	      <input type="text" class="form-control" id="lastname" placeholder="Mojica" formControlName="lastname" required>
+	      <label for="lastname">{{lblInputLastname}}</label>
+	      <input type="text" class="form-control" id="lastname" name="lastname" placeholder="Mojica" [(ngModel)]="employee.lastname" required>
 	      <div class="invalid-feedback">
 	        Please enter a message in the textarea.
 	      </div>
@@ -22,82 +22,82 @@
 	  </div>
 	  <div class="form-row">
 	    <div class="form-group col-md-6">
-	      <label for="birth">Fecha de nacimiento</label>
-	      <input type="date" class="form-control" id="birth" formControlName="birth" required>
+	      <label for="birth">{{lblInputBirth}}</label>
+	      <input type="date" class="form-control" id="birth" name="birth" [(ngModel)]="employee.birth" required>
 	      <div class="invalid-feedback">
 	        Please enter a message in the textarea.
 	      </div>
 	    </div>
 	    <div class="form-group col-md-6">
-	      <label for="bothcity">Ciudad de nacimiento</label>
-	      <input type="text" class="form-control" id="bothcity" formControlName="bothcity" placeholder="Bogota" required>
+	      <label for="bothcity">{{lblInputBothCity}}</label>
+	      <input type="text" class="form-control" id="bothcity" name="bothcity" [(ngModel)]="employee.bothcity" placeholder="Bogota" required>
 	      <div class="invalid-feedback">
 	        Please enter a message in the textarea.
 	      </div>
 	    </div>
 	  </div>
 	  <div class="form-group">
-	    <label for="address">Direcciones</label>
-	    <input type="text" class="form-control" id="address" formControlName="address" placeholder="1234 Main St" required>
+	    <label for="address">{{lblInputAddress}}</label>
+	    <input type="text" class="form-control" id="address" name="address" [(ngModel)]="employee.address" placeholder="1234 Main St" required>
 	    <div class="invalid-feedback">
 	        Please enter a message in the textarea.
 	    </div>
 	  </div>
 	  <div class="form-group">
-	    <label for="phones">Teléfonos de contacto</label>
-	    <input type="text" class="form-control" id="phones" formControlName="phones" placeholder="245678" required>
+	    <label for="phones">{{lblInputPhones}}</label>
+	    <input type="text" class="form-control" id="phones" name="phones" [(ngModel)]="employee.phones" placeholder="245678" required>
 	    <div class="invalid-feedback">
 	        Please enter a message in the textarea.
 	    </div>
 	  </div>
 	  <div class="form-group">
-	    <label for="mails">Correos electrónicos</label>
-	    <input type="text" class="form-control" id="mails" formControlName="mails" placeholder="mirandavelez@hotmail.com">
+	    <label for="mails">{{lblInputMails}}</label>
+	    <input type="text" class="form-control" id="mails" name="mails" [(ngModel)]="employee.mails" placeholder="mirandavelez@hotmail.com">
 	    <div class="invalid-feedback">
 	        Please enter a message in the textarea.
 	    </div>
 	  </div>
 	  <div class="form-row">
 	    <div class="form-group col-md-6">
-	      <label for="contractType">Tipo de contrato</label>
-	      <select id="contractType" formControlName="contractType" class="form-control">
+	      <label for="contractType">{{lblInputContractType}}</label>
+	      <select id="contractType" name="contractType" [(ngModel)]="employee.contract.type" class="form-control">
 	          <option value="husker">Temporal</option>
 	          <option value="starbuck">Indefinido</option>
 	      </select>
 	    </div>
 	    <div class="form-group col-md-6">
-	      <label for="contractNumber">Número de contrato</label>
-	      <input type="text" class="form-control" id="contractNumber" formControlName="contractNumber" placeholder="456799">
+	      <label for="contractNumber">{{lblInputContractNumber}}</label>
+	      <input type="text" class="form-control" name="contractNumber" id="contractNumber" [(ngModel)]="employee.contract.number" placeholder="456799">
 	    </div>
 	  </div>
 	  <div class="form-row">
 	    <div class="form-group col-md-6">
-	      <label for="contractBegin">Fecha de inicio (contrato)</label>
-	      <input type="date" class="form-control" id="contractBegin" formControlName="contractBegin">
+	      <label for="contractBegin">{{lblInputContractBegin}}</label>
+	      <input type="date" class="form-control" name="contractBegin" id="contractBegin" [(ngModel)]="employee.contract.begin">
 	    </div>
 	    <div class="form-group col-md-6">
-	      <label for="contractEnd">Fecha final (contrato)</label>
-	      <input type="date" class="form-control" id="contractEnd" formControlName="contractEnd">
+	      <label for="contractEnd">{{lblInputContractEnd}}</label>
+	      <input type="date" class="form-control" name="contractEnd" id="contractEnd" [(ngModel)]="employee.contract.end">
 	    </div>
 	  </div>
 	  <div class="form-group">
-	    <label for="userName">Nombre de usuario</label>
-	    <input type="text" class="form-control" id="userName" formControlName="userName" placeholder="richmoj233" required>
+	    <label for="userName">{{lblInputUsername}}</label>
+	    <input type="text" class="form-control" name="username" id="username" [(ngModel)]="employee.user.name" placeholder="richmoj233" required>
 	    <div class="invalid-feedback">
 	        Please enter a message in the textarea.
 	    </div>
 	  </div>
 	  <div class="form-row">
 	    <div class="form-group col-md-6">
-	      <label for="password1">Contraseña</label>
-	      <input type="password" class="form-control" id="password1" formControlName="password1" placeholder="Clave" required>
+	      <label for="password1">{{lblInputUserpasswd}}</label>
+	      <input type="password" class="form-control" name="password1" id="password1" [(ngModel)]="employee.user.password1" placeholder="Clave" required>
 		  <div class="invalid-feedback">
 		      Please enter a message in the textarea.
 		  </div>
 	    </div>
 	    <div class="form-group col-md-6">
-	      <label for="password2">Contraseña (confirmar)</label>
-	      <input type="password" class="form-control" id="password2" formControlName="password2" placeholder="Repetir clave" required>
+	      <label for="password2">{{lblInputUserpasswdConfirm}}</label>
+	      <input type="password" class="form-control" name="password2" id="password2" [(ngModel)]="employee.user.password2" placeholder="Repetir clave" required>
 		  <div class="invalid-feedback">
 		      Please enter a message in the textarea.
 		  </div>
@@ -105,11 +105,9 @@
 	  </div>
 	  
 	  <div class="form-group row">
-	    <div class="form-group col-md-6">
-	      <button type="submit" class="btn btn-primary" [disabled]="!employeecreate.valid">Crear</button>
-	    </div>
-	    <div class="form-group col-md-6">
-	      <button type="button" class="btn btn-primary">Limpiar</button>
+	    <div class="form-group col-md-12 text-center">
+	      	<button type="submit" class="btn btn-primary" [disabled]="!employeecreate.valid">{{lblButtonCreate}}</button>
+	    	<button type="button" class="btn btn-primary">{{lblButtonClean}}</button>
 	    </div>
 	  </div>
 	  
