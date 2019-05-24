@@ -6,6 +6,25 @@
 	<form class="card-text needs-validation" novalidate #employeecreate="ngForm" (ngSubmit)="create()">
 	  <div class="form-row">
 	    <div class="form-group col-md-6">
+	      <label for="idtype">{{lblInputIdType}}</label>
+	      <select id="idtype" name="idtype" [(ngModel)]="employee.id.type" class="form-control">
+	         <option value="CC">Cedula de ciudadania</option>
+	         <option value="RUT">Registro Unico Tributario</option>
+	      </select>
+	      <div class="invalid-feedback">
+	        Please enter a message in the textarea.
+	      </div>
+	    </div>
+	    <div class="form-group col-md-6">
+	      <label for="idnumber">{{lblInputIdNumber}}</label>
+	      <input type="text" class="form-control" id="idnumber" name="idnumber" placeholder="15651771" [(ngModel)]="employee.id.number" required>
+	      <div class="invalid-feedback">
+	        Please enter a message in the textarea.
+	      </div>
+	    </div>
+	  </div>
+	  <div class="form-row">
+	    <div class="form-group col-md-6">
 	      <label for="name">{{lblInputName}}</label>
 	      <input type="text" class="form-control" id="name" name="name" placeholder="Richard" [(ngModel)]="employee.name" required>
 	      <div class="invalid-feedback">
@@ -36,12 +55,21 @@
 	      </div>
 	    </div>
 	  </div>
-	  <div class="form-group">
-	    <label for="address">{{lblInputAddress}}</label>
-	    <input type="text" class="form-control" id="address" name="address" [(ngModel)]="employee.address" placeholder="1234 Main St" required>
-	    <div class="invalid-feedback">
-	        Please enter a message in the textarea.
-	    </div>
+	  <div class="form-row">
+		  <div class="form-group col-md-6">
+		    <label for="address">{{lblInputAddress}}</label>
+		    <input type="text" class="form-control" id="address" name="address" [(ngModel)]="employee.address" placeholder="1234 Main St" required>
+		    <div class="invalid-feedback">
+		        Please enter a message in the textarea.
+		    </div>
+		  </div>
+		  <div class="form-group col-md-6">
+		    <label for="city">{{lblInputCity}}</label>
+		    <input type="text" class="form-control" id="city" name="city" [(ngModel)]="employee.city" placeholder="Bogota" required>
+		    <div class="invalid-feedback">
+		        Please enter a message in the textarea.
+		    </div>
+		  </div>
 	  </div>
 	  <div class="form-group">
 	    <label for="phones">{{lblInputPhones}}</label>
@@ -96,7 +124,7 @@
 		  </div>
 	    </div>
 	    <div class="form-group col-md-6">
-	      <label for="password2">{{lblInputUserpasswdConfirm}}</label>
+	      <label for="password2">{{lblInputUserpasswdCon}}</label>
 	      <input type="password" class="form-control" name="password2" id="password2" [(ngModel)]="employee.user.password2" placeholder="Repetir clave" required>
 		  <div class="invalid-feedback">
 		      Please enter a message in the textarea.
@@ -106,8 +134,8 @@
 	  
 	  <div class="form-group row">
 	    <div class="form-group col-md-12 text-center">
-	      	<button type="submit" class="btn btn-primary" [disabled]="!employeecreate.valid">{{lblButtonCreate}}</button>
-	    	<button type="button" class="btn btn-primary">{{lblButtonClean}}</button>
+	      	<button type="submit" class="btn btn-primary btn-space" [disabled]="!employeecreate.valid">{{lblButtonCreate}}</button>
+	    	<button type="reset"  class="btn btn-primary">{{lblButtonClean}}</button>
 	    </div>
 	  </div>
 	  

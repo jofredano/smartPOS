@@ -17,6 +17,10 @@ export class WCreateEmployeeComponent implements OnInit, OnDestroy {
     
     private _lblTittleForm: string;
 
+    private _lblInputIdType: string;
+
+    private _lblInputIdNumber: string;
+
     private _lblInputName: string;
 
     private _lblInputLastname: string;
@@ -26,6 +30,8 @@ export class WCreateEmployeeComponent implements OnInit, OnDestroy {
     private _lblInputBothCity: string;
     
     private _lblInputAddress: string;
+
+    private _lblInputCity: string;
     
     private _lblInputPhones: string;
     
@@ -43,13 +49,17 @@ export class WCreateEmployeeComponent implements OnInit, OnDestroy {
     
     private _lblInputUserpasswd: string;
     
-    private _lblInputUserpasswdConfirm: string;
+    private _lblInputUserpasswdCon: string;
     
     private _lblButtonCreate: string;
     
     private _lblButtonClean: string;
 
     private _employee: DTOEmployee = {
+        id: {
+            type: '',
+            number: ''
+        },
         name: '',
         lastname: '',
         birth: null,
@@ -66,16 +76,28 @@ export class WCreateEmployeeComponent implements OnInit, OnDestroy {
         }
     };
 
-    constructor(private router: Router, private firewallService: FirewallService) {}
+    constructor(private router: Router, private firewallService: FirewallService) {
+        this.initLabels();
+    }
     
     ngOnInit(): void {
         //Implementacion cuando se intente destruir el componente
+    }
+
+    ngOnDestroy(): void {
+        //Implementacion cuando se intente destruir el componente
+    }
+    
+    initLabels(): void {
         this.lblTittleForm              = 'Contratando un nuevo empleado';
+        this.lblInputIdType             = 'Tipo de identificación';
+        this.lblInputIdNumber           = 'Número de identificación';
         this.lblInputName               = 'Nombres del empleado';
         this.lblInputLastname           = 'Apellidos del empleado';
         this.lblInputBirth              = 'Fecha de nacimiento';
         this.lblInputBothCity           = 'Ciudad de nacimiento';
         this.lblInputAddress            = 'Direcciones';
+        this.lblInputCity               = 'Ciudad de residencia';
         this.lblInputPhones             = 'Teléfonos de contacto';
         this.lblInputMails              = 'Correos electrónicos';
         this.lblInputContractType       = 'Tipo de contrato';
@@ -84,13 +106,9 @@ export class WCreateEmployeeComponent implements OnInit, OnDestroy {
         this.lblInputContractEnd        = 'Fecha final (contrato)';
         this.lblInputUsername           = 'Nombre de usuario';
         this.lblInputUserpasswd         = 'Contraseña';
-        this.lblInputUserpasswdConfirm  = 'Contraseña (confirmar)';
+        this.lblInputUserpasswdCon      = 'Contraseña (confirmar)';
         this.lblButtonCreate            = 'Crear';
-        this.lblButtonClean             = 'Limpiar';
-    }
-
-    ngOnDestroy(): void {
-        //Implementacion cuando se intente destruir el componente
+        this.lblButtonClean             = 'Limpiar';        
     }
     
     create(): void {
@@ -99,6 +117,12 @@ export class WCreateEmployeeComponent implements OnInit, OnDestroy {
     
     get lblTittleForm(): string {
         return this._lblTittleForm;
+    }
+    get lblInputIdType(): string {
+        return this._lblInputIdType;
+    }
+    get lblInputIdNumber(): string {
+        return this._lblInputIdNumber;
     }
     get lblInputName(): string {
         return this._lblInputName;
@@ -114,6 +138,9 @@ export class WCreateEmployeeComponent implements OnInit, OnDestroy {
     }
     get lblInputAddress(): string {
         return this._lblInputAddress;
+    }
+    get lblInputCity(): string {
+        return this._lblInputCity;
     }
     get lblInputPhones(): string {
         return this._lblInputPhones;
@@ -139,8 +166,8 @@ export class WCreateEmployeeComponent implements OnInit, OnDestroy {
     get lblInputUserpasswd(): string  {
         return this._lblInputUserpasswd;
     }
-    get lblInputUserpasswdConfirm(): string {
-        return this._lblInputUserpasswdConfirm;
+    get lblInputUserpasswdCon(): string {
+        return this._lblInputUserpasswdCon;
     }
     get lblButtonCreate(): string {
         return this._lblButtonCreate;
@@ -154,6 +181,12 @@ export class WCreateEmployeeComponent implements OnInit, OnDestroy {
 
     set lblTittleForm ( _lblTittleForm: string) { 
         this._lblTittleForm = _lblTittleForm;
+    }
+    set lblInputIdType( _lblInputIdType: string ) {
+        this._lblInputIdType = _lblInputIdType;
+    }
+    set lblInputIdNumber( _lblInputIdNumber: string ) {
+        this._lblInputIdNumber = _lblInputIdNumber;
     }
     set lblInputName ( _lblInputName: string) { 
         this._lblInputName = _lblInputName;
@@ -169,6 +202,9 @@ export class WCreateEmployeeComponent implements OnInit, OnDestroy {
     }
     set lblInputAddress ( _lblInputAddress: string) { 
         this._lblInputAddress = _lblInputAddress;
+    }
+    set lblInputCity ( _lblInputCity:string ) {
+        this._lblInputCity = _lblInputCity;
     }
     set lblInputPhones ( _lblInputPhones: string) { 
         this._lblInputPhones = _lblInputPhones;
@@ -194,8 +230,8 @@ export class WCreateEmployeeComponent implements OnInit, OnDestroy {
     set lblInputUserpasswd ( _lblInputUserpasswd: string) { 
         this._lblInputUserpasswd = _lblInputUserpasswd;
     }
-    set lblInputUserpasswdConfirm ( _lblInputUserpasswdConfirm: string) { 
-        this.lblInputUserpasswdConfirm = _lblInputUserpasswdConfirm;
+    set lblInputUserpasswdCon ( _lblInputUserpasswdCon: string) { 
+        this._lblInputUserpasswdCon = _lblInputUserpasswdCon;
     }
     set lblButtonCreate ( _lblButtonCreate: string) {
         this._lblButtonCreate = _lblButtonCreate;

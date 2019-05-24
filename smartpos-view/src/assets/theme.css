@@ -19,6 +19,10 @@ table {
   	width: 80%;
 }
 
+.btn-space {
+    margin-right: 5px;
+}
+
 td.mat-cell:first-child , th.mat-header-cell:first-child {
     padding-left: 15px !important;
     padding-right: 15px !important;

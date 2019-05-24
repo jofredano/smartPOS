@@ -1,5 +1,6 @@
 
 export interface DTOEmployee {
+  id:any;
   name:string; 
   lastname:string;
   birth:Date;

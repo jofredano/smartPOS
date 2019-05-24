@@ -67,6 +67,13 @@ export class FirewallService {
     }
     
     /**
+     * Prepara el encabezado con el token
+     */
+    prepareHeaderRequestWithToken(): any {
+        return this.prepareHeaderRequest( this._token );
+    }
+    
+    /**
      * Metodo que verifica si el token es valido
      * @param token     Codigo del token a validar
      * @param callback  Funcion callback si se requiere
@@ -156,7 +163,7 @@ export class FirewallService {
      * @returns indica si el usuario esta logueado en el sistema o no
      */
     haveAccess(): boolean {
-        const today:Date = new Date();
+        const today:Date     = new Date();
         const result:boolean = this._access != null && today <= new Date(this._access.fecfin_acceso.split(' ').join('T'));
         return result;
     }
