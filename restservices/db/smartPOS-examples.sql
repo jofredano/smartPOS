@@ -137,3 +137,12 @@ CALL smpos_prc_verificar_perfil(
 	@vou_mensaje);
 SELECT @vou_usuario, @vou_codigo, @vou_mensaje;
 
+CALL smpos_prc_obtener_categorias(
+ 	1,
+ 	NULL,
+ 	@vou_textResultSet,
+   	@vou_codigo,
+	@vou_mensaje);
+SELECT @vou_textResultSet, @vou_codigo, @vou_mensaje;
+
+	

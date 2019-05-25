@@ -143,9 +143,9 @@ class employees extends PathRestController {
 				//1. Se verifica que el usuario logueado puede realizar esta operacion
 				$status = $this->checkProfile($token, 'EMPLEADO.CREAR', $this->db, $callback);
 				//Verifica si efectivamente se creo el empleado
-				if ($status > 0) {
+				if ($status) {
 					$codeStatus = REST_Controller::HTTP_OK;
-					$output = "Se creo el empleado de manera exitosa";
+					$output     = "Se creo el empleado de manera exitosa";
 				}
 			} catch (Exception $e) {
 	            $output = $e->getMessage();

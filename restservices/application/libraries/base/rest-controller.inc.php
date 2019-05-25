@@ -43,21 +43,21 @@ class PathRestController extends REST_Controller {
 	public function checkProfile(string $token, string $profile, $database, callable $postFunction = NULL) {
 		//Procedemos a realizar llamado a base de datos
 		$output   = NULL;
-		$codeUser = 0;
+		$response = 0;
 		$database->query("CALL smpos_prc_verificar_perfil('".$token."', '".$profile."', @vou_usuario, @vou_codigo, @vou_mensaje); ");
 		$result   = $database->query("SELECT @vou_usuario AS usuario, @vou_codigo AS codigo, @vou_mensaje AS mensaje;")->result_array();
 		$output   = $result[0];
 		//Validamos si la respuesta fue exitosa
 		if ($output[self::ATTRIB_CODE] == '200') {
-			$codeUser = $output['usuario'];
+		    $response = $output;
 		} else if ($output[self::ATTRIB_CODE] == '401') {
-			$codeUser = 0;
+		    $response = NULL;
 		}
 		//Funcion que se ejecuta
 		if (!is_null($postFunction)) {
-			$postFunction($output);
+		    $response = $postFunction($output);
 		}
-		return $codeUser;
+		return $response;
 	}
 
 	/**
