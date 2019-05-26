@@ -2,8 +2,7 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HTTP_INTERCEPTORS } from '@angular/common/http';
 import { AngularWebStorageModule } from 'angular-web-storage';
-
-import { Authorization, FirewallService } from './security';
+import { Authorization, FirewallService, WidgetService } from './';
 
 import { HttpInterceptRequestService } from './http';
 
@@ -17,6 +16,7 @@ import { HttpInterceptRequestService } from './http';
   providers: [
     Authorization,
     FirewallService,
+    WidgetService,
     AngularWebStorageModule,
     { provide: HTTP_INTERCEPTORS, 
       useClass: HttpInterceptRequestService, multi: true }

@@ -992,9 +992,17 @@
 		     , cc.cat_abbreviatura
 			 , cc.cat_descripcion
 			 , cc.cat_estado
-			 , @CATEG_CODIGO := IFNULL(cc.cat_principal, 0) 
+			 , IFNULL(cc.cat_principal, 0) cat_principal 
 		FROM   smpos_sis_categorias cc 
-		WHERE IFNULL(cc.cat_principal, cc.cat_codigo) = IFNULL(@CATEG_CODIGO, @CAT_FILTRO);
+		WHERE  cc.cat_codigo    = IFNULL(@CATEG_CODIGO, @CAT_FILTRO)
+        UNION ALL
+		SELECT cc.cat_codigo
+		     , cc.cat_abbreviatura
+			 , cc.cat_descripcion
+			 , cc.cat_estado
+			 , @CATEG_CODIGO   := IFNULL(cc.cat_principal, 0) 
+		FROM   smpos_sis_categorias cc 
+		WHERE  cc.cat_principal = IFNULL(@CATEG_CODIGO, @CAT_FILTRO);
 	
 	DECLARE CONTINUE HANDLER FOR NOT FOUND 
 		SET CURSOR_DONE = TRUE;

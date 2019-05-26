@@ -1,7 +1,8 @@
 <?php 
 namespace domain\transfer\dto;
+use JsonSerializable;
 
-class DTOMenu {
+class DTOMenu implements JsonSerializable {
 
 	private $code;
 
@@ -96,6 +97,25 @@ class DTOMenu {
 
 	public function setChildren( array $children) {
 		$this->children = $children;
+	}
+	
+	
+	public function jsonSerialize() {
+	    $output = [
+	        'code'         => $this->getCode(),
+	        'tittle'       => $this->getTittle(),
+	        'name'         => $this->getName(),
+	        'abbreviation' => $this->getAbbreviation(),
+	        'description'  => $this->getDescription(),
+	        'active'       => $this->getActive(),
+	        'route'        => $this->getRoute(),
+	        'order'        => $this->getOrder(),
+	        'children'     => array()
+	    ];
+	    foreach($this->children as $childrenNode) {
+	        array_push($output['children'], $childrenNode->jsonSerialize());
+	    }
+	    return $output;
 	}
 }
 ?>

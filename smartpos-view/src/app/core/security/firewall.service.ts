@@ -3,6 +3,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { AngularWebStorageModule, SessionStorage } from 'angular-web-storage';
 import { Observable, Subject } from 'rxjs';
 import { share } from 'rxjs/operators';
+import { Constants } from '../http';
 
 /**
  *  Servicio usado para seguridad de la aplicacion
@@ -12,26 +13,6 @@ import { share } from 'rxjs/operators';
 })
 export class FirewallService {
 
-    /**
-     * Contexto de la aplicacion
-     * */
-    static readonly CONTEXT = '/smart-pos/';
-
-    /** recurso que obtiene la informacion del acceso */
-    static readonly SECURITY_ACCES_INFO = 'restservices/srv/users/check';
-    
-    /** recurso que realiza el inicio de sesion en el sistema */
-    static readonly SECURITY_LOGIN_ACCE = 'restservices/srv/users/login';
-    
-    /** recurso que realiza el cierre de sesion en el sistema */
-    static readonly SECURITY_CLOSE_ACCE = 'restservices/srv/users/logout';
-    
-    /** recurso que verifica si un recurso puede accederlo el usuario */
-    static readonly SECURITY_RESOU_ACCE = 'restservices/srv/users/resource';
-    
-    /** recurso que obtiene el menu asociado a este usuario */
-    static readonly SECURITY_MENUS_ACCE = 'restservices/srv/menus/list';
-    
     /** codigo de acceso entregado en el logueo */
     @SessionStorage() private _token: string;
     
@@ -56,7 +37,6 @@ export class FirewallService {
      * @param token
      */
     prepareHeaderRequest(token: string):any {
-        console.log( 'getHeaderToken -> Token: ' + token );
         let httpOptions = {
             headers: new HttpHeaders({
                 'Content-Type' : 'application/json',
@@ -79,7 +59,7 @@ export class FirewallService {
      * @param callback  Funcion callback si se requiere
      */
     applyAccessToken(token: string, callback : Function) {
-        this.http.get(FirewallService.CONTEXT + FirewallService.SECURITY_ACCES_INFO, 
+        this.http.get(Constants.CONTEXT + Constants.SECURITY_ACCES_INFO, 
              this.prepareHeaderRequest(token))
              .subscribe(access => {
                  this.authState.next(access);
@@ -99,8 +79,7 @@ export class FirewallService {
     isAuthorized(resource: string): Observable<boolean> {
         //Averiguar como se puede manejar envios POST con header
         return this.http.post<boolean>(
-               FirewallService.CONTEXT + FirewallService.SECURITY_RESOU_ACCE, { 
-                   resource: resource });
+             Constants.CONTEXT + Constants.SECURITY_RESOU_ACCE, { resource: resource });
     }
 
     /**
@@ -109,8 +88,8 @@ export class FirewallService {
      */
     getUserMenu(): Observable<any> {
         return this.http.get(
-                FirewallService.CONTEXT + FirewallService.SECURITY_MENUS_ACCE, 
-                this.prepareHeaderRequest(this._token));
+             Constants.CONTEXT + Constants.SECURITY_MENUS_ACCE, 
+             this.prepareHeaderRequest(this._token));
     }
     
     /**
@@ -121,7 +100,7 @@ export class FirewallService {
         //Debe invocar el recurso para cerrar sesion
         const self = this;
         this.http.get(
-            FirewallService.CONTEXT + FirewallService.SECURITY_CLOSE_ACCE, 
+            Constants.CONTEXT + Constants.SECURITY_CLOSE_ACCE, 
             this.prepareHeaderRequest(this._token))
             .subscribe(access => {
                 self.clearObserverForLogin();
@@ -140,7 +119,7 @@ export class FirewallService {
             username: info.username,
             password: info.password
         };
-        return this.http.post<any>(FirewallService.CONTEXT + FirewallService.SECURITY_LOGIN_ACCE, userinfo);
+        return this.http.post<any>(Constants.CONTEXT + Constants.SECURITY_LOGIN_ACCE, userinfo);
     }
 
     /**

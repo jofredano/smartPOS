@@ -1,9 +1,8 @@
 import { Component, Input, OnInit, OnDestroy } from '@angular/core';
 import { Subscription } from 'rxjs';
-import { FirewallService } from '../../core/security';
+import { FirewallService, WidgetService } from '../../core';
 import { DTOEmployee } from '../../core/dto';
 import { FormControl, FormGroup } from '@angular/forms';
-import { Router } from "@angular/router";
 
 /**
  * Componente para renderizar el encabezado de la aplicación
@@ -76,16 +75,27 @@ export class WCreateEmployeeComponent implements OnInit, OnDestroy {
         }
     };
 
-    constructor(private router: Router, private firewallService: FirewallService) {
+    constructor(private firewallService: FirewallService, private widgetService: WidgetService) {
         this.initLabels();
     }
     
     ngOnInit(): void {
         //Implementacion cuando se intente destruir el componente
+        this.loadCategories();
     }
 
     ngOnDestroy(): void {
         //Implementacion cuando se intente destruir el componente
+    }
+    
+    loadCategories(): void {
+        //Implementacion para la catga de categorias
+        this.widgetService.getCategories( 'PERSONA.TIPO' ).subscribe(
+           categories => {
+              console.log( categories );
+           }, error => {
+              console.log( error );
+           });
     }
     
     initLabels(): void {
