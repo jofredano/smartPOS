@@ -4,12 +4,20 @@
   </div>
   <div class="card-body">
 	<form class="card-text needs-validation" novalidate #employeecreate="ngForm" (ngSubmit)="create()">
+	  <div class="form-group">
+	    <label for="phones">{{lblInputTypePerson}}</label>
+	      <select id="persontype" name="persontype" [(ngModel)]="employee.type" class="form-control" (change)="loadTypeIdentification($event.target.value)">
+	         <option [value]="typePerson.abbreviation" *ngFor="let typePerson of typesPerson">{{typePerson.description}}</option>
+	      </select>
+	    <div class="invalid-feedback">
+	        Please enter a message in the textarea.
+	    </div>
+	  </div>
 	  <div class="form-row">
 	    <div class="form-group col-md-6">
 	      <label for="idtype">{{lblInputIdType}}</label>
 	      <select id="idtype" name="idtype" [(ngModel)]="employee.id.type" class="form-control">
-	         <option value="CC">Cedula de ciudadania</option>
-	         <option value="RUT">Registro Unico Tributario</option>
+	         <option [value]="typeIdentification.abbreviation" *ngFor="let typeIdentification of typesIdentification">{{typeIdentification.description}}</option>
 	      </select>
 	      <div class="invalid-feedback">
 	        Please enter a message in the textarea.
@@ -89,8 +97,7 @@
 	    <div class="form-group col-md-6">
 	      <label for="contractType">{{lblInputContractType}}</label>
 	      <select id="contractType" name="contractType" [(ngModel)]="employee.contract.type" class="form-control">
-	          <option value="husker">Temporal</option>
-	          <option value="starbuck">Indefinido</option>
+	          <option [value]="typeContract.abbreviation" *ngFor="let typeContract of typesContract">{{typeContract.description}}</option>
 	      </select>
 	    </div>
 	    <div class="form-group col-md-6">

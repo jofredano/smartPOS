@@ -76,6 +76,7 @@ $query_builder = TRUE;
 $db['default'] = array(
 	'dsn'	=> '',
 	'hostname' => 'localhost',
+    'port' => '3307',
 	'username' => 'smpos_user',
 	'password' => '9ZfTpGWEg6N1KTPD',
 	'database' => 'smpos_db',

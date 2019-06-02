@@ -12,7 +12,7 @@ CALL smpos_prc_crear_entidad(
 	'PERSONA.TIPO.NATURAL',
 	'CC-1111789100',
 	'Henry Stivent',
-	'Monta�o Ramirez',
+	'Montaño Ramirez',
 	STR_TO_DATE('1999-06-10', '%Y-%m-%d'),
 	NULL,
 	'Carrera 41 sur #1S-99',
@@ -138,8 +138,7 @@ CALL smpos_prc_verificar_perfil(
 SELECT @vou_usuario, @vou_codigo, @vou_mensaje;
 
 CALL smpos_prc_obtener_categorias(
- 	1,
- 	NULL,
+ 	'PERSONA.TIPO, CONSECUTIVO.RANGO.ESTADO',
  	@vou_textResultSet,
    	@vou_codigo,
 	@vou_mensaje);

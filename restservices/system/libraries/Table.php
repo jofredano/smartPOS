@@ -102,7 +102,7 @@ class CI_Table {
 	/**
 	 * Callback for custom table layout
 	 *
-	 * @var function
+	 * @var 
 	 */
 	public $function	= NULL;
 

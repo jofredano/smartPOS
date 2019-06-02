@@ -19,21 +19,21 @@ INSERT INTO smpos_sis_categorias (cat_codigo, cat_abbreviatura, cat_descripcion,
 INSERT INTO smpos_sis_categorias (cat_codigo, cat_abbreviatura, cat_descripcion, cat_estado, cat_principal)
 	VALUES (10, 'CONSECUTIVO.RANGO.ESTADO.CONSUMIDO', 'Rango Consumido', 2, 6); 
 INSERT INTO smpos_sis_categorias (cat_codigo, cat_abbreviatura, cat_descripcion, cat_estado, cat_principal)
-	VALUES (11, 'CONSECUTIVO.NUMERO.ESTADO', 'Estado de un n鷐ero de consecutivo', 2, NULL); 
+	VALUES (11, 'CONSECUTIVO.NUMERO.ESTADO', 'Estado de un numero de consecutivo', 2, NULL); 
 INSERT INTO smpos_sis_categorias (cat_codigo, cat_abbreviatura, cat_descripcion, cat_estado, cat_principal)
-	VALUES (12, 'CONSECUTIVO.NUMERO.ESTADO.ACTIVO', 'Estado activo de un n鷐ero', 2, 11); 
+	VALUES (12, 'CONSECUTIVO.NUMERO.ESTADO.ACTIVO', 'Estado activo de un numero', 2, 11); 
 INSERT INTO smpos_sis_categorias (cat_codigo, cat_abbreviatura, cat_descripcion, cat_estado, cat_principal)
-	VALUES (13, 'CONSECUTIVO.NUMERO.ESTADO.ASIGNADO', 'Estado asignado de un n鷐ero', 2, 11); 
+	VALUES (13, 'CONSECUTIVO.NUMERO.ESTADO.ASIGNADO', 'Estado asignado de un numero', 2, 11); 
 INSERT INTO smpos_sis_categorias (cat_codigo, cat_abbreviatura, cat_descripcion, cat_estado, cat_principal)
-	VALUES (14, 'CONSECUTIVO.NUMERO.ESTADO.INACTIVO', 'Estado inactivo de un n鷐ero', 2, 11); 
+	VALUES (14, 'CONSECUTIVO.NUMERO.ESTADO.INACTIVO', 'Estado inactivo de un numero', 2, 11); 
 INSERT INTO smpos_sis_categorias (cat_codigo, cat_abbreviatura, cat_descripcion, cat_estado, cat_principal)
-	VALUES (15, 'CONSECUTIVO.NUMERO.ESTADO.CONSUMIDO', 'Estado consumido de un n鷐ero', 2, 11); 
+	VALUES (15, 'CONSECUTIVO.NUMERO.ESTADO.CONSUMIDO', 'Estado consumido de un numero', 2, 11); 
 INSERT INTO smpos_sis_categorias (cat_codigo, cat_abbreviatura, cat_descripcion, cat_estado, cat_principal)
 	VALUES (16, 'MENU.ESTADO', 'Estados de las opciones de menu', 2, NULL); 
 INSERT INTO smpos_sis_categorias (cat_codigo, cat_abbreviatura, cat_descripcion, cat_estado, cat_principal)
-	VALUES (17, 'MENU.ESTADO.ACTIVO', 'Estado activo de la opci髇 del menu', 2, 16); 
+	VALUES (17, 'MENU.ESTADO.ACTIVO', 'Estado activo de la opcion del menu', 2, 16); 
 INSERT INTO smpos_sis_categorias (cat_codigo, cat_abbreviatura, cat_descripcion, cat_estado, cat_principal)
-	VALUES (18, 'MENU.ESTADO.INACTIVO', 'Estado inactivo de la opci髇 del menu', 2, 16); 
+	VALUES (18, 'MENU.ESTADO.INACTIVO', 'Estado inactivo de la opcion del menu', 2, 16); 
 INSERT INTO smpos_sis_categorias (cat_codigo, cat_abbreviatura, cat_descripcion, cat_estado, cat_principal)
 	VALUES (19, 'CONTRATO.TIPO', 'Tipos de contrato', 2, NULL);
 INSERT INTO smpos_sis_categorias (cat_codigo, cat_abbreviatura, cat_descripcion, cat_estado, cat_principal)
@@ -63,18 +63,18 @@ INSERT INTO smpos_sis_categorias (cat_codigo, cat_abbreviatura, cat_descripcion,
 INSERT smpos_sis_roles (rol_codigo, rol_titulo, rol_abbreviatura, rol_descripcion, rol_estado) VALUES (1, 'Rol de administrador', 'ROL.ADMINISTRADOR', 'Rol que representa a un administrador en el sistema', 2);
 INSERT smpos_sis_roles (rol_codigo, rol_titulo, rol_abbreviatura, rol_descripcion, rol_estado) VALUES (2, 'Rol de vendedor', 'ROL.VENDEDOR', 'Rol que representa a un vendedor en el sistema', 2);
 
-INSERT smpos_sis_perfiles (per_codigo, per_titulo, per_abbreviatura, per_descripcion, per_estado) VALUES (1, 'Creaci髇 de usuarios', 'USUARIO.CREAR', 'Perfil que permite crear usuarios en el sistema', 2);
-INSERT smpos_sis_perfiles (per_codigo, per_titulo, per_abbreviatura, per_descripcion, per_estado) VALUES (2, 'Creaci髇 de art韈ulos', 'ARTICULO.CREAR', 'Perfil que permite crear nuevos art韈ulos en el sistema', 2);
-INSERT smpos_sis_perfiles (per_codigo, per_titulo, per_abbreviatura, per_descripcion, per_estado) VALUES (3, 'Creaci髇 de empleados', 'EMPLEADO.CREAR', 'Perfil que permite crear nuevos empleados en el sistema', 2);
-INSERT smpos_sis_perfiles (per_codigo, per_titulo, per_abbreviatura, per_descripcion, per_estado) VALUES (4, 'Creaci髇 de consecutivos', 'CONSECUTIVO.RANGO.CREAR', 'Perfil que permite crear nuevos rangos de consecutivos en el sistema para venta', 2);
+INSERT smpos_sis_perfiles (per_codigo, per_titulo, per_abbreviatura, per_descripcion, per_estado) VALUES (1, 'Creaci贸n de usuarios', 'USUARIO.CREAR', 'Perfil que permite crear usuarios en el sistema', 2);
+INSERT smpos_sis_perfiles (per_codigo, per_titulo, per_abbreviatura, per_descripcion, per_estado) VALUES (2, 'Creaci贸n de art铆culos', 'ARTICULO.CREAR', 'Perfil que permite crear nuevos art铆culos en el sistema', 2);
+INSERT smpos_sis_perfiles (per_codigo, per_titulo, per_abbreviatura, per_descripcion, per_estado) VALUES (3, 'Creaci贸n de empleados', 'EMPLEADO.CREAR', 'Perfil que permite crear nuevos empleados en el sistema', 2);
+INSERT smpos_sis_perfiles (per_codigo, per_titulo, per_abbreviatura, per_descripcion, per_estado) VALUES (4, 'Creaci贸n de consecutivos', 'CONSECUTIVO.RANGO.CREAR', 'Perfil que permite crear nuevos rangos de consecutivos en el sistema para venta', 2);
 INSERT smpos_sis_perfiles (per_codigo, per_titulo, per_abbreviatura, per_descripcion, per_estado) VALUES (5, 'Consulta de usuarios', 'USUARIO.CONSULTAR', 'Perfil que permite consultar usuarios en el sistema', 2);
-INSERT smpos_sis_perfiles (per_codigo, per_titulo, per_abbreviatura, per_descripcion, per_estado) VALUES (6, 'Consulta de art韈ulos', 'ARTICULO.CONSULTAR', 'Perfil que permite consultar art韈ulos en el sistema', 2);
+INSERT smpos_sis_perfiles (per_codigo, per_titulo, per_abbreviatura, per_descripcion, per_estado) VALUES (6, 'Consulta de art铆culos', 'ARTICULO.CONSULTAR', 'Perfil que permite consultar art铆culos en el sistema', 2);
 INSERT smpos_sis_perfiles (per_codigo, per_titulo, per_abbreviatura, per_descripcion, per_estado) VALUES (7, 'Consulta de consecutivos', 'CONSECUTIVO.RANGO.CONSULTAR', 'Perfil que permite consultar rango de consecutivos en el sistema', 2);
-INSERT smpos_sis_perfiles (per_codigo, per_titulo, per_abbreviatura, per_descripcion, per_estado) VALUES (8, 'Modificaci髇 de usuarios', 'USUARIO.MODIFICAR', 'Perfil que permite modificar informaci髇 de usuarios en el sistema', 2);
-INSERT smpos_sis_perfiles (per_codigo, per_titulo, per_abbreviatura, per_descripcion, per_estado) VALUES (9, 'Modificaci髇 de art韈ulos', 'ARTICULO.MODIFICAR', 'Perfil que permite modificar art韈ulos en el sistema', 2);
-INSERT smpos_sis_perfiles (per_codigo, per_titulo, per_abbreviatura, per_descripcion, per_estado) VALUES (10, 'Modificaci髇 de empleados', 'EMPLEADO.MODIFICAR', 'Perfil que permite modificar informaci髇 de empleados en el sistema', 2);
-INSERT smpos_sis_perfiles (per_codigo, per_titulo, per_abbreviatura, per_descripcion, per_estado) VALUES (11, 'Modificaci髇 de consecutivos', 'CONSECUTIVO.RANGO.MODIFICAR', 'Perfil que permite modificar rango de consecutivos en el sistema', 2);
-INSERT smpos_sis_perfiles (per_codigo, per_titulo, per_abbreviatura, per_descripcion, per_estado) VALUES (12, 'Venta de art韈ulos', 'VENTA.CREAR', 'Perfil que permite realizar ventas en el sistema', 2);
+INSERT smpos_sis_perfiles (per_codigo, per_titulo, per_abbreviatura, per_descripcion, per_estado) VALUES (8, 'Modificaci贸n de usuarios', 'USUARIO.MODIFICAR', 'Perfil que permite modificar informaci贸n de usuarios en el sistema', 2);
+INSERT smpos_sis_perfiles (per_codigo, per_titulo, per_abbreviatura, per_descripcion, per_estado) VALUES (9, 'Modificaci贸n de art铆culos', 'ARTICULO.MODIFICAR', 'Perfil que permite modificar art铆culos en el sistema', 2);
+INSERT smpos_sis_perfiles (per_codigo, per_titulo, per_abbreviatura, per_descripcion, per_estado) VALUES (10, 'Modificaci贸n de empleados', 'EMPLEADO.MODIFICAR', 'Perfil que permite modificar informaci贸n de empleados en el sistema', 2);
+INSERT smpos_sis_perfiles (per_codigo, per_titulo, per_abbreviatura, per_descripcion, per_estado) VALUES (11, 'Modificaci贸n de consecutivos', 'CONSECUTIVO.RANGO.MODIFICAR', 'Perfil que permite modificar rango de consecutivos en el sistema', 2);
+INSERT smpos_sis_perfiles (per_codigo, per_titulo, per_abbreviatura, per_descripcion, per_estado) VALUES (12, 'Venta de art铆culos', 'VENTA.CREAR', 'Perfil que permite realizar ventas en el sistema', 2);
 
 INSERT INTO smpos_sis_roles_x_perfiles (rxp_codigo, rxp_rol, rxp_perfil, rxp_estado) VALUES (1, 1, 1, 2); 
 INSERT INTO smpos_sis_roles_x_perfiles (rxp_codigo, rxp_rol, rxp_perfil, rxp_estado) VALUES (2, 1, 2, 2); 

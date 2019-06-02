@@ -44,9 +44,8 @@ class categories extends PathRestController {
 	                    try {
 	                        //3. Se intenta crear el usuario con los datos suministrados
 	                        //Procedemos a realizar llamado a base de datos
-	                        $categoryCode   = empty($content["category"]["code"])?"NULL":$content["category"]["code"];
 	                        $categoryAbbrev = empty($content["category"]["abbrev"])?"NULL":"'".$content["category"]["abbrev"]."'";
-	                        $this->db->query("CALL smpos_prc_obtener_categorias(".$categoryCode.",".$categoryAbbrev.", @vou_result, @vou_codigo, @vou_mensaje); ");
+	                        $this->db->query("CALL smpos_prc_obtener_categorias(".$categoryAbbrev.", @vou_result, @vou_codigo, @vou_mensaje); ");
 	                        $result = $this->db->query("SELECT @vou_result AS resultSet, @vou_codigo AS codigo, @vou_mensaje AS mensaje;")->result_array();
 	                        //Validamos si la respuesta fue adecuada
 	                        $data = self::checkResponse( $result[0] );

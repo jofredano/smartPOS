@@ -1,8 +1,9 @@
 import { Component, Input, OnInit, OnDestroy } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { FirewallService, WidgetService } from '../../core';
-import { DTOEmployee } from '../../core/dto';
+import { DTOEmployee, DTOCategory, Utils } from '../../core/dto';
 import { FormControl, FormGroup } from '@angular/forms';
+import { filter } from 'rxjs/operators';
 
 /**
  * Componente para renderizar el encabezado de la aplicación
@@ -13,6 +14,8 @@ import { FormControl, FormGroup } from '@angular/forms';
   styleUrls: []
 })
 export class WCreateEmployeeComponent implements OnInit, OnDestroy {
+    
+    private _lblInputTypePerson: string;
     
     private _lblTittleForm: string;
 
@@ -59,6 +62,7 @@ export class WCreateEmployeeComponent implements OnInit, OnDestroy {
             type: '',
             number: ''
         },
+        type: 'PERSONA.TIPO.NATURAL',
         name: '',
         lastname: '',
         birth: null,
@@ -75,6 +79,15 @@ export class WCreateEmployeeComponent implements OnInit, OnDestroy {
         }
     };
 
+    private _categories: Array<any>;
+
+    private _typesPerson: Array<any>;
+
+    private _typesIdentification: Array<any>;
+
+    private _typesContract: Array<any>;
+
+
     constructor(private firewallService: FirewallService, private widgetService: WidgetService) {
         this.initLabels();
     }
@@ -89,17 +102,37 @@ export class WCreateEmployeeComponent implements OnInit, OnDestroy {
     }
     
     loadCategories(): void {
+        const self = this;
         //Implementacion para la catga de categorias
-        this.widgetService.getCategories( 'PERSONA.TIPO' ).subscribe(
+        this.widgetService.getCategories( 'PERSONA.TIPO,CONTRATO.TIPO' ).subscribe(
            categories => {
-              console.log( categories );
-           }, error => {
+              self.categories = categories.items;
+              self.loadTypePersonList( categories.items );
+              self.loadContractTypeList( categories.items );
+              self.loadTypeIdentification( 'PERSONA.TIPO.NATURAL' );
+           }, error   => {
               console.log( error );
            });
     }
     
+    loadTypePersonList(categories: Array<DTOCategory>) : void { 
+        let personTypes      = Utils.filter('PERSONA.TIPO', categories);
+        this.typesPerson     = personTypes[0].children;
+    }
+    
+    loadContractTypeList(categories: Array<DTOCategory>) : void { 
+        let personTypes      = Utils.filter('CONTRATO.TIPO', categories);
+        this.typesContract   = personTypes[0].children;
+    }
+    
+    loadTypeIdentification(abbreviation: string): void {
+        let identificationTypes     = Utils.filter(abbreviation, this.categories);
+        this.typesIdentification    = identificationTypes[0].children;
+    }
+    
     initLabels(): void {
         this.lblTittleForm              = 'Contratando un nuevo empleado';
+        this.lblInputTypePerson         = 'Tipo de persona';
         this.lblInputIdType             = 'Tipo de identificación';
         this.lblInputIdNumber           = 'Número de identificación';
         this.lblInputName               = 'Nombres del empleado';
@@ -125,8 +158,24 @@ export class WCreateEmployeeComponent implements OnInit, OnDestroy {
         console.log(this._employee);
     }
     
+    get categories(): Array<any> {
+        return this._categories;
+    }
+    get typesPerson(): Array<any> {
+        return this._typesPerson;
+    }
+    get typesIdentification(): Array<any> {
+        return this._typesIdentification;
+    }
+    get typesContract(): Array<any> {
+        return this._typesContract;
+    }
+
     get lblTittleForm(): string {
         return this._lblTittleForm;
+    }
+    get lblInputTypePerson(): string {
+        return this._lblInputTypePerson;
     }
     get lblInputIdType(): string {
         return this._lblInputIdType;
@@ -189,8 +238,24 @@ export class WCreateEmployeeComponent implements OnInit, OnDestroy {
         return this._employee;
     }
 
+    set categories( _categories: Array<any> ) {
+        this._categories = _categories;
+    }    
+    set typesPerson( _typesPerson: Array<any> ) {
+        this._typesPerson = _typesPerson;
+    }
+    set typesIdentification( _typesIdentification: Array<any> ) {
+        this._typesIdentification = _typesIdentification;
+    }
+    set typesContract( _typesContract : Array<any> ) {
+        this._typesContract = _typesContract;
+    }
+    
     set lblTittleForm ( _lblTittleForm: string) { 
         this._lblTittleForm = _lblTittleForm;
+    }
+    set lblInputTypePerson( _lblInputTypePerson: string ) {
+        this._lblInputTypePerson = _lblInputTypePerson;
     }
     set lblInputIdType( _lblInputIdType: string ) {
         this._lblInputIdType = _lblInputIdType;

@@ -969,8 +969,7 @@
   END //
   
   CREATE PROCEDURE smpos_prc_obtener_categorias(
- 	IN 		vin_cod_categoria			INT(11),
- 	IN 		vin_abbr_categoria			VARCHAR(200),
+ 	IN 		vin_abbr_categorias			TEXT,
  	OUT 	vou_textResultSet			TEXT,
    	OUT 	vou_codigo 	 				CHAR(5),
 	OUT 	vou_mensaje					TEXT)
@@ -988,21 +987,41 @@
 	DECLARE CAT_ESTADO				INT(11)			DEFAULT 0;
 
 	DECLARE cur_categorias 			CURSOR FOR 
-		SELECT cc.cat_codigo
-		     , cc.cat_abbreviatura
-			 , cc.cat_descripcion
-			 , cc.cat_estado
-			 , IFNULL(cc.cat_principal, 0) cat_principal 
-		FROM   smpos_sis_categorias cc 
-		WHERE  cc.cat_codigo    = IFNULL(@CATEG_CODIGO, @CAT_FILTRO)
-        UNION ALL
-		SELECT cc.cat_codigo
-		     , cc.cat_abbreviatura
-			 , cc.cat_descripcion
-			 , cc.cat_estado
-			 , @CATEG_CODIGO   := IFNULL(cc.cat_principal, 0) 
-		FROM   smpos_sis_categorias cc 
-		WHERE  cc.cat_principal = IFNULL(@CATEG_CODIGO, @CAT_FILTRO);
+		WITH RECURSIVE 
+		  inputs AS (
+		    SELECT vin_abbr_categorias AS names
+		  ),
+		  recurs AS (
+			SELECT 	 1 AS pos, 
+					 names AS remain, 
+					 SUBSTRING_INDEX( names, ',', 1 ) AS name
+			FROM     inputs
+			UNION ALL
+			SELECT   pos + 1 AS pos, 
+					 SUBSTRING( remain, CHAR_LENGTH( name ) + 2 ) AS remain,
+					 SUBSTRING_INDEX( SUBSTRING( remain, CHAR_LENGTH( name ) + 2 ), ',', 1 ) AS name
+			FROM     recurs
+			WHERE    CHAR_LENGTH( remain ) > CHAR_LENGTH( name )
+		  ),
+		  sub_categorias (cat_codigo, cat_abbreviatura, cat_descripcion, cat_estado, cat_principal) AS (
+		  SELECT     cc.cat_codigo,
+		             cc.cat_abbreviatura,
+		             cc.cat_descripcion, 
+					 cc.cat_estado, 
+					 IFNULL(cc.cat_principal, 0) cat_principal
+		  FROM       smpos_sis_categorias cc
+		  WHERE      cc.cat_abbreviatura IN (  SELECT TRIM(name) FROM recurs ORDER BY pos )
+		  UNION ALL
+		  SELECT     cc.cat_codigo,
+		             cc.cat_abbreviatura,
+		             cc.cat_descripcion, 
+					 cc.cat_estado, 
+					 IFNULL(cc.cat_principal, 0) cat_principal
+		  FROM       smpos_sis_categorias cc
+		  INNER JOIN sub_categorias sc ON cc.cat_principal = sc.cat_codigo
+		)
+		SELECT * FROM sub_categorias
+		ORDER BY cat_principal;
 	
 	DECLARE CONTINUE HANDLER FOR NOT FOUND 
 		SET CURSOR_DONE = TRUE;
@@ -1010,65 +1029,47 @@
     -- Flag para activar debug del procedimiento --
 	SET @enabled	= FALSE;
  	-- Linea para depurar procedimiento --
-	call debug_msg(@enabled, CONCAT('Categoria a buscar (', IFNULL(vin_cod_categoria, ''), '-', IFNULL(vin_abbr_categoria, ''), ')'));
+	call debug_msg(@enabled, CONCAT('Categoria a buscar (', IFNULL(vin_abbr_categorias, ''), ')'));
 	-- Verificar que uno de los dos parametros contenga informacion --
-	IF	vin_cod_categoria IS NOT NULL OR vin_abbr_categoria IS NOT NULL THEN 
-		-- Procede a buscar la categoria a extraer --
-	 	SELECT 	IF(COUNT(a.cat_codigo) > 0, a.cat_codigo, 0) INTO CAT_FILT_BUSQUE
-	 	FROM 	smpos_sis_categorias a
-	 	WHERE 	IF(vin_cod_categoria  IS NULL,  1 , a.cat_codigo)       = IFNULL(vin_cod_categoria  , 1)
-	 	AND 	IF(vin_abbr_categoria IS NULL, '1', a.cat_abbreviatura) = IFNULL(vin_abbr_categoria , '1');
-	 	-- Linea para depurar procedimiento --
-		call debug_msg(@enabled, CONCAT('Categoria real a buscar (', CAT_FILT_BUSQUE, ')'));
-		-- Se procede a verificar si realmente existe la categoria --
-		IF 	CAT_FILT_BUSQUE > 0 THEN
-		    -- Asigna la informacion a la variable --
-		    SET @CAT_FILTRO  = CAT_FILT_BUSQUE;
-		 	-- Linea para depurar procedimiento --
-			call debug_msg(@enabled, CONCAT('Categoria filtro de busqueda (', @CAT_FILTRO, ')'));
-			-- Se procede a entregar las categorias para esta consulta --
-			OPEN  cur_categorias;
-				read_loop: LOOP
-					-- Lee un registro del cursor --
-					FETCH cur_categorias INTO CAT_CODIGO, CAT_ABREVI, CAT_DESCRI, 
-										 	  CAT_ESTADO, CAT_PRINCI;
-					-- Determina si continua el loop --
-				    IF 	CURSOR_DONE THEN
-					 	-- Linea para depurar procedimiento --
-						call debug_msg(@enabled, CONCAT('Termino el cursor (', CURSOR_DONE, ')'));
-				      	-- Abandone el cursor --
-				      	LEAVE read_loop;
-				    END IF;
-					-- Construye la salida parcial --
-					SET RESSET_CATEOPTS	= CONCAT(
-						RESSET_CATEOPTS,
-						'	<row>',
-						'		<field name="cat_codigo">', CAT_CODIGO, '</field>',
-						'		<field name="cat_abbreviatura">', CAT_ABREVI, '</field>',
-						'		<field name="cat_descripcion">', CAT_DESCRI, '</field>',
-						'		<field name="cat_principal">', CAT_PRINCI, '</field>',
-						'		<field name="cat_estado">', CAT_ESTADO, '</field>',
-						'	</row>');
-				END LOOP;
-			CLOSE cur_categorias;
-			-- 	Verifica la salida si se puede entregar --
-			IF	RESSET_CATEOPTS IS NOT NULL AND RESSET_CATEOPTS <> '' THEN
-				-- 	Valida si quedo con informacion para entregar la salida --
-				SET vou_textResultSet 	= CONCAT(
-					'<?xml version="1.0" encoding="UTF-8"?>',
-					'<rows>', RESSET_CATEOPTS, '</rows>');
-				-- Salida cuando hay error --
-				SET vou_codigo  		= '200';
-				SET vou_mensaje 		= 'Carga de categorias de manera exitosa';
-			ELSE 
-				SET vou_textResultSet 	= NULL;
-				SET vou_codigo  		= '402';
-				SET vou_mensaje 		= 'No hay categorias parametrizadas';
-			END IF;
+	IF	vin_abbr_categorias IS NOT NULL THEN 
+		-- Se procede a entregar las categorias para esta consulta --
+		OPEN  cur_categorias;
+			read_loop: LOOP
+				-- Lee un registro del cursor --
+				FETCH cur_categorias INTO CAT_CODIGO, CAT_ABREVI, CAT_DESCRI, 
+									 	  CAT_ESTADO, CAT_PRINCI;
+				-- Determina si continua el loop --
+			    IF 	CURSOR_DONE THEN
+				 	-- Linea para depurar procedimiento --
+					call debug_msg(@enabled, CONCAT('Termino el cursor (', CURSOR_DONE, ')'));
+			      	-- Abandone el cursor --
+			      	LEAVE read_loop;
+			    END IF;
+				-- Construye la salida parcial --
+				SET RESSET_CATEOPTS	= CONCAT(
+					RESSET_CATEOPTS,
+					'	<row>',
+					'		<field name="cat_codigo">', CAT_CODIGO, '</field>',
+					'		<field name="cat_abbreviatura">', CAT_ABREVI, '</field>',
+					'		<field name="cat_descripcion">', CAT_DESCRI, '</field>',
+					'		<field name="cat_principal">', CAT_PRINCI, '</field>',
+					'		<field name="cat_estado">', CAT_ESTADO, '</field>',
+					'	</row>');
+			END LOOP;
+		CLOSE cur_categorias;
+		-- 	Verifica la salida si se puede entregar --
+		IF	RESSET_CATEOPTS IS NOT NULL AND RESSET_CATEOPTS <> '' THEN
+			-- 	Valida si quedo con informacion para entregar la salida --
+			SET vou_textResultSet 	= CONCAT(
+				'<?xml version="1.0" encoding="UTF-8"?>',
+				'<rows>', RESSET_CATEOPTS, '</rows>');
+			-- Salida cuando hay error --
+			SET vou_codigo  		= '200';
+			SET vou_mensaje 		= 'Carga de categorias de manera exitosa';
 		ELSE 
 			SET vou_textResultSet 	= NULL;
 			SET vou_codigo  		= '402';
-			SET vou_mensaje 		= 'Categoria no existe';
+			SET vou_mensaje 		= 'No hay categorias parametrizadas';
 		END IF;
 	ELSE 
 		SET vou_textResultSet 		= NULL;

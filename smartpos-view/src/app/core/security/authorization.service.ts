@@ -51,14 +51,12 @@ export class Authorization implements CanActivate, CanActivateChild {
             const mustRedirect = !this.firewall.haveAccess() && (state.url != '/main/login');
             //Verficia que sea /main/login para que se cambie por /main/home
             let urlPath        = (this.firewall.haveAccess() && (state.url == '/main/login'))?'/main/home':state.url.substring(1);
-            //Validar consola
-            console.log('Ruta => ' + urlPath + ' -> ' + mustRedirect);
             //Debe verificar si se debe redireccionar
             if (mustRedirect) {
                 //Aqui debe estar el problema
                 this.router.navigate(['main/login']);
             } else {
-                this.checkAuthorization(urlPath, resolver);                
+                this.checkAuthorization(urlPath, resolver);
             }
         });
     }
