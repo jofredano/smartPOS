@@ -1,9 +1,10 @@
 import { Component, Input, OnInit, OnDestroy } from '@angular/core';
+import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import { filter } from 'rxjs/operators';
 import { Subscription } from 'rxjs';
 import { FirewallService, WidgetService } from '../../core';
 import { DTOEmployee, DTOCategory, Utils } from '../../core/dto';
-import { FormControl, FormGroup } from '@angular/forms';
-import { filter } from 'rxjs/operators';
+
 
 /**
  * Componente para renderizar el encabezado de la aplicación
@@ -15,46 +16,47 @@ import { filter } from 'rxjs/operators';
 })
 export class WCreateEmployeeComponent implements OnInit, OnDestroy {
     
-    private _lblInputTypePerson: string;
-    
+    registerEmployee: FormGroup;
+
     private _lblTittleForm: string;
-
+    private _lblInputTypePerson: string;
     private _lblInputIdType: string;
-
     private _lblInputIdNumber: string;
-
     private _lblInputName: string;
-
     private _lblInputLastname: string;
-    
     private _lblInputBirth: string;
-    
     private _lblInputBothCity: string;
-    
     private _lblInputAddress: string;
-
     private _lblInputCity: string;
-    
     private _lblInputPhones: string;
-    
     private _lblInputMails: string;
-    
     private _lblInputContractType: string;
-    
     private _lblInputContractNumber: string;
-    
     private _lblInputContractBegin: string;
-    
     private _lblInputContractEnd: string;
-    
     private _lblInputUsername: string;
-    
     private _lblInputUserpasswd: string;
-    
     private _lblInputUserpasswdCon: string;
-    
+
+    private _errInputIdType: string;
+    private _errInputIdNumber: string;
+    private _errInputName: string;
+    private _errInputLastname: string;
+    private _errInputBirth: string;
+    private _errInputBothCity: string;
+    private _errInputAddress: string;
+    private _errInputCity: string;
+    private _errInputPhones: string;
+    private _errInputMails: string;
+    private _errInputContractType: string;
+    private _errInputContractNumber: string;
+    private _errInputContractBegin: string;
+    private _errInputContractEnd: string;
+    private _errInputUsername: string;
+    private _errInputUserpasswd: string;
+    private _errInputUserpasswdCon: string;
+
     private _lblButtonCreate: string;
-    
     private _lblButtonClean: string;
 
     private _employee: DTOEmployee = {
@@ -62,7 +64,7 @@ export class WCreateEmployeeComponent implements OnInit, OnDestroy {
             type: '',
             number: ''
         },
-        type: 'PERSONA.TIPO.NATURAL',
+        type: '',
         name: '',
         lastname: '',
         birth: null,
@@ -88,11 +90,33 @@ export class WCreateEmployeeComponent implements OnInit, OnDestroy {
     private _typesContract: Array<any>;
 
 
-    constructor(private firewallService: FirewallService, private widgetService: WidgetService) {
+    constructor(private formBuilder: FormBuilder, private firewallService: FirewallService, private widgetService: WidgetService) {
         this.initLabels();
     }
     
     ngOnInit(): void {
+        this.registerEmployee = this.formBuilder.group({
+            'employee.type':            ['PERSONA.TIPO.NATURAL', Validators.required],
+            'employee.id.type':         ['', Validators.required],
+            'employee.id.number':       ['', Validators.required],
+            'employee.name':            ['', Validators.required],
+            'employee.lastname':        ['', Validators.required],
+            'employee.birth':           ['', Validators.required],
+            'employee.bothcity':        ['', Validators.required],
+            'employee.address':         ['', Validators.required],
+            'employee.city':            ['', Validators.required],
+            'employee.phones':          ['', Validators.required],
+            'employee.mails':           ['', [Validators.required, Validators.email]],
+            'employee.contract.type':   ['', Validators.required],
+            'employee.contract.number': ['', Validators.required],
+            'employee.contract.begin':  ['', Validators.required],
+            'employee.contract.end':    [''],
+            'employee.user.name':       ['', [Validators.required, Validators.minLength(8)]],
+            'employee.user.password1':  ['', [Validators.required, Validators.minLength(6)]],
+            'employee.user.password2':  ['', [Validators.required, Validators.minLength(6)]]
+        }, {
+            validator: Utils.matchFields('employee.user.password1', 'employee.user.password2')
+        });
         //Implementacion cuando se intente destruir el componente
         this.loadCategories();
     }
@@ -132,6 +156,7 @@ export class WCreateEmployeeComponent implements OnInit, OnDestroy {
     
     initLabels(): void {
         this.lblTittleForm              = 'Contratando un nuevo empleado';
+        
         this.lblInputTypePerson         = 'Tipo de persona';
         this.lblInputIdType             = 'Tipo de identificación';
         this.lblInputIdNumber           = 'Número de identificación';
@@ -150,12 +175,65 @@ export class WCreateEmployeeComponent implements OnInit, OnDestroy {
         this.lblInputUsername           = 'Nombre de usuario';
         this.lblInputUserpasswd         = 'Contraseña';
         this.lblInputUserpasswdCon      = 'Contraseña (confirmar)';
+        
+        this.errInputIdType             = 'Debe seleccionar un tipo de identificación válido';
+        this.errInputIdNumber           = 'Número de identificación inválido';
+        this.errInputName               = 'Nombre inválido';
+        this.errInputLastname           = 'Apellido inválido';
+        this.errInputBirth              = 'Fecha de nacimiento inválida';
+        this.errInputBothCity           = 'Ciudad de nacimiento inválida';
+        this.errInputAddress            = 'Dirección inválida';
+        this.errInputCity               = 'Ciudad de residencia inválida';
+        this.errInputPhones             = 'Teléfonos inválidos';
+        this.errInputMails              = 'Correo inválido';
+        this.errInputContractType       = 'Tipo de contrato inválido';
+        this.errInputContractNumber     = 'Número de contrato inválido';
+        this.errInputContractBegin      = 'Fecha seleccionada inválida';
+        this.errInputContractEnd        = 'Fecha seleccionada inválida';
+        this.errInputUsername           = 'Nombre de usuario inválido';
+        this.errInputUserpasswd         = 'Contraseña inválida';
+        this.errInputUserpasswdCon      = 'Contraseña inválida';
+        
         this.lblButtonCreate            = 'Crear';
         this.lblButtonClean             = 'Limpiar';        
     }
     
     create(): void {
-        console.log(this._employee);
+        if (this.registerEmployee.invalid) {
+          console.log('Con problemas');  
+        } else {
+           let employee: DTOEmployee = {
+               id: {
+                   type       : this.registerEmployee.value['employee.id.type'],
+                   number     : this.registerEmployee.value['employee.id.number']
+               },
+               type           : this.registerEmployee.value['employee.type'],
+               name           : this.registerEmployee.value['employee.name'],
+               lastname       : this.registerEmployee.value['employee.lastname'],
+               birth          : this.registerEmployee.value['employee.birth'],
+               bothcity       : this.registerEmployee.value['employee.bothcity'],
+               address        : this.registerEmployee.value['employee.address'],
+               phones         : this.registerEmployee.value['employee.phones'],
+               mails          : this.registerEmployee.value['employee.mails'],
+               contract       : {
+                   type       : this.registerEmployee.value['employee.contract.type'],
+                   number     : this.registerEmployee.value['employee.contract.number'],
+                   begin      : this.registerEmployee.value['employee.contract.begin'],
+                   end        : this.registerEmployee.value['employee.contract.end']
+               },
+               user           : {
+                   name       : this.registerEmployee.value['employee.user.name'],
+                   password1  : this.registerEmployee.value['employee.user.password1'],
+                   password2  : this.registerEmployee.value['employee.user.password2']
+               }
+           };
+           //Se transforma a objeto de empleado
+           console.log(employee);            
+        }
+    }
+    
+    get fields() { 
+        return this.registerEmployee.controls; 
     }
     
     get categories(): Array<any> {
@@ -228,12 +306,66 @@ export class WCreateEmployeeComponent implements OnInit, OnDestroy {
     get lblInputUserpasswdCon(): string {
         return this._lblInputUserpasswdCon;
     }
+
+    get errInputIdType(): string {
+        return this._errInputIdType;
+    }
+    get errInputIdNumber(): string {
+        return this._errInputIdNumber;
+    }
+    get errInputName(): string {
+        return this._errInputName;
+    }
+    get errInputLastname(): string {
+        return this._errInputLastname;
+    }
+    get errInputBirth(): string {
+        return this._errInputBirth;
+    }
+    get errInputBothCity(): string {
+        return this._errInputBothCity;
+    }
+    get errInputAddress(): string {
+        return this._errInputAddress;
+    }
+    get errInputCity(): string {
+        return this._errInputCity;
+    }
+    get errInputPhones(): string {
+        return this._errInputPhones;
+    }
+    get errInputMails(): string {
+        return this._errInputMails;
+    }
+    get errInputContractType(): string {
+        return this._errInputContractType;
+    }
+    get errInputContractNumber(): string {
+        return this._errInputContractNumber;
+    }
+    get errInputContractBegin(): string {
+        return this._errInputContractBegin;
+    }
+    get errInputContractEnd(): string {
+        return this._errInputContractEnd;
+    }
+    get errInputUsername(): string {  
+        return this._errInputUsername;
+    }
+    get errInputUserpasswd(): string  {
+        return this._errInputUserpasswd;
+    }
+    get errInputUserpasswdCon(): string {
+        return this._errInputUserpasswdCon;
+    }
+    
     get lblButtonCreate(): string {
         return this._lblButtonCreate;
     }
     get lblButtonClean(): string {
         return this._lblButtonClean;
     }
+
     get employee(): DTOEmployee {
         return this._employee;
     }
@@ -308,12 +440,66 @@ export class WCreateEmployeeComponent implements OnInit, OnDestroy {
     set lblInputUserpasswdCon ( _lblInputUserpasswdCon: string) { 
         this._lblInputUserpasswdCon = _lblInputUserpasswdCon;
     }
+
+    set errInputIdType( _errInputIdType: string ) {
+        this._errInputIdType = _errInputIdType;
+    }
+    set errInputIdNumber( _errInputIdNumber: string ) {
+        this._errInputIdNumber = _errInputIdNumber;
+    }
+    set errInputName ( _errInputName: string) { 
+        this._errInputName = _errInputName;
+    }
+    set errInputLastname ( _errInputLastname: string) { 
+        this._errInputLastname = _errInputLastname;
+    }
+    set errInputBirth ( _errInputBirth: string) { 
+        this._errInputBirth = _errInputBirth;
+    }
+    set errInputBothCity ( _errInputBothCity: string) { 
+        this._errInputBothCity = _errInputBothCity;
+    }
+    set errInputAddress ( _errInputAddress: string) { 
+        this._errInputAddress = _errInputAddress;
+    }
+    set errInputCity ( _errInputCity:string ) {
+        this._errInputCity = _errInputCity;
+    }
+    set errInputPhones ( _errInputPhones: string) { 
+        this._errInputPhones = _errInputPhones;
+    }
+    set errInputMails( _errInputMails: string) { 
+        this._errInputMails = _errInputMails;
+    }
+    set errInputContractType ( _errInputContractType: string) { 
+        this._errInputContractType = _errInputContractType;
+    }
+    set errInputContractNumber ( _errInputContractNumber: string) { 
+        this._errInputContractNumber = _errInputContractNumber;
+    }
+    set errInputContractBegin ( _errInputContractBegin: string) {
+        this._errInputContractBegin = _errInputContractBegin;
+    }
+    set errInputContractEnd ( _errInputContractEnd: string) { 
+        this._errInputContractEnd = _errInputContractEnd;
+    }
+    set errInputUsername ( _errInputUsername: string) { 
+        this._errInputUsername = _errInputUsername;
+    }
+    set errInputUserpasswd ( _errInputUserpasswd: string) { 
+        this._errInputUserpasswd = _errInputUserpasswd;
+    }
+    set errInputUserpasswdCon ( _errInputUserpasswdCon: string) { 
+        this._errInputUserpasswdCon = _errInputUserpasswdCon;
+    }
+    
     set lblButtonCreate ( _lblButtonCreate: string) {
         this._lblButtonCreate = _lblButtonCreate;
     }
     set lblButtonClean ( _lblButtonClean: string) { 
         this._lblButtonClean = _lblButtonClean;
     }
+
     @Input()
     set employee( _employee: DTOEmployee) {
         this._employee = _employee;
