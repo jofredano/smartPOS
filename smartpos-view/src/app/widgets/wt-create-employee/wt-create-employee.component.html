@@ -5,6 +5,9 @@
   <div class="card-body">
 	<form class="card-text needs-validation" novalidate [formGroup]="registerEmployee" (ngSubmit)="create()">
 	  <div class="form-group">
+	    <wc-alert></wc-alert>
+	  </div>
+	  <div class="form-group">
 	    <label for="phones">{{lblInputTypePerson}}</label>
 	      <select id="persontype" name="persontype" formControlName="employee.type" class="form-control" (change)="loadTypeIdentification($event.target.value)">
 	         <option [value]="typePerson.abbreviation" *ngFor="let typePerson of typesPerson">{{typePerson.description}}</option>

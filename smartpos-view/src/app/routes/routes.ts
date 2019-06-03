@@ -3,7 +3,7 @@ import { FrameComponent } from '../layout/';
 import { Error403Component } from '../shared/global-error-components';
 import { Authorization } from '../core/security';
 
-import { LoginComponent, MainComponent, WCreateEmployeeComponent } from "../widgets";
+import { LoginComponent, MainComponent, WtCreateEmployeeComponent } from "../widgets";
 
 /**
  * @type{Array} objeto que almacena la ruta base sobre la cual se asigna el modulo manejador
@@ -21,7 +21,7 @@ export const APP_ROUTES: Routes = [
              canActivateChild: [Authorization] },
          { path: 'admin' , 
              children: [
-                { path: 'create-employee' , component: WCreateEmployeeComponent }
+                { path: 'create-employee' , component: WtCreateEmployeeComponent }
              ], 
              canActivateChild: [Authorization] },
       ]

@@ -10,11 +10,11 @@ import { DTOEmployee, DTOCategory, Utils } from '../../core/dto';
  * Componente para renderizar el encabezado de la aplicación
  */
 @Component({
-  selector: 'app-w-create-employee',
-  templateUrl: './w-create-employee.component.html',
+  selector: 'app-wt-create-employee',
+  templateUrl: './wt-create-employee.component.html',
   styleUrls: []
 })
-export class WCreateEmployeeComponent implements OnInit, OnDestroy {
+export class WtCreateEmployeeComponent implements OnInit, OnDestroy {
     
     registerEmployee: FormGroup;
 
@@ -200,7 +200,7 @@ export class WCreateEmployeeComponent implements OnInit, OnDestroy {
     
     create(): void {
         if (this.registerEmployee.invalid) {
-          console.log('Con problemas');  
+           console.log('Con problemas');  
         } else {
            let employee: DTOEmployee = {
                id: {
@@ -223,8 +223,7 @@ export class WCreateEmployeeComponent implements OnInit, OnDestroy {
                },
                user           : {
                    name       : this.registerEmployee.value['employee.user.name'],
-                   password1  : this.registerEmployee.value['employee.user.password1'],
-                   password2  : this.registerEmployee.value['employee.user.password2']
+                   password   : this.registerEmployee.value['employee.user.password1']
                }
            };
            //Se transforma a objeto de empleado
