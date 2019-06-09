@@ -4,6 +4,7 @@ import { AngularWebStorageModule, SessionStorage } from 'angular-web-storage';
 import { Observable, Subject } from 'rxjs';
 import { share } from 'rxjs/operators';
 import { Constants } from '../http';
+import { Router } from '@angular/router';
 
 /**
  *  Servicio usado para seguridad de la aplicacion
@@ -29,7 +30,7 @@ export class FirewallService {
      * Constructor de la clase
      * @param HttpClient servicio para hacer peticiones http
      */
-    constructor(private http: HttpClient) {
+    constructor(private http: HttpClient, private router: Router) {
     }
 
     /**
@@ -105,7 +106,6 @@ export class FirewallService {
             .subscribe(access => {
                 self.clearObserverForLogin();
             }, error => {
-                self.clearObserverForLogin();
                 console.log(error);
             });
     }
@@ -153,8 +153,9 @@ export class FirewallService {
      */
     clearObserverForLogin() {
         this._access    = null;
-        this._userInfo = null;
-        this._token    = null;
+        this._userInfo  = null;
+        this._token     = null;
+        this.router.navigate(['main/login']);
     }
     
     get userInfo(): any {
