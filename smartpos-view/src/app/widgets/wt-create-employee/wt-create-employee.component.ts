@@ -2,7 +2,7 @@ import { Component, Input, OnInit, OnDestroy } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { filter } from 'rxjs/operators';
 import { Subscription } from 'rxjs';
-import { FirewallService, WidgetService } from '../../core';
+import { FirewallService, WidgetService, MessageService } from '../../core';
 import { DTOEmployee, DTOCategory, Utils } from '../../core/dto';
 
 
@@ -72,7 +72,7 @@ export class WtCreateEmployeeComponent implements OnInit, OnDestroy {
         address: '',
         phones: '',
         mails: '',
-        contract: {
+        agreement: {
         },
         user: {
             name: '',
@@ -89,9 +89,16 @@ export class WtCreateEmployeeComponent implements OnInit, OnDestroy {
 
     private _typesContract: Array<any>;
 
+    private _submitted: boolean;
 
-    constructor(private formBuilder: FormBuilder, private firewallService: FirewallService, private widgetService: WidgetService) {
-        this.initLabels();
+
+    constructor(
+       private formBuilder: FormBuilder, 
+       private firewallService: FirewallService, 
+       private widgetService: WidgetService, 
+       private messageService: MessageService) {
+       this.initLabels();
+       this.submitted = false;
     }
     
     ngOnInit(): void {
@@ -198,9 +205,14 @@ export class WtCreateEmployeeComponent implements OnInit, OnDestroy {
         this.lblButtonClean             = 'Limpiar';        
     }
     
+    mustQuestionTypeUndefined(): boolean {
+        return (this.registerEmployee.value['employee.contract.type'] == 'CONTRATO.TIPO.INDEFINIDO');
+    }
+    
     create(): void {
+        this.submitted = true;
         if (this.registerEmployee.invalid) {
-           console.log('Con problemas');  
+            this.messageService.sendMessage( { type: 'error', text: 'Debe diligenciar los datos del formulario de manera correcta' });
         } else {
            let employee: DTOEmployee = {
                id: {
@@ -215,7 +227,7 @@ export class WtCreateEmployeeComponent implements OnInit, OnDestroy {
                address        : this.registerEmployee.value['employee.address'],
                phones         : this.registerEmployee.value['employee.phones'],
                mails          : this.registerEmployee.value['employee.mails'],
-               contract       : {
+               agreement      : {
                    type       : this.registerEmployee.value['employee.contract.type'],
                    number     : this.registerEmployee.value['employee.contract.number'],
                    begin      : this.registerEmployee.value['employee.contract.begin'],
@@ -223,11 +235,20 @@ export class WtCreateEmployeeComponent implements OnInit, OnDestroy {
                },
                user           : {
                    name       : this.registerEmployee.value['employee.user.name'],
-                   password   : this.registerEmployee.value['employee.user.password1']
+                   password   : this.registerEmployee.value['employee.user.password1'],
+                   //Se tiene que realizar otro servicio para obtener los roles
+                   //que puede crear este usuario
+                   role       : 'ROL.ADMINISTRADOR'
                }
            };
            //Se transforma a objeto de empleado
-           console.log(employee);            
+           this.widgetService.createEmployee( employee ).subscribe(
+               response => {
+                   this.messageService.sendMessage( { type: 'success', text: response });
+                   console.log(employee); 
+                }, error   => {
+                   this.messageService.sendMessage( { type: 'error', text: error.error }); 
+                });
         }
     }
     
@@ -368,6 +389,10 @@ export class WtCreateEmployeeComponent implements OnInit, OnDestroy {
     get employee(): DTOEmployee {
         return this._employee;
     }
+    
+    get submitted(): boolean {
+        return this._submitted;
+    }
 
     set categories( _categories: Array<any> ) {
         this._categories = _categories;
@@ -502,5 +527,9 @@ export class WtCreateEmployeeComponent implements OnInit, OnDestroy {
     @Input()
     set employee( _employee: DTOEmployee) {
         this._employee = _employee;
+    }
+    
+    set submitted( _submited: boolean) {
+        this._submitted = _submited;
     }
 }

@@ -47,7 +47,7 @@ class employees extends PathRestController {
 			if (!Utils::checkIdentification($content['id'])) {
 				throw new GeneralException('No corresponde a un documento de identificacion', 1047);
 			}
-			if (!Utils::checkEmail($content['mail'])) {
+			if (!Utils::checkEmail($content['mails'])) {
 				throw new GeneralException('No corresponde a un correo electronico', 1048);
 			}
 			if (!Utils::checkAlphabetic($content['name'])) {
@@ -98,30 +98,29 @@ class employees extends PathRestController {
 							//2. Se verifica que los campos obligatorios esten diligenciados
 							$content 					= self::checkContent( $content );
 							//Se diligencia los datos para ser invocado el procedimiento
-							$vin_ent_identificacion		= $content['id'];
-							$vin_per_nombres			= $content['name'];
-							$vin_per_apellidos			= $content['lastname'];
-							$vin_per_fecha_nacimiento	= $content['birth'];
-							$vin_ent_direccion			= $content['address'];
-							$vin_ent_telefono			= $content['phone'];
-							$vin_ent_correo				= $content['mail'];
-							$vin_emp_tipo_contrato		= $content[self::AGGREMENT_ATTRIB]['type'];
-							$vin_emp_numero_contrato	= $content[self::AGGREMENT_ATTRIB]['number'];
-							$vin_emp_fecha_inicio 		= $content[self::AGGREMENT_ATTRIB]['begin'];
-							$vin_emp_fecha_fin 			= $content[self::AGGREMENT_ATTRIB]['end'];
-							$vin_usu_alias 				= $content[self::USER_ATTRIB]['name'];
-							$vin_usu_clave 				= $content[self::USER_ATTRIB]['password'];
-							$vin_roles					= $content[self::USER_ATTRIB]['role'];
+							$vin_ent_identificacion		= Utils::getValue($content, 'id',       "'#value'", 'NULL');
+							$vin_per_nombres			= Utils::getValue($content, 'name',     "'#value'", 'NULL');
+							$vin_per_apellidos			= Utils::getValue($content, 'lastname', "'#value'", 'NULL');
+							$vin_per_fecha_nacimiento	= Utils::getValue($content, 'birth',    "STR_TO_DATE('#value','%Y-%m-%d')", 'NULL');
+							$vin_ent_direccion			= Utils::getValue($content, 'address',  "'#value'", 'NULL');
+							$vin_ent_telefono			= Utils::getValue($content, 'phones',   "'#value'", 'NULL');
+							$vin_ent_correo				= Utils::getValue($content, 'mails',    "'#value'", 'NULL');
+							$vin_emp_tipo_contrato		= Utils::getValue($content[self::AGGREMENT_ATTRIB], 'type',     "'#value'", 'NULL');
+							$vin_emp_numero_contrato	= Utils::getValue($content[self::AGGREMENT_ATTRIB], 'number',   "'#value'", 'NULL');
+							$vin_emp_fecha_inicio 		= Utils::getValue($content[self::AGGREMENT_ATTRIB], 'begin',    "STR_TO_DATE('#value','%Y-%m-%d')", 'NULL');
+							$vin_emp_fecha_fin 			= Utils::getValue($content[self::AGGREMENT_ATTRIB], 'end',      "STR_TO_DATE('#value','%Y-%m-%d')", 'NULL');
+							$vin_usu_alias 				= Utils::getValue($content[self::USER_ATTRIB],      'name',     "'#value'", 'NULL');
+							$vin_usu_clave 				= Utils::getValue($content[self::USER_ATTRIB],      'password', "'#value'", 'NULL');
+							$vin_roles					= Utils::getValue($content[self::USER_ATTRIB],      'role',     "'#value'", 'NULL');
 							$vin_usuario_creador		= $result['usuario'];
 							//3. Se intenta crear el usuario con los datos suministrados
 							$this->db->query("CALL smpos_prc_crear_empleado(".
-									"'".$vin_ent_identificacion."', '".$vin_per_nombres."',  '".$vin_per_apellidos."',".
-									"STR_TO_DATE ('".$vin_per_fecha_nacimiento."','%Y-%m-%d'),".
-									"'".$vin_ent_direccion."',      '".$vin_ent_telefono."', '".$vin_ent_correo."',".
-									"'".$vin_emp_tipo_contrato."',  '".$vin_emp_numero_contrato."',".
-									"STR_TO_DATE('".$vin_emp_fecha_inicio."', '%Y-%m-%d'),".
-									"STR_TO_DATE('".$vin_emp_fecha_fin."', '%Y-%m-%d'),".
-									"'".$vin_usu_alias."',          '".$vin_usu_clave."',    '".$vin_roles."',".
+									"".$vin_ent_identificacion.", ".$vin_per_nombres.",  ".$vin_per_apellidos.",".
+									"".$vin_per_fecha_nacimiento.",".
+									"".$vin_ent_direccion.",      ".$vin_ent_telefono.", ".$vin_ent_correo.",".
+									"".$vin_emp_tipo_contrato.",  ".$vin_emp_numero_contrato.",".
+									"".$vin_emp_fecha_inicio.",   ".$vin_emp_fecha_fin.",".
+									"".$vin_usu_alias.",          ".$vin_usu_clave.",    ".$vin_roles.",".
 									"".$vin_usuario_creador.",      @vou_entidad,        @vou_codigo,".
 									"@vou_mensaje); ");
 							$result = $this->db->query("SELECT @vou_entidad AS entidad, @vou_codigo AS codigo, @vou_mensaje AS mensaje;")->result_array();

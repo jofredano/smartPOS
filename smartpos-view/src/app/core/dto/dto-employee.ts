@@ -9,6 +9,6 @@ export interface DTOEmployee {
   address:string;
   phones:string;
   mails:string;
-  contract:any;
+  agreement:any;
   user:any;
 }

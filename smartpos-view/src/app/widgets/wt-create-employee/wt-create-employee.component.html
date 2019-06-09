@@ -16,17 +16,17 @@
 	  <div class="form-row">
 	    <div class="form-group col-md-6">
 	      <label for="idtype">{{lblInputIdType}}</label>
-	      <select id="idtype" name="idtype" formControlName="employee.id.type" class="form-control" [ngClass]="{ 'is-invalid': fields['employee.id.type'].errors }">
+	      <select id="idtype" name="idtype" formControlName="employee.id.type" class="form-control" [ngClass]="{ 'is-invalid': submitted && fields['employee.id.type'].errors }">
 	         <option [value]="typeIdentification.abbreviation" *ngFor="let typeIdentification of typesIdentification">{{typeIdentification.description}}</option>
 	      </select>
-	      <div class="invalid-feedback" *ngIf="fields['employee.id.type'].errors">
+	      <div class="invalid-feedback" *ngIf="submitted && fields['employee.id.type'].errors">
 	        {{errInputIdType}}
 	      </div>
 	    </div>
 	    <div class="form-group col-md-6">
 	      <label for="idnumber">{{lblInputIdNumber}}</label>
-	      <input type="text" class="form-control" id="idnumber" name="idnumber" placeholder="15651771" formControlName="employee.id.number" [ngClass]="{ 'is-invalid': fields['employee.id.number'].errors }" required>
-	      <div class="invalid-feedback" *ngIf="fields['employee.id.number'].errors">
+	      <input type="text" class="form-control" id="idnumber" name="idnumber" placeholder="15651771" formControlName="employee.id.number" [ngClass]="{ 'is-invalid': submitted && fields['employee.id.number'].errors }" required>
+	      <div class="invalid-feedback" *ngIf="submitted && fields['employee.id.number'].errors">
 	        {{errInputIdNumber}}
 	      </div>
 	    </div>
@@ -34,15 +34,15 @@
 	  <div class="form-row">
 	    <div class="form-group col-md-6">
 	      <label for="name">{{lblInputName}}</label>
-	      <input type="text" class="form-control" id="name" name="name" placeholder="Richard" formControlName="employee.name" [ngClass]="{ 'is-invalid': fields['employee.name'].errors }" required>
-	      <div class="invalid-feedback" *ngIf="fields['employee.name'].errors">
+	      <input type="text" class="form-control" id="name" name="name" placeholder="Richard" formControlName="employee.name" [ngClass]="{ 'is-invalid': submitted && fields['employee.name'].errors }" required>
+	      <div class="invalid-feedback" *ngIf="submitted && fields['employee.name'].errors">
 	        {{errInputName}}
 	      </div>
 	    </div>
 	    <div class="form-group col-md-6">
 	      <label for="lastname">{{lblInputLastname}}</label>
-	      <input type="text" class="form-control" id="lastname" name="lastname" placeholder="Mojica" formControlName="employee.lastname" [ngClass]="{ 'is-invalid': fields['employee.lastname'].errors }" required>
-	      <div class="invalid-feedback" *ngIf="fields['employee.lastname'].errors">
+	      <input type="text" class="form-control" id="lastname" name="lastname" placeholder="Mojica" formControlName="employee.lastname" [ngClass]="{ 'is-invalid': submitted && fields['employee.lastname'].errors }" required>
+	      <div class="invalid-feedback" *ngIf="submitted && fields['employee.lastname'].errors">
 	        {{errInputLastname}}
 	      </div>
 	    </div>
@@ -50,15 +50,15 @@
 	  <div class="form-row">
 	    <div class="form-group col-md-6">
 	      <label for="birth">{{lblInputBirth}}</label>
-	      <input type="date" class="form-control" id="birth" name="birth" formControlName="employee.birth" [ngClass]="{ 'is-invalid': fields['employee.birth'].errors }" required>
-	      <div class="invalid-feedback" *ngIf="fields['employee.birth'].errors">
+	      <input type="date" class="form-control" id="birth" name="birth" formControlName="employee.birth" [ngClass]="{ 'is-invalid': submitted && fields['employee.birth'].errors }" required>
+	      <div class="invalid-feedback" *ngIf="submitted && fields['employee.birth'].errors">
 	        {{errInputBirth}}
 	      </div>
 	    </div>
 	    <div class="form-group col-md-6">
 	      <label for="bothcity">{{lblInputBothCity}}</label>
-	      <input type="text" class="form-control" id="bothcity" name="bothcity" formControlName="employee.bothcity" placeholder="Bogota"  [ngClass]="{ 'is-invalid': fields['employee.bothcity'].errors }" required>
-	      <div class="invalid-feedback" *ngIf="fields['employee.bothcity'].errors">
+	      <input type="text" class="form-control" id="bothcity" name="bothcity" formControlName="employee.bothcity" placeholder="Bogota"  [ngClass]="{ 'is-invalid': submitted && fields['employee.bothcity'].errors }" required>
+	      <div class="invalid-feedback" *ngIf="submitted && fields['employee.bothcity'].errors">
 	        {{errInputBothCity}}
 	      </div>
 	    </div>
@@ -66,47 +66,47 @@
 	  <div class="form-row">
 		  <div class="form-group col-md-6">
 		    <label for="address">{{lblInputAddress}}</label>
-		    <input type="text" class="form-control" id="address" name="address" formControlName="employee.address" [ngClass]="{ 'is-invalid': fields['employee.address'].errors }" placeholder="1234 Main St" required>
-		    <div class="invalid-feedback" *ngIf="fields['employee.address'].errors">
+		    <input type="text" class="form-control" id="address" name="address" formControlName="employee.address" [ngClass]="{ 'is-invalid': submitted && fields['employee.address'].errors }" placeholder="1234 Main St" required>
+		    <div class="invalid-feedback" *ngIf="submitted && fields['employee.address'].errors">
 		        {{errInputAddress}}
 		    </div>
 		  </div>
 		  <div class="form-group col-md-6">
 		    <label for="city">{{lblInputCity}}</label>
-		    <input type="text" class="form-control" id="city" name="city" formControlName="employee.city" [ngClass]="{ 'is-invalid': fields['employee.city'].errors }" placeholder="Bogota" required>
-		    <div class="invalid-feedback" *ngIf="fields['employee.city'].errors">
+		    <input type="text" class="form-control" id="city" name="city" formControlName="employee.city" [ngClass]="{ 'is-invalid': submitted && fields['employee.city'].errors }" placeholder="Bogota" required>
+		    <div class="invalid-feedback" *ngIf="submitted && fields['employee.city'].errors">
 		        {{errInputCity}}
 		    </div>
 		  </div>
 	  </div>
 	  <div class="form-group">
 	    <label for="phones">{{lblInputPhones}}</label>
-	    <input type="text" class="form-control" id="phones" name="phones" formControlName="employee.phones" [ngClass]="{ 'is-invalid': fields['employee.phones'].errors }" placeholder="245678" required>
-	    <div class="invalid-feedback" *ngIf="fields['employee.phones'].errors">
+	    <input type="text" class="form-control" id="phones" name="phones" formControlName="employee.phones" [ngClass]="{ 'is-invalid': submitted && fields['employee.phones'].errors }" placeholder="245678" required>
+	    <div class="invalid-feedback" *ngIf="submitted && fields['employee.phones'].errors">
 	        {{errInputPhones}}
 	    </div>
 	  </div>
 	  <div class="form-group">
 	    <label for="mails">{{lblInputMails}}</label>
-	    <input type="text" class="form-control" id="mails" name="mails" formControlName="employee.mails" [ngClass]="{ 'is-invalid': fields['employee.mails'].errors }" placeholder="mirandavelez@hotmail.com">
-	    <div class="invalid-feedback" *ngIf="fields['employee.mails'].errors">
+	    <input type="text" class="form-control" id="mails" name="mails" formControlName="employee.mails" [ngClass]="{ 'is-invalid': submitted && fields['employee.mails'].errors }" placeholder="mirandavelez@hotmail.com">
+	    <div class="invalid-feedback" *ngIf="submitted && fields['employee.mails'].errors">
 	        {{errInputMails}}
 	    </div>
 	  </div>
 	  <div class="form-row">
 	    <div class="form-group col-md-6">
 	      <label for="contractType">{{lblInputContractType}}</label>
-	      <select id="contractType" name="contractType" formControlName="employee.contract.type" [ngClass]="{ 'is-invalid': fields['employee.contract.type'].errors }" class="form-control" required>
+	      <select id="contractType" name="contractType" formControlName="employee.contract.type" [ngClass]="{ 'is-invalid': submitted && fields['employee.contract.type'].errors }" class="form-control" required>
 	          <option [value]="typeContract.abbreviation" *ngFor="let typeContract of typesContract">{{typeContract.description}}</option>
 	      </select>
-	      <div class="invalid-feedback" *ngIf="fields['employee.contract.type'].errors">
+	      <div class="invalid-feedback" *ngIf="submitted && fields['employee.contract.type'].errors">
 	        {{errInputContractType}}
 	      </div>
 	    </div>
 	    <div class="form-group col-md-6">
 	      <label for="contractNumber">{{lblInputContractNumber}}</label>
-	      <input type="text" class="form-control" name="contractNumber" id="contractNumber" formControlName="employee.contract.number" [ngClass]="{ 'is-invalid': fields['employee.contract.number'].errors }" placeholder="456799" required>
-	      <div class="invalid-feedback" *ngIf="fields['employee.contract.number'].errors">
+	      <input type="text" class="form-control" name="contractNumber" id="contractNumber" formControlName="employee.contract.number" [ngClass]="{ 'is-invalid': submitted && fields['employee.contract.number'].errors }" placeholder="456799" required>
+	      <div class="invalid-feedback" *ngIf="submitted && fields['employee.contract.number'].errors">
 	        {{errInputContractNumber}}
 	      </div>
 	    </div>
@@ -114,38 +114,38 @@
 	  <div class="form-row">
 	    <div class="form-group col-md-6">
 	      <label for="contractBegin">{{lblInputContractBegin}}</label>
-	      <input type="date" class="form-control" name="contractBegin" id="contractBegin" formControlName="employee.contract.begin" [ngClass]="{ 'is-invalid': fields['employee.contract.begin'].errors }">
-	      <div class="invalid-feedback" *ngIf="fields['employee.contract.begin'].errors">
+	      <input type="date" class="form-control" name="contractBegin" id="contractBegin" formControlName="employee.contract.begin" [ngClass]="{ 'is-invalid': submitted && fields['employee.contract.begin'].errors }">
+	      <div class="invalid-feedback" *ngIf="submitted && fields['employee.contract.begin'].errors">
 	        {{errInputContractBegin}}
 	      </div>
 	    </div>
 	    <div class="form-group col-md-6">
 	      <label for="contractEnd">{{lblInputContractEnd}}</label>
-	      <input type="date" class="form-control" name="contractEnd" id="contractEnd" formControlName="employee.contract.end" [ngClass]="{ 'is-invalid': fields['employee.contract.end'].errors }">
-	      <div class="invalid-feedback" *ngIf="fields['employee.contract.end'].errors">
+	      <input type="date" class="form-control" name="contractEnd" id="contractEnd" formControlName="employee.contract.end" [readonly]="mustQuestionTypeUndefined()" [ngClass]="{ 'is-invalid': submitted && fields['employee.contract.end'].errors }">
+	      <div class="invalid-feedback" *ngIf="submitted && fields['employee.contract.end'].errors">
 	        {{errInputContractEnd}}
 	      </div>
 	    </div>
 	  </div>
 	  <div class="form-group">
 	    <label for="userName">{{lblInputUsername}}</label>
-	    <input type="text" class="form-control" name="username" id="username" formControlName="employee.user.name"  [ngClass]="{ 'is-invalid': fields['employee.user.name'].errors }" placeholder="richmoj233" required>
-	    <div class="invalid-feedback" *ngIf="fields['employee.user.name'].errors">
+	    <input type="text" class="form-control" name="username" id="username" formControlName="employee.user.name"  [ngClass]="{ 'is-invalid': submitted && fields['employee.user.name'].errors }" placeholder="richmoj233" required>
+	    <div class="invalid-feedback" *ngIf="submitted && fields['employee.user.name'].errors">
 	        {{errInputUsername}}
 	    </div>
 	  </div>
 	  <div class="form-row">
 	    <div class="form-group col-md-6">
 	      <label for="password1">{{lblInputUserpasswd}}</label>
-	      <input type="password" class="form-control" name="password1" id="password1" formControlName="employee.user.password1" [ngClass]="{ 'is-invalid': fields['employee.user.password1'].errors }" placeholder="Clave" required>
-		  <div class="invalid-feedback" *ngIf="fields['employee.user.password1'].errors">
+	      <input type="password" class="form-control" name="password1" id="password1" formControlName="employee.user.password1" [ngClass]="{ 'is-invalid': submitted && fields['employee.user.password1'].errors }" placeholder="Clave" required>
+		  <div class="invalid-feedback" *ngIf="submitted && fields['employee.user.password1'].errors">
 		      {{errInputUserpasswd}}
 		  </div>
 	    </div>
 	    <div class="form-group col-md-6">
 	      <label for="password2">{{lblInputUserpasswdCon}}</label>
-	      <input type="password" class="form-control" name="password2" id="password2" formControlName="employee.user.password2" [ngClass]="{ 'is-invalid': fields['employee.user.password2'].errors }" placeholder="Repetir clave" required>
-		  <div class="invalid-feedback" *ngIf="fields['employee.user.password2'].errors">
+	      <input type="password" class="form-control" name="password2" id="password2" formControlName="employee.user.password2" [ngClass]="{ 'is-invalid': submitted && fields['employee.user.password2'].errors }" placeholder="Repetir clave" required>
+		  <div class="invalid-feedback" *ngIf="submitted && fields['employee.user.password2'].errors">
 		      {{errInputUserpasswdCon}}
 		  </div>
 	    </div>

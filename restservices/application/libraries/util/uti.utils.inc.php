@@ -101,6 +101,28 @@ class Utils {
 		}
 		return $items;
 	}
+	
+	/**
+	 * Metodo que verifica si una propiedad existe en un objeto
+	 * @param object $entity
+	 * @param string $property
+	 * @return boolean
+	 */
+	public static function checkProperty( $entity, string $property) {
+	    return property_exists((object) $entity, $property);
+	}
+	
+	/**
+	 * Obtiene el valor de un objeto
+	 * @param  object $entity
+	 * @param  string $property
+	 * @param  string $formatter
+	 * @param  string $default
+	 * @return mixed
+	 */
+	public static function getValue($entity, string $property, string $formatter, string $default) {
+	    return self::checkProperty( $entity, $property )?str_replace("#value", $entity[$property], $formatter):$default;
+	}
 
 }
 ?>

@@ -28,4 +28,7 @@ export class Constants {
     /** recurso que obtiene la informacion del acceso */
     static readonly RESOURCE_CATEGORIES_LIST = 'restservices/srv/categories/list';
     
+    /** recurso que obtiene la informacion del acceso */
+    static readonly RESOURCE_CREATE_EMPLOYEE = 'restservices/srv/employees/create';
+    
 }

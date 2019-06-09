@@ -5,6 +5,8 @@ import { share } from 'rxjs/operators';
 import { FirewallService } from '../security';
 import { Constants } from '../http';
 
+import { DTOEmployee, DTOCategory, Utils } from '../../core/dto';
+
 /**
  *  Servicio usado para seguridad de la aplicacion
  */
@@ -31,4 +33,13 @@ export class WidgetService {
             this.firewall.prepareHeaderRequestWithToken() );
     }
     
+    /**
+     * Crea un empleado en el sistema
+     * @param employee
+     */
+    createEmployee( employee: DTOEmployee ): Observable<any> {
+        return this.http.post(
+            Constants.CONTEXT + Constants.RESOURCE_CREATE_EMPLOYEE, 
+            employee, this.firewall.prepareHeaderRequestWithToken() );
+    }
 }
