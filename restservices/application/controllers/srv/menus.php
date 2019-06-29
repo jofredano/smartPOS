@@ -51,14 +51,16 @@ class menus extends PathRestController {
 	        try {
 	            //Procedemos a realizar llamado a base de datos
 	            $this->db->query("CALL smpos_prc_obtener_menu('".$token."', @vou_result, @vou_codigo, @vou_mensaje); ");
-	            $result = $this->db->query("SELECT @vou_result AS resultSet, @vou_codigo AS codigo, @vou_mensaje AS mensaje;")->result_array();
-	            $output = $result[0];
+	            $result         = $this->db->query("SELECT @vou_result AS resultSet, @vou_codigo AS codigo, @vou_mensaje AS mensaje;")->result_array();
+	            $output         = $result[0];
 	            //Validamos si la respuesta fue exitosa
 	            if ($output[PathRestController::ATTRIB_CODE] == '200') {
 	                //Tratamiento del cursor como xml texto
 	                $items      = $this->prepareResultSetText($output['resultSet']);
 	            	//Se recorre el resultado para transformarlo a menu de la aplicacion
 	            	$output 	= $this->prepareMenu($items);
+	            	//Construye una opcion principal
+	            	$output     = $output[0];
 	            	//Estado de la respuesta
 	                $codeStatus = REST_Controller::HTTP_OK;
 	            } else if ($output[PathRestController::ATTRIB_CODE] == '401') {
@@ -67,8 +69,8 @@ class menus extends PathRestController {
 	                $codeStatus = REST_Controller::HTTP_INTERNAL_SERVER_ERROR;
 	            }
 	        } catch (Exception $e) {
-	            $output = $e->getMessage();
-	            $codeStatus = REST_Controller::HTTP_INTERNAL_SERVER_ERROR;
+	            $output         = $e->getMessage();
+	            $codeStatus     = REST_Controller::HTTP_INTERNAL_SERVER_ERROR;
 	        }
 	    } else {
 	        $output     = self::MSGNOTTOKEN_DATA;
@@ -146,6 +148,7 @@ class menus extends PathRestController {
 			$menu->setTittle( $item->opc_titulo );
 			$menu->setAbbreviation( $item->opc_abreviatura );
 			$menu->setDescription( $item->opc_descripcion );
+			$menu->setOrder( $item->opc_orden );
 			$menu->setRoute( $item->opc_ruta );
 			
 			//Valida si no posee opc_principal (indica que es una opcion que no es hija de nadie)
@@ -166,6 +169,7 @@ class menus extends PathRestController {
 					$element->setAbbreviation( $parent->opc_abreviatura );
 					$element->setDescription( $parent->opc_descripcion );
 					$element->setRoute( $parent->opc_ruta );
+					$element->setOrder( $item->opc_orden );
 					array_push($element->getChildren(), $menu);
 					array_push($result, $element);
 				} else {

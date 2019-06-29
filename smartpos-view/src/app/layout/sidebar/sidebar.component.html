@@ -1,30 +1,41 @@
-<div class="sidebar">
-  <!-- 
+<nav class="sidebar" id="sidebar">
   <p-scrollPanel [style]="{height: '100%'}">
-      <div class="sidebar-title">{{ userMenu?.name }}</div>
+      <div class="sidebar-title">{{ userMenu?.tittle }}</div>
       <ul class="sidebar-root">
-        <li class="nav-item" *ngFor="let menu of userMenu?.menuItems" [ngClass]="{'active-item': menu.active }">
-            <a class="ripple nav-link" href="#" [routerLink]="menu.children &&  menu.children.length > 0 ? null : '/'.concat(menu.contextPath)"  (click)="toggleSubmenu(menu)">
+        <li class="nav-item" *ngFor="let menu of userMenu?.children" [ngClass]="{'active-item': menu.active }">
+            <a class="ripple nav-link" href="#" [routerLink]="menu.children &&  menu.children.length > 0 ? null : '/'.concat(menu.route)"  (click)="toggleSubmenu(menu)">
                 <i class="fa {{menu.image}}"></i>
-                <span class="sidebar-menuitem-text">{{ menu.name }}</span>
+                <span class="sidebar-menuitem-text">{{ menu.tittle }}</span>
                 <i *ngIf="menu.children && menu.children.length > 0" class="fa fa-angle-down sidebar-menuitem-toggler"></i>
             </a>
             <app-submenu *ngIf="menu.children && menu.children.length > 0" 
-                            [basePath]="menu.contextPath" 
+                            [mainRoute]="menu.route" 
                             [visible]="menu.active" 
-                            [itemsMenu]="menu.children"
+                            [children]="menu.children"
                             [paddingLeft]="20">
             </app-submenu>
         </li>
       </ul>
   </p-scrollPanel>
+
+  <!-- 
+  <div class="sidebar-header">
+     <h4>{{ userMenu?.tittle }}</h4>
+  </div>
+
+  <ul class="list-unstyled components" *ngIf="userMenu?.children.length > 0 ">
+      <li *ngFor="let menu of userMenu?.children" [ngClass]="{'active': menu.active }">
+           <a href="#" [routerLink]="menu.children &&  menu.children.length > 0 ? null : '/'.concat(menu.route)"  (click)="toggleSubmenu(menu)" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">
+           		{{ menu.tittle }}
+           </a>
+           <app-submenu *ngIf="menu.children && menu.children.length > 0" 
+                           [mainRoute]="menu.route" 
+                           [visible]="menu.active" 
+                           [children]="menu.children"
+                           [paddingLeft]="20">
+           </app-submenu>
+      </li>
+  </ul>
   -->
-  <section class="block-list">
-	<header>Menu principal</header>
-	<ul>
-		<li class="with-chevron"><a href="#/admin/create-employee">Administracion</a></li>
-		<li class="with-chevron"><a href="#/admin/create-employee">Venta</a></li>
-		<li class="with-chevron"><a href="#/admin/create-employee">Inventario</a></li>
-	</ul>
-  </section>
-</div>
+  
+</nav>

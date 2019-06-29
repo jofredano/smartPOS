@@ -28,17 +28,17 @@ export class SubmenuComponent {
   constructor(private sidebarService: SidebarService) {
   }
 
-  @Input() itemsMenu: Array<any>;
+  @Input() children: Array<any>;
 
   @Input() visible: boolean;
 
-  @Input() basePath: string;
+  @Input() mainRoute: string;
 
   @Input() paddingLeft: number;
 
   toggleSubmenu(menu: any) {
     const isActive = menu.active;
-    this.sidebarService.inactivateAllItems(this.itemsMenu);
+    this.sidebarService.inactivateAllItems(this.children);
     menu.active = !isActive;
   }
 }

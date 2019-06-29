@@ -19,9 +19,9 @@ export const APP_ROUTES: Routes = [
                 { path: 'login' , component: LoginComponent },
              ], 
              canActivateChild: [Authorization] },
-         { path: 'admin' , 
+         { path: 'administracion' , 
              children: [
-                { path: 'create-employee' , component: WtCreateEmployeeComponent }
+                { path: 'empleado-crear' , component: WtCreateEmployeeComponent }
              ], 
              canActivateChild: [Authorization] },
       ]

@@ -214,7 +214,7 @@ export class WtCreateEmployeeComponent implements OnInit, OnDestroy {
         if (this.registerEmployee.invalid) {
             this.messageService.sendMessage( { type: 'error', text: 'Debe diligenciar los datos del formulario de manera correcta' });
         } else {
-           let employee: DTOEmployee = {
+           let employee: DTOEmployee    = {
                id: {
                    type       : this.registerEmployee.value['employee.id.type'],
                    number     : this.registerEmployee.value['employee.id.number']

@@ -5,6 +5,7 @@ import { Observable, Subject } from 'rxjs';
 import { share } from 'rxjs/operators';
 import { Constants } from '../http';
 import { Router } from '@angular/router';
+import { OnDestroy } from "@angular/core";
 
 /**
  *  Servicio usado para seguridad de la aplicacion
@@ -13,7 +14,7 @@ import { Router } from '@angular/router';
   providedIn: 'root'
 })
 export class FirewallService {
-
+    
     /** codigo de acceso entregado en el logueo */
     @SessionStorage() private _token: string;
     
@@ -32,7 +33,7 @@ export class FirewallService {
      */
     constructor(private http: HttpClient, private router: Router) {
     }
-
+    
     /**
      * Prepara el encabezado con el token
      * @param token
@@ -106,6 +107,7 @@ export class FirewallService {
             .subscribe(access => {
                 self.clearObserverForLogin();
             }, error => {
+                self.clearObserverForLogin();
                 console.log(error);
             });
     }
@@ -144,6 +146,7 @@ export class FirewallService {
     haveAccess(): boolean {
         const today:Date     = new Date();
         const result:boolean = this._access != null && today <= new Date(this._access.fecfin_acceso.split(' ').join('T'));
+        console.log( this._access );
         return result;
     }
 

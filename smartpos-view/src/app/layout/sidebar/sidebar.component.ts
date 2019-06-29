@@ -27,19 +27,20 @@ export class SidebarComponent implements OnInit {
   ngOnInit(): void {
     const self = this;
     this.sidebarService.onMenuLoaded().subscribe(menu => {
-      self.userMenu = menu;
-      self.setMenuAsActive(self.router.url);
+       console.log(menu); 
+       self.userMenu = menu;
+       self.setMenuAsActive(self.router.url);
     });
   }
 
   toggleSubmenu(menu: any): void {
     const isActive = menu.active;
-    this.sidebarService.inactivateAllItems(this.userMenu.menuItems);
+    this.sidebarService.inactivateAllItems(this.userMenu.children);
     menu.active = !isActive;
   }
 
   setMenuAsActive( url: string ): void {
-    this.userMenu.menuItems.forEach(item => this.markIfIsActive(item, '/', url));
+    this.userMenu.children.forEach(item => this.markIfIsActive(item, '/', url));
   }
 
   markIfIsActive(item: any, baseUrl: string, url: string): void {

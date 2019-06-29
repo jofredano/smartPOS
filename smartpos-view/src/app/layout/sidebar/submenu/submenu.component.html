@@ -1,15 +1,31 @@
 <ul class="sidebar-submenu" [@anim]="visible">
-    <li *ngFor="let menu of itemsMenu" class="nav-item" [ngClass]="{'active-subitem': menu.active}">
-        <a class="nav-link pd-{{ paddingLeft }}" href="#" [routerLink]="menu.children &&  menu.children.length > 0 ? null : '/'.concat(basePath).concat('/').concat(menu.contextPath)" (click)="toggleSubmenu(menu)">
+    <li *ngFor="let menu of children" class="nav-item" [ngClass]="{'active': menu.active}">
+        <a class="nav-link pd-{{ paddingLeft }}" href="#" [routerLink]="menu.children &&  menu.children.length > 0 ? null : '/'.concat(mainRoute).concat('/').concat(menu.route)" (click)="toggleSubmenu(menu)">
             <i class="fa {{menu.image}}"></i>
-            <span class="sidebar-submenu-menuitem-text">{{ menu.name }}</span>
+            <span class="sidebar-submenu-menuitem-text">{{ menu.tittle }}</span>
             <i *ngIf="menu.children && menu.children.length > 0" class="fa fa-angle-down sidebar-menuitem-toggler"></i>
         </a>
         <app-submenu *ngIf="menu.children && menu.children.length > 0" 
-                        [basePath]="basePath + '/' + menu.contextPath" 
+                        [mainRoute]="mainRoute + '/' + menu.route" 
                         [visible]="menu.active" 
-                        [itemsMenu]="menu.children"
+                        [children]="menu.children"
                         [paddingLeft]="paddingLeft + 10" >
         </app-submenu>
     </li>
 </ul>
+
+<!-- 
+<ul class="collapse list-unstyled" id="{{menu?.name}}" [@anim]="visible">
+    <li *ngFor="let menu of children" [ngClass]="{'active': menu.active}">
+        <a href="#" [routerLink]="menu.children &&  menu.children.length > 0 ? null : '/'.concat(basePath).concat('/').concat(menu.route)" (click)="toggleSubmenu(menu)">
+        	{{ menu.tittle }}
+        </a>
+        <app-submenu *ngIf="menu.children && menu.children.length > 0" 
+                        [basePath]="mainRoute + '/' + menu.route" 
+                        [visible]="menu.active" 
+                        [children]="menu.children"
+                        [paddingLeft]="paddingLeft + 10" >
+        </app-submenu>
+    </li>
+</ul>
+-->

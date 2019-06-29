@@ -815,22 +815,34 @@
 	DECLARE OPC_ESTADO				INT(11)			DEFAULT 0;
 	
 	DECLARE cur_menus 				CURSOR FOR 
-		SELECT opc.opc_codigo, 		opc.opc_nombre,
-			   opc.opc_titulo,		opc.opc_abreviatura,
-			   opc.opc_descripcion,	opc.opc_ruta,
-			   opc.opc_principal,	opc.opc_orden,
-			   opc.opc_estado 	 
-		FROM   smpos_sis_accesos acc,
-			   smpos_sis_usuarios_x_roles uxr,
-			   smpos_sis_roles_x_perfiles rxp,
-			   smpos_men_opciones_x_perfiles oxp,
-			   smpos_men_opciones opc
-		WHERE  acc.acc_usuario = uxr.uxr_usuario
-		AND    uxr.uxr_rol     = rxp.rxp_rol 
-		AND    oxp.oxp_perfil  = rxp.rxp_perfil
-		AND    opc.opc_codigo  = oxp.oxp_opcion
-		AND    acc.acc_token   = vin_token
-		ORDER BY opc.opc_orden ASC;
+			WITH RECURSIVE menus(opc_codigo, 		opc_nombre, 		opc_titulo, 
+								 opc_abreviatura, 	opc_descripcion, 	opc_ruta, 
+								 opc_principal, 	opc_orden, 			opc_estado)  AS (
+				SELECT opc.opc_codigo, 				opc.opc_nombre,
+					   opc.opc_titulo,				opc.opc_abreviatura,
+					   opc.opc_descripcion,			opc.opc_ruta,
+					   IFNULL(opc.opc_principal, 0) opc_principal,	
+					   opc.opc_orden,				opc.opc_estado 	 
+				FROM   smpos_sis_accesos acc,
+					   smpos_sis_usuarios_x_roles uxr,
+					   smpos_sis_roles_x_perfiles rxp,
+					   smpos_men_opciones_x_perfiles oxp,
+					   smpos_men_opciones opc
+				WHERE  acc.acc_usuario = uxr.uxr_usuario
+				AND    uxr.uxr_rol     = rxp.rxp_rol 
+				AND    oxp.oxp_perfil  = rxp.rxp_perfil
+				AND    opc.opc_codigo  = oxp.oxp_opcion
+				AND    acc.acc_token   = vin_token
+				UNION ALL
+				SELECT opc.opc_codigo, 				opc.opc_nombre,
+					   opc.opc_titulo,				opc.opc_abreviatura,
+					   opc.opc_descripcion,			opc.opc_ruta,
+					   IFNULL(opc.opc_principal, 0) opc_principal,	
+					   opc.opc_orden,				opc.opc_estado 	 
+				FROM   smpos_men_opciones opc
+				INNER JOIN menus sc ON opc.opc_principal = sc.opc_codigo
+			) SELECT * FROM menus opc
+			  ORDER BY opc.opc_orden ASC;
 	
 	DECLARE CONTINUE HANDLER FOR NOT FOUND 
 		SET CURSOR_DONE = TRUE;
