@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Subject, Subscription, Observable } from 'rxjs';
 import { FirewallService } from '../security';
+import { MessageService } from '../widget';
 
 /**
  * Servicio para gestionar el estado del menu
@@ -22,7 +23,7 @@ export class SidebarService {
    * Constructor
    * @param firewallService Servicio de identidad de usuario
    */
-  constructor(private firewallService: FirewallService) {
+  constructor(private firewallService: FirewallService, private messageService: MessageService) {
     this.status     = new Subject<boolean>();
     this.stream     = new Subject<any>();
     const self      = this;
@@ -70,6 +71,8 @@ export class SidebarService {
         const menuUser = userMenu;
         this.inactivateAllItems(menuUser.menuItems);
         this.setOptionMenu(menuUser);
+     }, error => { 
+        this.messageService.sendMessage( { type: 'error', text: error.error.message });
      });
   }
 

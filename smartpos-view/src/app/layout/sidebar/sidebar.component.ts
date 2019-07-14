@@ -27,7 +27,6 @@ export class SidebarComponent implements OnInit {
   ngOnInit(): void {
     const self = this;
     this.sidebarService.onMenuLoaded().subscribe(menu => {
-       console.log(menu); 
        self.userMenu = menu;
        self.setMenuAsActive(self.router.url);
     });

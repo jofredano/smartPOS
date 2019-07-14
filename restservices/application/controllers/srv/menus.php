@@ -4,6 +4,7 @@ require APPPATH . 'libraries/base/rest-controller.inc.php';
 
 use Restserver\Libraries\REST_Controller;
 use domain\transfer\dto\DTOMenu;
+use domain\transfer\dto\DTOResponse;
 
 /**
  * Implementacion de recursos a menus
@@ -65,15 +66,33 @@ class menus extends PathRestController {
 	                $codeStatus = REST_Controller::HTTP_OK;
 	            } else if ($output[PathRestController::ATTRIB_CODE] == '401') {
 	                $codeStatus = REST_Controller::HTTP_UNAUTHORIZED;
+	                $response   = new DTOResponse();
+	                $response->setCode( $output['codigo'] );
+	                $response->setMessage( $output['mensaje'] );
+	                $response->setItems( array() );
+	                $output     = $response;
 	            } else {
 	                $codeStatus = REST_Controller::HTTP_INTERNAL_SERVER_ERROR;
+	                $response   = new DTOResponse();
+	                $response->setCode( $output['codigo'] );
+	                $response->setMessage( $output['mensaje'] );
+	                $response->setItems( array() );
+	                $output     = $response;
 	            }
 	        } catch (Exception $e) {
-	            $output         = $e->getMessage();
+	            $response       = new DTOResponse();
+	            $response->setCode( $e->getCode() );
+	            $response->setMessage( $e->getMessage() );
+	            $response->setItems( array() );
+	            $output         = $response;
 	            $codeStatus     = REST_Controller::HTTP_INTERNAL_SERVER_ERROR;
 	        }
 	    } else {
-	        $output     = self::MSGNOTTOKEN_DATA;
+	        $response       = new DTOResponse();
+	        $response->setCode( REST_Controller::HTTP_INTERNAL_SERVER_ERROR );
+	        $response->setMessage( self::MSGNOTTOKEN_DATA );
+	        $response->setItems( array() );
+	        $output         = $response;
 	        $codeStatus = REST_Controller::HTTP_INTERNAL_SERVER_ERROR;
 	    }
 	    //Hacer como se pasa por encabezado informacion al recurso
@@ -108,10 +127,11 @@ class menus extends PathRestController {
 				$children = $childrenItems;
 				//Mientras no encuentre la opcion
 				while(is_null($result) && count($children) > 0) {
+				    $index = key ( $children );
 					//Busca la opcion en las opciones hijo del primer elemento
-					$result = $this->getOptionMenu($code, $children[0]->getChildren());
+				    $result = $this->getOptionMenu($code, $children[$index]->getChildren());
 					//Y elimina la opcion donde se realizo la busqueda
-					unset($children[0]);
+				    unset($children[$index]);
 				}				
 			}
 		}

@@ -247,7 +247,7 @@ export class WtCreateEmployeeComponent implements OnInit, OnDestroy {
                    this.messageService.sendMessage( { type: 'success', text: response });
                    console.log(employee); 
                 }, error   => {
-                   this.messageService.sendMessage( { type: 'error', text: error.error }); 
+                   this.messageService.sendMessage( { type: 'error', text: error.error.message }); 
                 });
         }
     }

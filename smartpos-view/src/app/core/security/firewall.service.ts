@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { AngularWebStorageModule, SessionStorage } from 'angular-web-storage';
+import { AngularWebStorageModule, SessionStorage, LocalStorage } from 'angular-web-storage';
 import { Observable, Subject } from 'rxjs';
 import { share } from 'rxjs/operators';
 import { Constants } from '../http';
@@ -19,7 +19,7 @@ export class FirewallService {
     @SessionStorage() private _token: string;
     
     /** representa el codigo unico de acceso */
-    @SessionStorage() private _access: any;
+    @LocalStorage() private _access: any;
     
     /** informacion del usuario (alias, clave) */
     private _userInfo: any;
@@ -144,9 +144,9 @@ export class FirewallService {
      * @returns indica si el usuario esta logueado en el sistema o no
      */
     haveAccess(): boolean {
+        //Ajustar metodo para que valide realmente cuando la sesion finaliza
         const today:Date     = new Date();
         const result:boolean = this._access != null && today <= new Date(this._access.fecfin_acceso.split(' ').join('T'));
-        console.log( this._access );
         return result;
     }
 
@@ -155,10 +155,10 @@ export class FirewallService {
      * de esta forma se puede hacer refresh de dicha información solicitandola al backend
      */
     clearObserverForLogin() {
+        //Buscar como destruir la informacion almacenada en @LocalStorage
         this._access    = null;
         this._userInfo  = null;
         this._token     = null;
-        this.router.navigate(['main/login']);
     }
     
     get userInfo(): any {

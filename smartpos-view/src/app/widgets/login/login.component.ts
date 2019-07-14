@@ -1,7 +1,8 @@
 import { Component, Input, OnInit, OnDestroy } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { FirewallService } from '../../core/security';
-import { FormControl, FormGroup } from '@angular/forms';
+import { MessageService } from '../../core/widget';
+import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { Router } from "@angular/router";
 
 /**
@@ -14,6 +15,8 @@ import { Router } from "@angular/router";
 })
 export class LoginComponent implements OnInit, OnDestroy {
 
+  accessUserForm: FormGroup;
+    
   /** Se crearan campos para control de los mensajes en el componente */
   private _lblTittleForm: string;
 
@@ -35,10 +38,12 @@ export class LoginComponent implements OnInit, OnDestroy {
       password: ''
   };
 
-  constructor(private router: Router, private firewallService: FirewallService) {}
-
-  ngOnInit(): void {
-      //this.identityService.getUserInfo().subscribe(userInfo => this.user = userInfo);
+  constructor(
+      private formBuilder: FormBuilder, 
+      private router: Router, 
+      private firewallService: FirewallService, 
+      private messageService: MessageService) 
+  {
       this.lblTittleForm              = 'Debe diligenciar su acceso';
       this.lblQuestionUsernameForm    = 'Nombre de usuario';
       this.lblQuestionPasswdForm      = 'Clave';
@@ -47,6 +52,17 @@ export class LoginComponent implements OnInit, OnDestroy {
       this.showMessage                = false;
   }
 
+  ngOnInit(): void {
+      this.accessUserForm = this.formBuilder.group({
+          'username':         ['', Validators.required],
+          'password':         ['', Validators.required]
+      });
+  }
+
+  get fields() { 
+      return this.accessUserForm.controls; 
+  }
+  
   ngOnDestroy(): void {
       //Implementacion cuando se intente destruir el componente
   }
@@ -127,21 +143,23 @@ export class LoginComponent implements OnInit, OnDestroy {
   }
   
   accessUser() {
-      const self = this.firewallService;
-      const navigator = this.router;
+      this.info  = {
+         'username' : this.accessUserForm.value['username'],
+         'password' : this.accessUserForm.value['password']
+      };
+      const self        = this.firewallService;
+      const navs        = this.router;
       this.firewallService.accessUser(this.info).subscribe(
        res => {
-          this.showMessage = false;
-          self.token = res.token;
+          this.showMessage  = false;
+          self.token        = res.token;
           self.applyAccessToken( res.token , function(access) {
               if (access != null) {
-                  navigator.navigate(['admin/create-employee']);
+                  navs.navigate(['administracion/empleado-crear']);
               }
           });
        }, error => {
-          this.showMessage = true;
-          this.textMessage = error.error.mensaje;
-          console.error(error);
+           this.messageService.sendMessage( { type: 'error', text: error.error.message });
        });
   }
 

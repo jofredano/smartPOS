@@ -56,16 +56,16 @@ class categories extends PathRestController {
 	                } else {
 	                    throw new GeneralException(
 	                        $result[self::MESSAGE_ATTRIB],
-	                        REST_Controller::HTTP_UNAUTHORIZED);
+	                        REST_Controller::HTTP_INTERNAL_SERVER_ERROR);
 	                }
 	                return $data;
 	            };
-	            //Se realiza proceso de creacion del empleado
+	            //Se realiza proceso de validacion para carga de categorias
 	            //1. Se verifica que el usuario logueado puede realizar esta operacion
 	            $data        = $this->checkProfile($token, 'EMPLEADO.CREAR', $this->db, $callback);
 	            //Se procede a transformar resultado 
 	            $items       = $this->prepareResultSetText( $data );
-	            //Verifica si efectivamente se creo el empleado
+	            //Verifica si efectivamente cargo categorias
 	            if (count($items) > 0) {
 	                $status   = REST_Controller::HTTP_OK;
 	                $response = new DTOResponse();
@@ -73,14 +73,28 @@ class categories extends PathRestController {
 	                $response->setMessage( "Categorias cargadas" );
 	                $response->setItems( $this->prepareCategories( $items ) );
 	                $output   = $response;
+	            } else {
+	                $response = new DTOResponse();
+	                $response->setCode( "401" );
+	                $response->setMessage( "No hay categorias cargadas para esta consulta" );
+	                $response->setItems( null );
+	                $output   = $response;
 	            }
 	        } catch (Exception $e) {
-	            $output   = $e->getMessage();
+	            $response = new DTOResponse();
+	            $response->setCode( $e->getCode() );
+	            $response->setMessage( $e->getMessage() );
+	            $response->setItems( array() );
+	            $output   = $response;
 	            $status   = $e->getCode();
 	        }
 	    } else {
-	        $output  = PathRestController::MSGNOTTOKEN_DATA;
-	        $status  = REST_Controller::HTTP_INTERNAL_SERVER_ERROR;
+	        $response = new DTOResponse();
+	        $response->setCode( REST_Controller::HTTP_INTERNAL_SERVER_ERROR );
+	        $response->setMessage( PathRestController::MSGNOTTOKEN_DATA );
+	        $response->setItems( array() );
+	        $output   = $response;
+	        $status   = REST_Controller::HTTP_INTERNAL_SERVER_ERROR;
 	    }
 	    $this->set_response($output, $status);
 	}

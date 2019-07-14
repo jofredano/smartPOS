@@ -1,13 +1,16 @@
 <div class="card" style="width:35rem">
   <div class="card-body">
     <h5 class="card-title">{{lblTittleForm}}</h5>
+  	<!-- 
   	<h6 *ngIf="showMessage" class="card-subtitle mb-2 text-muted text/center">
        {{textMessage}} 
     </h6>
-	<form #userlogin="ngForm" class="card-text needs-validation" novalidate (ngSubmit)="accessUser()">
+    -->
+    <wc-alert></wc-alert>
+	<form [formGroup]="accessUserForm" class="card-text needs-validation" novalidate (ngSubmit)="accessUser()">
 	  <div class="form-group">
 	    <label for="username">{{lblQuestionUsernameForm}}</label>
-	    <input type="text" class="form-control" id="username" name="username" [(ngModel)]="username" placeholder="{{lblQuestionUsernameForm}}" required>
+	    <input type="text" class="form-control" id="username" name="username" formControlName="username" placeholder="{{lblQuestionUsernameForm}}" required>
 	    <div class="invalid-feedback">
 	        Please enter a message in the textarea.
 	    </div>
@@ -15,7 +18,7 @@
 	  
 	  <div class="form-group">
 	    <label for="phones">{{lblQuestionPasswdForm}}</label>
-	    <input type="password" class="form-control" id="password" name="password" [(ngModel)]="password" placeholder="{{lblQuestionPasswdForm}}" required>
+	    <input type="password" class="form-control" id="password" name="password" formControlName="password" placeholder="{{lblQuestionPasswdForm}}" required>
 	    <div class="invalid-feedback">
 	        Please enter a message in the textarea.
 	    </div>
@@ -23,7 +26,7 @@
 	  
 	  <div class="form-group row">
 	    <div class="form-group col-md-12 text-center">
-	      	<button type="submit" class="btn btn-primary btn-space" [disabled]="!userlogin.valid">{{lblButtonAccessForm}}</button>
+	      	<button type="submit" class="btn btn-primary btn-space">{{lblButtonAccessForm}}</button>
 	    	<button type="button" class="btn btn-primary">{{lblButtonRegisterForm}}</button>
 	    </div>
 	  </div>

@@ -3,6 +3,7 @@ defined('BASEPATH') || exit('No direct script access allowed');
 require APPPATH . 'libraries/base/rest-controller.inc.php';
 
 use Restserver\Libraries\REST_Controller;
+use domain\transfer\dto\DTOResponse;
 
 /**
  * Implementacion de recursos a usuarios
@@ -29,8 +30,12 @@ class users extends PathRestController {
         $codeStatus = 0;
         try {
             if (is_null($content)) {
-                $output = "No posee los argumentos necesarios";
                 $codeStatus = REST_Controller::HTTP_BAD_REQUEST;
+                $response   = new DTOResponse();
+                $response->setCode( REST_Controller::HTTP_BAD_REQUEST );
+                $response->setMessage( "No posee los argumentos necesarios" );
+                $response->setItems( array() );
+                $output     = $response;
             } else {
                 //Procedemos a realizar llamado a base de datos
                 $this->db->query("CALL smpos_prc_iniciar_sesion('".$content["username"]."', '".$content["password"]."', ".self::TIMELIMIT_SESSION.", @vou_token, @vou_codigo,@vou_mensaje); ");
@@ -40,13 +45,27 @@ class users extends PathRestController {
                 if ($output[PathRestController::ATTRIB_CODE] == '200') {
                     $codeStatus = REST_Controller::HTTP_OK;
                 } else if ($output[PathRestController::ATTRIB_CODE] == '401') {
-                    $codeStatus = REST_Controller::HTTP_UNAUTHORIZED;
+                    $codeStatus = REST_Controller::HTTP_INTERNAL_SERVER_ERROR;
+                    $response   = new DTOResponse();
+                    $response->setCode( $output['codigo'] );
+                    $response->setMessage( $output['mensaje'] );
+                    $response->setItems( array() );
+                    $output     = $response;
                 } else {
                     $codeStatus = REST_Controller::HTTP_INTERNAL_SERVER_ERROR;
+                    $response   = new DTOResponse();
+                    $response->setCode( $output['codigo'] );
+                    $response->setMessage( $output['mensaje'] );
+                    $response->setItems( array() );
+                    $output     = $response;
                 }
             }
         } catch (Exception $e) {
-            $output = $e->getMessage();
+            $response   = new DTOResponse();
+            $response->setCode( $e->getCode() );
+            $response->setMessage( $e->getMessage() );
+            $response->setItems( array() );
+            $output     = $response;
             $codeStatus = REST_Controller::HTTP_INTERNAL_SERVER_ERROR;
         }
         //Se valida informacion de la sesion
